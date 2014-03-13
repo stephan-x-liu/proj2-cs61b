@@ -13,7 +13,13 @@ public class Grid{
 	}
 
 	public Field get(int x, int y){
-		return board[x][y];
+		try{
+			return board[x][y];
+		}
+		catch(ArrayIndexOutOfBoundsException e){
+			return null;
+		}
+		
 	}
 
 	public Field neighbor(int x, int y){
