@@ -84,6 +84,7 @@ public Field Field.left_up(); //Returns closest occupied field to the left_up or
 public Field Field.left_down(); //Returns closest occupied field to the left_down or null for unoccupied.
 public Field Field.right_up(); //Returns closest occupied field to the right_up or null for unoccupied.
 public Field Field.right_down(); //Returns closest occupied field to the right_down or null for unoccupied.
+public Field Field.position(); //Returns grid coordinates of the Field.
 public Piece Field.item(); //Returns the piece in the field, else null.
 public boolean Field.hasPiece(); //Returns whether or not there is a piece 
 public boolean Field.addPiece(); //Places a piece on the board in the given field.
