@@ -50,6 +50,15 @@ public class Field{
 	**/
 	public void setPiece(Piece p){
 		piece = p;
+		p.setField(this);
+	}
+
+	/**
+	*	Removes the piece of a Field.
+	**/
+	public void removePiece(){
+		piece.setField(null);
+		piece = null;
 	}
 
 	/**

@@ -1,12 +1,12 @@
                                      GRADER
 
-Name of student running submit:
-Login of student running submit:
+Name of student running submit: Stephan Liu
+Login of student running submit: cs61b-wf
 
-Second team member's name:
+Second team member's name: Amanda Chow
 Second team member's login:
 
-Third team member's name (if any):
+Third team member's name (if any): Sebastian Merz
 Third team member's login:
 
 IMPORTANT:  Once you've submitted Project 2 once, the same team member should
@@ -67,30 +67,226 @@ Classes:
 Field.java
 Piece.java
 Grid.java
-MasterAIComputer.java #winning
+MachinePlayer.java
 
-public boolean Grid.isValidMove(Piece p,int x,int y); //Returns whether or not a spot is a valid move.
-public List Grid.validMoves(Piece p); //Returns a list of valid moves for a given piece.
-public List Grid.whitePieces(); //Returns all of the white pieces.
-public List Grid.blackPieces(); //Returns all of the black pieces.
-public List Grid.allNetworks(); //Returns all networks on the Grid.
-public boolean Grid.hasNetwork(); //Returns if there is a winning network.
-public boolean MachinePlayer.winningMove(Field); //Checks to see if there are any moves that can win.
-public Field Field.left(); //Returns closest occupied field to the left or null for unoccupied. 
-public Field Field.right(); //Returns closest occupied field to the right or null for unoccupied.
-public Field Field.up(); //Returns closest occupied field to the above or null for unoccupied.
-public Field Field.down(); //Returns closest occupied field below or null for unoccupied.
-public Field Field.left_up(); //Returns closest occupied field to the left_up or null for unoccupied.
-public Field Field.left_down(); //Returns closest occupied field to the left_down or null for unoccupied.
-public Field Field.right_up(); //Returns closest occupied field to the right_up or null for unoccupied.
-public Field Field.right_down(); //Returns closest occupied field to the right_down or null for unoccupied.
-public Field Field.position(); //Returns grid coordinates of the Field.
-public Piece Field.item(); //Returns the piece in the field, else null.
-public boolean Field.hasPiece(); //Returns whether or not there is a piece 
-public boolean Field.addPiece(); //Places a piece on the board in the given field.
-public boolean Field.removePiece(); //Removes a piece from the board in the given field.
-public String Piece.color(); //Returns color of piece.
-public 
+
+=================================MODULES=================================
+
+- Grid: Class representation of current state of the game.
+- Move: Finds valid moves
+- Network: Finds existing networks or potential networks
+- AlphaBeta: Performs Alpha-Beta Pruning
+- Eval: Evaluates a score for each board 
+
+
+
+
+
+================================GRID MODULE================================
+
+Classes:
+
+  - Grid.java: Represents game grid
+  - Field.java: Represents wrapper for a field
+  - Piece.java: Represents a piece, either black or white
+
+  -------------------------------Grid.java-------------------------------
+
+  Fields:
+
+    private Field[][] grid //2D Square array size 7 x 7 of all Squares in grid
+
+    private boolean addMove //'true' if players are currently performing add moves
+    
+    private Field[] machineSquares //Square array size 10 of Squares claimed by opponent
+    
+    private Field[] opponentSquares //Square array size 10 of Squares claimed by opponent
+
+  Methods:
+
+    public char moveType() //Return "A," "S," or "Q" according to what type of move the next move should be
+
+    public void machineMove(Move) //Changes machineSquares accordingly based on MachinePlayer's move
+
+    public void opponentMove(Move) //Changes opponentSquares accordingly based on OpponentPlayer's move
+
+    public void removeSquare(int[] coord) //Takes in coordinate of square and sets it to unclaimed
+
+    public Grid clone(Grid) //Clones current Grid onto new Grid
+
+
+  ------------------------------Field.java------------------------------
+  
+  /**
+  * Constructor for Field object.
+  * @param x is x coordinate of field.
+  * @param y is y coordinate of field.
+  * @param g is Grid that the field is on.
+  **/
+  public Field( int x, int y, Grid g)
+
+  /**
+  * Gets the coordinates of the Field.
+  * @return is a length 2 integer array contain x and y.
+  **/
+  public int[] position()
+
+  /**
+  * Sets the piece of a Field.
+  * @param p is the Piece that is being placed in the field.
+  **/
+  public void setPiece(Piece p)
+
+  /**
+  * Gets the piece a field contains.
+  * @return is a piece if Field is occupied.
+  *  @return is null if Field is unoccupied.
+  **/
+  public Piece getPiece()
+
+  /**
+  * Returns whether or not the Field has a piece.
+  * @return true if occupied and false if unoccupied.
+  **/
+  public boolean hasPiece()
+
+  /**
+  * Gets a Field in an adjacdent direction
+  * @param dir is a length 2 integer array defining direction.
+  * @return is a Field if there is a valid Field in the direction.
+  *  @return is null if out of bounds of Grid.
+  **/
+  public Field adjacent(int[] dir)
+
+  /**
+  * Checks if Field as one neighbor.
+  * @return is a Field if there is a neighbor (occupied adjacent Field).
+  *  @return is null if there is not a neighbor.
+  **/
+  public Field neighbor()
+
+  /**
+  * Finds closest piece in given direction.
+  * @param dir is a length 2 integer array defining direction.
+  * @return is a Field if there is an occupied Field in the given direction.
+  * @return null if it hits the edge of the Grid.
+  **/
+  public Field getInDirection(int[] dir)
+
+  /**
+  * Removes the piece of a Field.
+  **/
+  public void removePiece(){
+
+  ------------------------------Piece.java------------------------------
+  /**
+  * Constructor for Piece objects.
+  * @param color identifies color of Piece; 0 for black and 1 for white.
+  * @param Field is the field that the piece is in.
+  **/
+  public Piece(int color, Field f)
+
+  /**
+  * Constructs a Piece object without a Field.
+  * @param color identifies color of Piece; 0 for black and 1 for white.
+  **/
+  public Piece(int color)
+
+  /**
+  * Sets the field for a Piece object.
+  * @param new_field is the Field that the Piece is being moved to.
+  **/
+  public void setField(Field new_field)
+
+  /**
+  * Returns color of piece.
+  * @return int; 0 for black and 1 for white.
+  **/
+  public int color()
+
+  /**
+  * Returns Field of the Piece.
+  * @return Field object.
+  **/
+  public Field field()
+
+
+
+
+================================MOVE MODULE================================
+
+Classes:
+
+  - Grid.java
+
+  -------------------------------Grid.java-------------------------------
+
+  Methods:
+
+    public boolean isValidMove(Move move) //Returns true if move is valid, false if move is invalid.
+
+    public Moves[] validAddMoves() //Return list of valid add moves for MachinePlayer
+
+    public Moves[] validStepMoves() //Return list of valid step moves for MachinePlayer
+
+
+
+
+
+===============================NETWORK MODULE===============================
+
+Classes:
+
+  - Grid.java
+
+  -------------------------------Grid.java-------------------------------
+
+  Methods:
+
+    public char hasNetwork() //Return 'M' if Grid contains a MachinePlayer network, 'O' if Grid contains an opponent player network, 'N' if Grid doesn't contain a network
+
+
+
+
+
+==============================ALPHABETA MODULE==============================
+
+Classes:
+
+- Grid.java
+
+  -------------------------------Grid.java-------------------------------
+
+  Fields:
+
+    - private int searchDepth //Search depth of Alpha-Beta Pruning
+
+  Methods:
+
+    public Move addABPruning(boolean machineTurn=true) //Returns best Add move using Alpha-Beta Pruning. Takes boolean parameter that is true if calculating for MachinePlayer's move, false if calculating for opponent's move
+
+    public Move stepABPruning(boolean machineTurn=true) //Returns best Step move using Alpha-Beta Pruning. Takes boolean parameter that is true if calculating for MachinePlayer's move, false if calculating for opponent's move
+
+
+
+
+
+================================EVAL MODULE================================
+
+Classes:
+
+- Grid.java
+
+-------------------------------Grid.java-------------------------------
+
+  Methods:
+
+    public int eval() //Returns evaluation of Grid--Positive value if MachinePlayer is doing well, negative value if MachinePlayer is not.
+
+
+Modules:
+
+
 
 
 
