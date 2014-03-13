@@ -69,10 +69,12 @@ Piece.java
 Grid.java
 MasterAIComputer.java #winning
 
-public boolean Grid.isValidMove(Piece,x,y); //Returns whether or not a spot is a valid move.
-public List Grid.validMoves(Piece); //Returns a list of valid moves for a given piece.
+public boolean Grid.isValidMove(Piece p,int x,int y); //Returns whether or not a spot is a valid move.
+public List Grid.validMoves(Piece p); //Returns a list of valid moves for a given piece.
 public List Grid.whitePieces(); //Returns all of the white pieces.
 public List Grid.blackPieces(); //Returns all of the black pieces.
+public List Grid.allNetworks(); //Returns all networks on the Grid.
+public boolean Grid.hasNetwork(); //Returns if there is a winning network.
 public boolean MachinePlayer.winningMove(Field); //Checks to see if there are any moves that can win.
 public Field Field.left(); //Returns closest occupied field to the left or null for unoccupied. 
 public Field Field.right(); //Returns closest occupied field to the right or null for unoccupied.
@@ -84,6 +86,8 @@ public Field Field.right_up(); //Returns closest occupied field to the right_up 
 public Field Field.right_down(); //Returns closest occupied field to the right_down or null for unoccupied.
 public Piece Field.item(); //Returns the piece in the field, else null.
 public boolean Field.hasPiece(); //Returns whether or not there is a piece 
+public boolean Field.addPiece(); //Places a piece on the board in the given field.
+public boolean Field.removePiece(); //Removes a piece from the board in the given field.
 public String Piece.color(); //Returns color of piece.
 public 
 
