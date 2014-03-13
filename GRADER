@@ -62,3 +62,37 @@ You will probably need to change some of your design decisions as you go; be
 sure to modify this file to reflect these changes before you submit your
 project.  Your design of classes and interfaces will be worth 10% of your
 grade.
+
+Classes:
+Field.java
+Piece.java
+Grid.java
+MasterAIComputer.java #winning
+
+public boolean Grid.isValidMove(Piece,x,y); //Returns whether or not a spot is a valid move.
+public List Grid.validMoves(Piece); //Returns a list of valid moves for a given piece.
+public List Grid.whitePieces(); //Returns all of the white pieces.
+public List Grid.blackPieces(); //Returns all of the black pieces.
+public boolean MachinePlayer.winningMove(Field); //Checks to see if there are any moves that can win.
+public Field Field.left(); //Returns closest occupied field to the left or null for unoccupied. 
+public Field Field.right(); //Returns closest occupied field to the right or null for unoccupied.
+public Field Field.up(); //Returns closest occupied field to the above or null for unoccupied.
+public Field Field.down(); //Returns closest occupied field below or null for unoccupied.
+public Field Field.left_up(); //Returns closest occupied field to the left_up or null for unoccupied.
+public Field Field.left_down(); //Returns closest occupied field to the left_down or null for unoccupied.
+public Field Field.right_up(); //Returns closest occupied field to the right_up or null for unoccupied.
+public Field Field.right_down(); //Returns closest occupied field to the right_down or null for unoccupied.
+public Piece Field.item(); //Returns the piece in the field, else null.
+public boolean Field.hasPiece(); //Returns whether or not there is a piece 
+public String Piece.color(); //Returns color of piece.
+public 
+
+
+
+
+
+
+
+
+
+
