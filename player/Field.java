@@ -5,14 +5,15 @@ public class Field{
 	private int x;
 	private int y;
 	private Grid grid;
-	private final int[] LEFT = {-1,0};
-	private final int[] RIGHT = {1,0};
-	private final int[] UP= {0,1};
-	private final int[] DOWN = {0,-1};
-	private final int[] LEFT_UP = {-1,1};
-	private final int[] LEFT_DOWN = {-1,-1};
-	private final int[] RIGHT_UP = {1,1};
-	private final int[] RIGHT_DOWN = {1,-1};
+	static final int[] LEFT = {-1,0};
+	static final int[] RIGHT = {1,0};
+	static final int[] UP= {0,1};
+	static final int[] DOWN = {0,-1};
+	static final int[] LEFT_UP = {-1,1};
+	static final int[] LEFT_DOWN = {-1,-1};
+	static final int[] RIGHT_UP = {1,1};
+	static final int[] RIGHT_DOWN = {1,-1};
+	static final int[][] DIRECTIONS = {LEFT,RIGHT,UP,DOWN,LEFT_UP,LEFT_DOWN,RIGHT_UP,RIGHT_DOWN};
 
 	public Field( int x, int y, Grid g){
 		piece = null;
@@ -22,15 +23,35 @@ public class Field{
 	}
 
 	public int[] position(){
-		return {x,y};
+		int[] temp = {x,y};
+		return temp;
 	}
 
-	public setPiece(Piece p){
+	public void setPiece(Piece p){
 		piece = p;
 	}
 
-	public getPiece(){
+	public Piece getPiece(){
 		return piece;
+	}
+
+	public Field adjacent(int[] dir){
+		try{
+			return grid.get(x+dir[0],y+dir[1]);
+		}
+		catch(NullPointerException e){
+			return null;
+		} 
+	}
+
+	public Field neighbor(){
+		for(int[] dir : DIRECTIONS){
+			Field adj = adjacent(dir);
+			if(adj!=null&&adj.getPiece()!=null){
+				return adj;
+			}
+		}
+		return null;
 	}
 
 	public Field getInDirection(int[] dir){
