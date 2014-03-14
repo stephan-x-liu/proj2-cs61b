@@ -113,33 +113,11 @@ public class Field{
 		if(grid.get(x+dir[0],y+dir[1]).getPiece()!=null){
 			return grid.get(x+dir[0],y+dir[1]);
 		}
+		else if(grid.get(x+dir[0],y+dir[1])){
+			return null;
+		}
 		else{
 			return grid.get(x+dir[0],y+dir[1]).left();
 		}
 	}
-	public Field left(){
-		return getInDirection(LEFT);
-	}
-	public Field right(){
-		return getInDirection(RIGHT);
-	}
-	public Field up(){
-		return getInDirection(UP);
-	}
-	public Field down(){
-		return getInDirection(DOWN);
-	}
-	public Field left_up(){
-		return getInDirection(LEFT_UP);
-	}
-	public Field right_up(){
-		return getInDirection(RIGHT_UP);
-	}
-	public Field left_down(){
-		return getInDirection(LEFT_DOWN);
-	}
-	public Field right_down(){
-		return getInDirection(RIGHT_DOWN);
-	}
-	
 }
