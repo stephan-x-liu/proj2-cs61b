@@ -11,6 +11,10 @@ public class Square{
   private int x;
   private int y;
   private Grid grid;
+  private int black_potential;
+  private int white_potential;
+  private int black_networks;
+  private int white_networks;
 
   //Directions as length 2 integer arrays representing slope
   static final int[] LEFT = {-1,0};
@@ -34,6 +38,10 @@ public class Square{
     this.x = x;
     this.y = y;
     grid = g;
+    black_networks = 0;
+    white_networks = 0;
+    black_potential = 0;
+    white_potential = 0;
   }
 
   /**
