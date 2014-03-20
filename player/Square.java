@@ -6,8 +6,8 @@ package player;
 
 
 
-public class Field{
-	private Piece piece;
+public class Square{
+	private int piece;
 	private int x;
 	private int y;
 	private Grid grid;
@@ -24,12 +24,12 @@ public class Field{
 	static final int[][] DIRECTIONS = {LEFT,RIGHT,UP,DOWN,LEFT_UP,LEFT_DOWN,RIGHT_UP,RIGHT_DOWN};
 
 	/**
-	*	Constructor for Field object.
-	*	@param x is x coordinate of field.
-	*	@param y is y coordinate of field.
-	*	@param g is Grid that the field is on.
+	*	Constructor for Square object.
+	*	@param x is x coordinate of Square.
+	*	@param y is y coordinate of Square.
+	*	@param g is Grid that the Square is on.
 	**/
-	public Field( int x, int y, Grid g){
+	public Square( int x, int y, Grid g){
 		piece = null;
 		this.x = x;
 		this.y = y;
@@ -37,7 +37,7 @@ public class Field{
 	}
 
 	/**
-	*	Gets the coordinates of the Field.
+	*	Gets the coordinates of the Square.
 	*	@return is a length 2 integer array contain x and y.
 	**/
 	public int[] position(){
@@ -45,33 +45,31 @@ public class Field{
 		return temp;
 	}
 	/**
-	*	Sets the piece of a Field.
-	*	@param p is the Piece that is being placed in the field.
+	*	Sets the piece of a Square.
+	*	@param p where 0 is black and 1 is white.
 	**/
-	public void setPiece(Piece p){
+	public void setPiece(int p){
 		piece = p;
-		p.setField(this);
 	}
 
 	/**
-	*	Removes the piece of a Field.
+	*	Removes the piece of a Square.
 	**/
 	public void removePiece(){
-		piece.setField(null);
 		piece = null;
 	}
 
 	/**
-	*	Gets the piece a field contains.
-	*	@return is a piece if Field is occupied.
-	* 	@return is null if Field is unoccupied.
+	*	Gets the piece a Square contains.
+	*	@return is an int representing piece if Square is occupied.
+	* 	@return is null if Square is unoccupied.
 	**/
 	public Piece getPiece(){
 		return piece;
 	}
 
 	/**
-	*	Returns whether or not the Field has a piece.
+	*	Returns whether or not the Square has a piece.
 	*	@return true if occupied and false if unoccupied.
 	**/
 	public boolean hasPiece(){
@@ -79,24 +77,24 @@ public class Field{
 	}
 
 	/**
-	*	Gets a Field in an adjacdent direction
+	*	Gets a Square in an adjacdent direction
 	*	@param dir is a length 2 integer array defining direction.
-	*	@return is a Field if there is a valid Field in the direction.
+	*	@return is a Square if there is a valid Square in the direction.
 	* 	@return is null if out of bounds of Grid.
 	**/
-	public Field adjacent(int[] dir){
+	public Square adjacent(int[] dir){
 		return grid.get(x+dir[0],y+dir[1]);
 	}
 
 	/**
-	*	Checks if Field as one neighbor.
-	*	@return is a Field if there is a neighbor (occupied adjacent Field).
+	*	Checks if Square as one neighbor.
+	*	@return is a Square if there is a neighbor (occupied adjacent Square).
 	* 	@return is null if there is not a neighbor.
 	**/
-	public Field neighbor(){
+	public Square neighbor(int color){
 		for(int[] dir : DIRECTIONS){
-			Field adj = adjacent(dir);
-			if(adj!=null&&adj.getPiece()!=null){
+			Square adj = adjacent(dir);
+			if(adj!=null&&adj.getPiece()==piece){
 				return adj;
 			}
 		}
@@ -106,11 +104,11 @@ public class Field{
 	/**
 	*	Finds closest piece in given direction.
 	*	@param dir is a length 2 integer array defining direction.
-	*	@return is a Field if there is an occupied Field in the given direction.
+	*	@return is a Square if there is an occupied Square in the given direction.
 	* 	@return null if it hits the edge of the Grid.
 	**/
-	public Field getInDirection(int[] dir){
-		if(grid.get(x+dir[0],y+dir[1]).getPiece()!=null){
+	public Square getInDirection(int[] dir){
+		if(grid.get(x+dir[0],y+dir[1]).hasPiece()){
 			return grid.get(x+dir[0],y+dir[1]);
 		}
 		else if(grid.get(x+dir[0],y+dir[1])){
