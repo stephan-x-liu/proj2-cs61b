@@ -8,7 +8,6 @@ package player;
  */
 public class MachinePlayer extends Player {
 
-  public static final boolean doesStephanSuck = true;
   // Creates a machine player with the given color.  Color is either 0 (black)
   // or 1 (white).  (White has the first move.)
   public MachinePlayer(int color) {
