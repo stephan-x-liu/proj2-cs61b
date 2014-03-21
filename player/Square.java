@@ -8,6 +8,9 @@ package player;
 
 public class Square{
   private int piece;
+  static final int NONE = 2;
+  static final int white = 1;
+  static final int black = 0;
   private int x;
   private int y;
   private Grid grid;
@@ -81,7 +84,7 @@ public class Square{
   *  @return true if occupied and false if unoccupied.
   **/
   public boolean hasPiece(){
-    return piece == null;
+    return piece != NONE;
   }
 
   /**
