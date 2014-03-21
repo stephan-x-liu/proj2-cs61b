@@ -75,7 +75,7 @@ public class Square{
   *  @return is an int representing piece if Square is occupied.
   *   @return is null if Square is unoccupied.
   **/
-  public Piece getPiece(){
+  public int getPiece(){
     return piece;
   }
 
@@ -105,7 +105,7 @@ public class Square{
   public Square neighbor(int color){
     for(int[] dir : DIRECTIONS){
       Square adj = adjacent(dir);
-      if(adj!=null&&adj.getPiece()==piece){
+      if(adj!=null&&adj.getPiece()==color){
         return adj;
       }
     }
@@ -122,11 +122,11 @@ public class Square{
     if(grid.get(x+dir[0],y+dir[1]).hasPiece()){
       return grid.get(x+dir[0],y+dir[1]);
     }
-    else if(grid.get(x+dir[0],y+dir[1])){
+    else if(grid.get(x+dir[0],y+dir[1])==null){
       return null;
     }
     else{
-      return grid.get(x+dir[0],y+dir[1]).left();
+      return grid.get(x+dir[0],y+dir[1]).getInDirection(dir);
     }
   }
 }
