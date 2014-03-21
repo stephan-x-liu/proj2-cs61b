@@ -19,6 +19,7 @@ public class Square{
   private int black_networks;
   private int white_networks;
 
+
   //Directions as length 2 integer arrays representing slope
   static final int[] LEFT = {-1,0};
   static final int[] RIGHT = {1,0};
@@ -37,14 +38,17 @@ public class Square{
   *  @param g is Grid that the Square is on.
   **/
   public Square( int x, int y, Grid g){
-    piece = null;
+    piece = NONE;
     this.x = x;
     this.y = y;
     grid = g;
-    black_networks = 0;
-    white_networks = 0;
-    black_potential = 0;
-    white_potential = 0;
+  }
+
+  public Square( int x, int y, int piece, Grid g){
+    this.piece = piece;
+    this.x = x;
+    this.y = y;
+    grid = g;
   }
 
   /**
@@ -67,7 +71,7 @@ public class Square{
   *  Removes the piece of a Square.
   **/
   public void removePiece(){
-    piece = null;
+    piece = 0;
   }
 
   /**
@@ -84,7 +88,7 @@ public class Square{
   *  @return true if occupied and false if unoccupied.
   **/
   public boolean hasPiece(){
-    return piece != NONE;
+    return (piece == 0);
   }
 
   /**
@@ -98,7 +102,7 @@ public class Square{
   }
 
   /**
-  *  Checks if Square as one neighbor.
+  *  Checks if Square has one neighbor.
   *  @return is a Square if there is a neighbor (occupied adjacent Square).
   *   @return is null if there is not a neighbor.
   **/
