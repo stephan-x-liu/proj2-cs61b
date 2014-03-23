@@ -7,17 +7,25 @@ package player;
 
 
 public class Square{
+  
+  //Set to "simple" for short toString, "complex" for debug info.
+  private static final String DEBUG = "complex";
+  
   private int piece;
   static final int NONE = 2;
-  static final int white = 1;
-  static final int black = 0;
+  static final int WHITE = 1;
+  static final int BLACK = 0;
   private int x;
   private int y;
   private Grid grid;
-  private int black_potential;
-  private int white_potential;
-  private int black_networks;
-  private int white_networks;
+  private int blackPotential;
+  private int whitePotential;
+
+  //White and black networks are both 2x the actual networks because
+  //of the way the tracing algorithm works. We simply account for this when
+  //we return our results in order to minimize computing time.
+  private int blackNetworks;
+  private int whiteNetworks;
 
 
   //Directions as length 2 integer arrays representing slope
@@ -117,6 +125,52 @@ public class Square{
   }
 
   /**
+   * Reset the white/black potential and network counts for this square
+   **/
+  public void resetPN(){
+    blackPotential = 0;
+    whitePotential = 0;
+    blackNetworks = 0;
+    whiteNetworks = 0;
+
+  }
+  public void addBlackPotential(){
+    blackPotential++;
+  }
+
+  public void addWhitePotential(){
+    whitePotential++;
+  }
+
+  public void addBlackNetwork(){
+    blackNetworks++;
+  }
+
+  public void addWhiteNetwork(){
+    whiteNetworks++;
+  }
+
+  public int getBlackPotential(){
+    return blackPotential;
+  }
+
+  public int getWhitePotential(){
+    return whitePotential;
+  }
+
+  //Count for black networks always 2x what it should be because we record
+  //the network from both ends.
+  public int getBlackNetworks(){
+    return blackNetworks/2;
+  }
+
+  //Count for white networks always 2x what it should be because we record
+  //the network from both ends.
+  public int getWhiteNetworks(){
+    return whiteNetworks/2;
+  }
+
+  /**
   *  Finds closest piece in given direction.
   *  @param dir is a length 2 integer array defining direction.
   *  @return is a Square if there is an occupied Square in the given direction.
@@ -131,6 +185,24 @@ public class Square{
     }
     else{
       return grid.get(x+dir[0],y+dir[1]).getInDirection(dir);
+    }
+  }
+
+  /**
+   * Just a normal to string method
+   * @return a string representing piece contents including: color, potential and actual networks
+   **/
+  public String toString(){
+    String pieceStr = " ";
+    if(piece == WHITE){
+      pieceStr = "W";
+    }else if(piece == BLACK){
+      pieceStr = "B";
+    }
+    if(DEBUG == "simple"){
+      return pieceStr;
+    }else{
+      return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
     }
   }
 }

@@ -1,14 +1,17 @@
 package player;
+import list.*;
 
 public class Grid{
-	private static final int NONE = 2;
-	private static final int WHITE = 1;
-	private static final int BLACK = 0;
-	private static final int DIMENSION = 8;
+  //These fields must be default protected so we can test stuff properly
+	static final int NONE = 2;
+	static final int WHITE = 1;
+	static final int BLACK = 0;
+	public static final int DIMENSION = 8;
 	private boolean add = true;
 	private Square[][] board;
 	private Square[] blackSquares = new Square[10];
 	private Square[] whiteSquares = new Square[10];
+  static final int[][] DIRECTIONS = Square.DIRECTIONS;
 	//put in length 10 array of black pieces
 	//put in length 10 array of white pieces
 	public Grid(){
@@ -18,8 +21,17 @@ public class Grid{
 				board[i][j] = new Square(i,j,this);
 			}
 		}
-		blackSquares = new Square[10];
 	}
+
+  public Grid(int[][] model){
+    board = new Square[DIMENSION][DIMENSION];
+		for(int i = 0; i < DIMENSION; i ++){
+			for(int j = 0; j < DIMENSION; j++){
+				board[i][j] = new Square(i,j,this);
+        board[i][j].setPiece(model[i][j]);
+			}
+		}
+  }
 
 	public Square get(int x, int y){
 		try{
@@ -130,6 +142,99 @@ public class Grid{
 		return validMoves;
 	}
 
+  /**
+   * Resets the black/white potential and networks for all squares.
+   **/
+
+  public void resetSquaresPN(){
+		for (int x = 0; x < DIMENSION; x++){
+			for (int y = 0; y < DIMENSION; y++){
+        get(x, y).resetPN();
+      }
+    }
+  }
+
+  public void updateNetworkList(){
+    int i = 0;
+    Square mainSquare = blackSquares[i];
+    SList squaresToChange;
+    Square curSquare;
+
+    resetSquaresPN();
+
+    //Use while instead of for so we can stop at null instead of at end.
+    while(mainSquare != null){
+      //For every mainSquare
+      for(int[] dir : DIRECTIONS){
+        
+        //Reset varialbes, since we're in a new direction (a new path)
+        squaresToChange = new SList();
+        curSquare = mainSquare.adjacent(dir);
+
+        //Iterate through all squares on the path.
+        while(true){
+          //If we hit the edge or a white square, it's only a potential network.
+          if(curSquare == null || curSquare.getPiece() == Square.WHITE){
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addBlackPotential();
+            }
+            break;
+          //If we hit a black square, it's a network.
+          }else if(curSquare.getPiece() == Square.BLACK){
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addBlackNetwork();
+            }
+            break;
+          //This just leaves NONE, an empty square, in which case
+          //we add the square to the potential and move on.
+          }else{
+            squaresToChange.insertBack(curSquare);
+            curSquare = curSquare.adjacent(dir);
+          }
+        }
+      }
+
+      //Increment to the next mainSquare, depends on array being initialized to null
+      i++;
+      mainSquare = blackSquares[i];
+    }
+
+    //Repeat for white!
+    i = 0;
+    mainSquare = whiteSquares[i];
+    while(mainSquare != null){
+      for(int[] dir : DIRECTIONS){
+        
+        squaresToChange = new SList();
+        curSquare = mainSquare.adjacent(dir);
+
+        while(true){
+          if(curSquare == null || curSquare.getPiece() == Square.BLACK){
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addWhitePotential();
+            }
+            break;
+          }else if(curSquare.getPiece() == Square.WHITE){
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addWhiteNetwork();
+            }
+            break;
+          }else{
+            squaresToChange.insertBack(curSquare);
+            curSquare = curSquare.adjacent(dir);
+          }
+        }
+      }
+      i++;
+      mainSquare = whiteSquares[i];
+    }
+  }
+  
+
 	public Move[] validAddMoves(int color){
 		Move[] validMoves = new Move[64];
 		int moveIndex = 0;
@@ -147,10 +252,14 @@ public class Grid{
 	}
 
 	public String toString(){
-		String s = "-----------------------------------------";
+		String s = "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
+    s += "-----------------------------------------";
 		for (int x = 0; x < DIMENSION; x++){
 			s+= "\n|";
-			for (int y = 0; x < DIMENSION; y++){
+			for (int y = 0; y < DIMENSION; y++){
+
+        s += " "+get(x, y).toString()+" |";
+        /*
 				if (get(x, y).getPiece() == WHITE){
 					s+=" W |";
 				}
@@ -160,6 +269,7 @@ public class Grid{
 				else {
 					s+="   |";
 				}
+        */
 			}
 			s+="\n";
 		}
