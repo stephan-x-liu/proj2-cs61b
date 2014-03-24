@@ -10,7 +10,9 @@ public class Grid{
 	private boolean add = true;
 	private Square[][] board;
 	private Square[] blackSquares = new Square[10];
+  private int blackSquareCount;
 	private Square[] whiteSquares = new Square[10];
+  private int whiteSquareCount;
   static final int[][] DIRECTIONS = Square.DIRECTIONS;
 	//put in length 10 array of black pieces
 	//put in length 10 array of white pieces
@@ -28,6 +30,15 @@ public class Grid{
 		for(int i = 0; i < DIMENSION; i ++){
 			for(int j = 0; j < DIMENSION; j++){
 				board[i][j] = new Square(i,j,this);
+        //For every single x and y value, check if it's black and white, then set the pieces.
+        if(model[i][j] == BLACK){
+          blackSquares[blackSquareCount] = board[i][j];
+          blackSquareCount++;
+        }
+        if(model[i][j] == WHITE){
+          whiteSquares[whiteSquareCount] = board[i][j];
+          whiteSquareCount++;
+        }
         board[i][j].setPiece(model[i][j]);
 			}
 		}
@@ -43,27 +54,31 @@ public class Grid{
 		
 	}
 
-	// public Grid(String pieces){
-	// 	board = new Square[DIMENSION][DIMENSION];
-	// 	Square s;
-	// 	int w = 0, b = 0;
-	// 	for (int x = 0; x < DIMENSION; x++){
-	// 		for (int y = 0; y < DIMENSION; y++){
-	// 			s = new Square(x, y, Integer.parseInt(pieces[0]), this);
-	// 			board[x][y] = s;
-	// 			if (pieces[0] == WHITE){
-	// 				whiteSquares[w] = s;
-	// 				w++;
-	// 			}
-	// 			if (pieces[0] == BLACK){
-	// 				blackSquares[b] = s;
-	// 				b++;
-	// 			}
-	// 			pieces = pieces.substring(1, pieces.length());
-	// 		}
-	// 	}
+	public Grid(String pieces){
+    pieces = pieces.replaceAll("W", Integer.toString(WHITE));
+    pieces = pieces.replaceAll("B", Integer.toString(BLACK));
+    pieces = pieces.replaceAll(".", Integer.toString(NONE));
+	 	board = new Square[DIMENSION][DIMENSION];
+    char[] charArray = pieces.toCharArray();
+	 	Square s;
+	 	int i = 0;
+	 	for (int y = 0; y < DIMENSION; y++){
+	 		for (int x = 0; x < DIMENSION; x++){
+	 			s = new Square(x, y, Integer.parseInt(String.valueOf(charArray[i])), this);
+	 			board[x][y] = s;
+	 			if (charArray[i] == WHITE){
+	 				whiteSquares[whiteSquareCount] = s;
+	 				whiteSquareCount++;
+	 			}
+	 			if (charArray[i] == BLACK){
+	 				blackSquares[blackSquareCount] = s;
+	 				blackSquareCount++;
+	 			}
+        i++;
+	 		}
+	 	}
 
-	// 	}
+ 	}
 
 	// private Square neighbor(int x, int y){
 	// 	return board[x][y].neighbor();
@@ -251,12 +266,36 @@ public class Grid{
 		return validMoves;
 	}
 
+  String serializeToString(){
+    int tmp;
+    String out = "";
+		for (int y = 0; y < DIMENSION; y++){
+			for (int x = 0; x < DIMENSION; x++){
+        tmp = get(x, y).getPiece();
+        if(tmp == WHITE){
+          out = out.concat("W");
+        }else if(tmp == BLACK){
+          out = out.concat("B");
+        }else if(tmp == NONE){
+          out = out.concat(".");
+        }else{
+          System.out.println("Internal state warning in seralizeToString");
+        }
+      }
+    }
+    return out;
+  }
+
 	public String toString(){
-		String s = "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
+		String s = "=========================================\n";
+    s+= "Stringified version:\n";
+    s+= serializeToString();
+    s+= "\n";
+    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
     s += "-----------------------------------------";
-		for (int x = 0; x < DIMENSION; x++){
+		for (int y = 0; y < DIMENSION; y++){
 			s+= "\n|";
-			for (int y = 0; y < DIMENSION; y++){
+			for (int x = 0; x < DIMENSION; x++){
 
         s += " "+get(x, y).toString()+" |";
         /*

@@ -37,15 +37,34 @@ public class GridTester{
           System.out.println("Seems there was an issue with the input, printing it for reference:");
           System.out.println(line);
         }
-        input[i][j] = field;
+        input[j][i] = field;
       }
     }
     return new Grid(input);
   }
 
+  public Grid gridFromSerial(){
+    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
+    System.out.println("Please paste in the seralized grid:");
+    System.out.print("Grid:  ");
+    String line = "";
+    try{
+      line = cin.readLine();
+    }catch(IOException e){
+      line = "Shit2";
+      System.out.println("IO Exception2");
+    }
+    return new Grid(line);
+  }
+
+
   public static void main(String args[]){
     GridTester tester = new GridTester();
-    Grid grid = tester.gridFromInput();
+    Grid grid = tester.gridFromSerial();
+    grid.updateNetworkList();
+    System.out.println(grid);
+    
+    grid = tester.gridFromInput();
     grid.updateNetworkList();
     System.out.println(grid);
   }
