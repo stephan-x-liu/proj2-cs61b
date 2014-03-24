@@ -11,10 +11,10 @@ public class Square{
   //Set to "simple" for short toString, "complex" for debug info.
   private static final String DEBUG = "complex";
   
-  private int piece;
   static final int NONE = 2;
   static final int WHITE = 1;
   static final int BLACK = 0;
+  private int piece;
   private int x;
   private int y;
   private Grid grid;
