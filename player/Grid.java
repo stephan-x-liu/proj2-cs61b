@@ -254,11 +254,11 @@ public class Grid{
 	public String toString(){
 		String s = "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
     s += "-----------------------------------------";
-		for (int x = 0; x < DIMENSION; x++){
+		for (int y = 0; y < DIMENSION; y++){
 			s+= "\n|";
-			for (int y = 0; y < DIMENSION; y++){
+			for (int x = 0; x < DIMENSION; x++){
 
-        s += " "+get(x, y).toString()+" |";
+        s += " "+get(x, y).getPiece().toString()+" |";
         /*
 				if (get(x, y).getPiece() == WHITE){
 					s+=" W |";
