@@ -46,7 +46,6 @@ public class GridTester{
   public Grid gridFromSerial(){
     BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
     System.out.println("Please paste in the seralized grid:");
-    System.out.print("Grid:  ");
     String line = "";
     try{
       line = cin.readLine();

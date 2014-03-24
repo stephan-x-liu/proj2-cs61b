@@ -57,7 +57,7 @@ public class Grid{
 	public Grid(String pieces){
     pieces = pieces.replaceAll("W", Integer.toString(WHITE));
     pieces = pieces.replaceAll("B", Integer.toString(BLACK));
-    pieces = pieces.replaceAll(".", Integer.toString(NONE));
+    pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
 	 	board = new Square[DIMENSION][DIMENSION];
     char[] charArray = pieces.toCharArray();
 	 	Square s;
