@@ -258,7 +258,7 @@ public class Grid{
 			s+= "\n|";
 			for (int x = 0; x < DIMENSION; x++){
 
-        s += " "+get(x, y).getPiece().toString()+" |";
+       			s += " "+get(x, y).toString()+" |";
         /*
 				if (get(x, y).getPiece() == WHITE){
 					s+=" W |";
