@@ -76,6 +76,16 @@ public class Grid{
 	 		add = false;
 	 	}
  	}
+ 	
+ 	public int[][] board(){
+ 		int[][] temp = new int[DIMENSION][DIMENSION];
+ 		for(int i = 0; i < DIMENSION; i ++){
+			for(int j = 0; j < DIMENSION; j++){
+				temp[i][j] = board[i][j].getPiece();
+			}
+		}
+		return temp;
+ 	}
 
 	public Square get(int x, int y){
 		try {

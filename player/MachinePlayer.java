@@ -7,23 +7,30 @@ package player;
  *  made by both players.  Can select a move for itself.
  */
 public class MachinePlayer extends Player {
-
+  int color;
+  Grid grid;
+  int searchDepth;
   // Creates a machine player with the given color.  Color is either 0 (black)
   // or 1 (white).  (White has the first move.)
   public MachinePlayer(int color) {
+    this(color,3);
   }
 
   // Creates a machine player with the given color and search depth.  Color is
   // either 0 (black) or 1 (white).  (White has the first move.)
   public MachinePlayer(int color, int searchDepth) {
+    this.color = color;
+    this.grid = new Grid();
+    this.searchDepth = searchDepth;
   }
 
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    Square[] moves = grid.validMoves(color);
+    Move[] moves = grid.validMoves(color);
     int[] bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,this.grid,this.color);
-    Square move = moves[bestMove[1]];
+    Move move = moves[bestMove[1]];
+    return move;
   
   } 
 
@@ -47,39 +54,43 @@ public class MachinePlayer extends Player {
   public int[] abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
     int bestMoveIndex=-1;
     int score;
-    if (g.hasWinningNetwork()) {
-      return Integer.MAX_VALUE;
-    }
+    //if (g.hasWinningNetwork()) {
+    //  ret = {Integer.MAX_VALUE,-1};
+    //  return ret;
+    //}
     if(searchDepth == 0){
       return g.evaluate();
     }
-    Square[] moves = g.validMoves(color);
-    for(i = 0; i < moves.length && i < 15; i++){
-      Grid temp = new Grid(g.board);
-      temp.makeMove(moves[i]);
+    Move[] moves = g.validMoves(color);
+    for(int i = 0; i < moves.length && i < 15; i++){
+      Grid temp = new Grid(g.board());
+      temp.makeMove(moves[i],color);
       score = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
       if(score>= b){
-        return b;
+        int[] ret = {b,-1};
+        return ret;
       }
-      if(score > alpha){
+      if(score > a){
         bestMoveIndex = i;
         a = score;
       }
     }
-    return {a,i};
+    int[] ret = {a,bestMoveIndex};
+    return ret;
   }
+
   public int abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
     int score;
-    if (g.hasWinningNetwork()) {
-      return Integer.MIN_VALUE;
-    }
+    //if (g.hasWinningNetwork()) {
+     // return Integer.MIN_VALUE;
+    //}
     if(searchDepth == 0){
       return g.evaluate();
     }
-    Square[] moves = g.validMoves(color);
-    for(i = 0; i < moves.length && i < 15; i++){
-      Grid temp = new Grid(g.board);
-      temp.makeMove(moves[i]);
+    Move[] moves = g.validMoves(color);
+    for(int i = 0; i < moves.length && i < 15; i++){
+      Grid temp = new Grid(g.board());
+      temp.makeMove(moves[i],color);
       int[] maxed = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = maxed[0];
       if(score<= a){
@@ -91,4 +102,5 @@ public class MachinePlayer extends Player {
     }
     return b;
   }
+}
 
