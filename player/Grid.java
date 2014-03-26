@@ -3,9 +3,9 @@ import list.*;
 
 public class Grid{
   //These fields must be default protected so we can test stuff properly
-	static final int NONE = 2;
-	static final int WHITE = 1;
 	static final int BLACK = 0;
+	static final int WHITE = 1;
+	static final int NONE = 2;
 	public static final int DIMENSION = 8;
 	private boolean add = true;
 	private Square[][] board;
@@ -85,7 +85,44 @@ public class Grid{
 		}
 	}
 
-	public Square[] validMoves(int color){
+	public void makeMove(Move move, int color){
+		if (isValidMove(move, color)){
+			if (move.moveKind == Move.STEP){
+				board[move.x2][move.y2].removePiece();
+				board[move.x1][move.y1].setPiece(color);
+				for (int a=0; a<10; a++){
+					if (color==BLACK){
+						if (blackSquares[a]==board[move.x2][move.y2]){
+							blackSquares[a] = board[move.x1][move.y1];
+							break;
+						}
+					}
+					if (color==WHITE){
+						if (whiteSquares[a]==board[move.x2][move.y2]){
+							whiteSquares[a] = board[move.x1][move.y1];
+							break;
+						}
+					}
+				}
+			}
+			if (move.moveKind==Move.ADD) {
+				board[move.x1][move.y1].setPiece(color);
+				if (color==BLACK){
+					blackSquares[blackSquareCount] = board[move.x1][move.y1];
+					blackSquareCount++;
+				}
+				if (color==WHITE){
+					whiteSquares[whiteSquareCount] = board[move.x1][move.y1];
+					whiteSquareCount++;
+				}
+				if (blackSquareCount==10 && whiteSquareCount==10){
+					add = false;
+				}
+			}
+		}
+	}
+
+	public Move[] validMoves(int color){
 		Move[] validMoves = new Move[64];
 		int moveIndex = 0;
 		Move move;
@@ -143,7 +180,7 @@ public class Grid{
 				return false;
 			}
 		}
-		if (move.moveKind==1){
+		if (move.moveKind==Move.ADD){
 			Square neighbor = board[move.x1][move.y1].neighbor(color);
 			if (neighbor != null){
 				if (neighbor.neighbor(color) != null){
@@ -151,7 +188,13 @@ public class Grid{
 				}
 			}
 		}
-		if (move.moveKind==2){ //step move
+		if (move.moveKind==Move.STEP){
+			if (add){
+				return false;
+			}
+			if ((board[move.x2][move.y2]).getPiece() != color){
+				return false;
+			}	
 			if (move.x1==move.x2 || move.y1==move.y2){ //stepping to same square
 				return false;
 			}
