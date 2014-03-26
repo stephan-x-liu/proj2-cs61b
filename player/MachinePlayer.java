@@ -21,7 +21,10 @@ public class MachinePlayer extends Player {
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    return new Move();
+    Square[] moves = grid.validMoves(color);
+    int[] bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,this.grid,this.color);
+    Square move = moves[bestMove[1]];
+  
   } 
 
   // If the Move m is legal, records the move as a move by the opponent
@@ -41,4 +44,51 @@ public class MachinePlayer extends Player {
     return false;
   }
 
-}
+  public int[] abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
+    int bestMoveIndex=-1;
+    int score;
+    if (g.hasWinningNetwork()) {
+      return Integer.MAX_VALUE;
+    }
+    if(searchDepth == 0){
+      return g.evaluate();
+    }
+    Square[] moves = g.validMoves(color);
+    for(i = 0; i < moves.length && i < 15; i++){
+      Grid temp = new Grid(g.board);
+      temp.makeMove(moves[i]);
+      score = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
+      if(score>= b){
+        return b;
+      }
+      if(score > alpha){
+        bestMoveIndex = i;
+        a = score;
+      }
+    }
+    return {a,i};
+  }
+  public int abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
+    int score;
+    if (g.hasWinningNetwork()) {
+      return Integer.MIN_VALUE;
+    }
+    if(searchDepth == 0){
+      return g.evaluate();
+    }
+    Square[] moves = g.validMoves(color);
+    for(i = 0; i < moves.length && i < 15; i++){
+      Grid temp = new Grid(g.board);
+      temp.makeMove(moves[i]);
+      int[] maxed = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);
+      score = maxed[0];
+      if(score<= a){
+        return a;
+      }
+      if(score < b){
+        b = score;
+      }
+    }
+    return b;
+  }
+
