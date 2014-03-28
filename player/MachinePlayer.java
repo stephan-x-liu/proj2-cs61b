@@ -7,9 +7,12 @@ package player;
  *  made by both players.  Can select a move for itself.
  */
 public class MachinePlayer extends Player {
-  int color;
-  Grid grid;
-  int searchDepth;
+  static final int BLACK = 0;
+  static final int WHITE = 1;
+  final int color;
+  final int opponent;
+  final Grid grid;
+  final int searchDepth;
   // Creates a machine player with the given color.  Color is either 0 (black)
   // or 1 (white).  (White has the first move.)
   public MachinePlayer(int color) {
@@ -20,7 +23,7 @@ public class MachinePlayer extends Player {
   // either 0 (black) or 1 (white).  (White has the first move.)
   public MachinePlayer(int color, int searchDepth) {
     this.color = color;
-    this.grid = new Grid();
+    grid = new Grid();
     this.searchDepth = searchDepth;
   }
 
@@ -30,6 +33,7 @@ public class MachinePlayer extends Player {
     Move[] moves = grid.validMoves(color);
     int[] bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,this.grid,this.color);
     Move move = moves[bestMove[1]];
+    grid.makeMove(move, color);
     return move;
   
   } 
@@ -39,7 +43,19 @@ public class MachinePlayer extends Player {
   // illegal, returns false without modifying the internal state of "this"
   // player.  This method allows your opponents to inform you of their moves.
   public boolean opponentMove(Move m) {
-    return false;
+    int opponent;
+    if (color==BLACK){
+      opponent = WHITE;
+    }
+    if (color==WHITE){
+      opponent = BLACK;
+    }
+    if (!grid.isValidMove(m, opponent)){
+      return false;
+    } else {
+      grid.makeMove(m, opponent);
+      return true;
+    }
   }
 
   // If the Move m is legal, records the move as a move by "this" player
@@ -48,7 +64,12 @@ public class MachinePlayer extends Player {
   // player.  This method is used to help set up "Network problems" for your
   // player to solve.
   public boolean forceMove(Move m) {
-    return false;
+    if (!grid.isValidMove(m, color)){
+      return false;
+    } else {
+      grid.makeMove(m, color);
+      return true;
+    }
   }
 
   public int[] abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
