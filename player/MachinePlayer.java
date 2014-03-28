@@ -80,7 +80,8 @@ public class MachinePlayer extends Player {
     //  return ret;
     //}
     if(searchDepth == 0){
-      return g.evaluate();
+      int[] ret = {g.evaluate(),-1};
+      return ret;
     }
     Move[] moves = g.validMoves(color);
     for(int i = 0; i < moves.length && i < 15; i++){
