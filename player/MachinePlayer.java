@@ -25,16 +25,14 @@ public class MachinePlayer extends Player {
     this.color = color;
     grid = new Grid();
     this.searchDepth = searchDepth;
+    opponent = (color + 1)%2;
   }
 
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    Move[] moves = grid.validMoves(color);
-    int[] bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,this.grid,this.color);
-    Move move = moves[bestMove[1]];
-    grid.makeMove(move, color);
-    return move;
+    Best bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
+    return bestMove.move;
   
   } 
 
@@ -43,17 +41,10 @@ public class MachinePlayer extends Player {
   // illegal, returns false without modifying the internal state of "this"
   // player.  This method allows your opponents to inform you of their moves.
   public boolean opponentMove(Move m) {
-    int opponent;
-    if (color==BLACK){
-      opponent = WHITE;
-    }
-    if (color==WHITE){
-      opponent = BLACK;
-    }
-    if (!grid.isValidMove(m, opponent)){
+    if (!grid.isValidMove(m, this.opponent)){
       return false;
     } else {
-      grid.makeMove(m, opponent);
+      grid.makeMove(m, this.opponent);
       return true;
     }
   }
@@ -72,57 +63,74 @@ public class MachinePlayer extends Player {
     }
   }
 
-  public int[] abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
-    int bestMoveIndex=-1;
+  public Best abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
+    Best bestMove = new Best();
     int score;
-    //if (g.hasWinningNetwork()) {
-    //  ret = {Integer.MAX_VALUE,-1};
-    //  return ret;
-    //}
+    if (g.hasWinningNetwork()) {
+      bestMove.score = Integer.MAX_VALUE;
+      return bestMove;
+    }
     if(searchDepth == 0){
-      int[] ret = {g.evaluate(),-1};
-      return ret;
+      bestMove.score = g.evaluate();
+      return bestMove;
     }
     Move[] moves = g.validMoves(color);
     for(int i = 0; i < moves.length && i < 15; i++){
       Grid temp = new Grid(g.board());
       temp.makeMove(moves[i],color);
-      score = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
+      Best t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
+      score = t.score;
       if(score>= b){
-        int[] ret = {b,-1};
-        return ret;
+        bestMove.score = b;
+        bestMove.move = moves[i];
+        return bestMove;
       }
       if(score > a){
-        bestMoveIndex = i;
-        a = score;
+        bestMove.score = score;
+        bestMove.move = moves[i];
       }
     }
-    int[] ret = {a,bestMoveIndex};
-    return ret;
+    return bestMove;
   }
 
-  public int abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
+  public Best abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
+    Best bestMove = new Best();
     int score;
-    //if (g.hasWinningNetwork()) {
-     // return Integer.MIN_VALUE;
-    //}
+    if (g.hasWinningNetwork()) {
+      bestMove.score = Integer.MIN_VALUE;
+      return bestMove;
+    }
     if(searchDepth == 0){
-      return g.evaluate();
+      bestMove.score = g.evaluate();
+      return bestMove;
     }
     Move[] moves = g.validMoves(color);
     for(int i = 0; i < moves.length && i < 15; i++){
       Grid temp = new Grid(g.board());
       temp.makeMove(moves[i],color);
-      int[] maxed = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);
-      score = maxed[0];
-      if(score<= a){
-        return a;
+      Best t = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);
+      score = t.score;
+      if(score <= a){
+        bestMove.score = a;
+        bestMove.move = moves[i];
+        return bestMove;
       }
       if(score < b){
-        b = score;
+        bestMove.score = score;
+        bestMove.move = moves[i];
       }
     }
-    return b;
+    return bestMove;
+  }
+
+}
+
+class Best{
+  Move move;
+  int score;
+  public Best(){
+    move = null;
+    score = 0;
   }
 }
 
