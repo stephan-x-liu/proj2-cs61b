@@ -31,7 +31,7 @@ public class MachinePlayer extends Player {
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    Best bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
+    BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
     return bestMove.move;
   
   } 
@@ -63,8 +63,8 @@ public class MachinePlayer extends Player {
     }
   }
 
-  public Best abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
-    Best bestMove = new Best();
+  public BestMove abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
+    BestMove bestMove = new BestMove();
     int score;
     if (g.hasWinningNetwork()) {
       bestMove.score = Integer.MAX_VALUE;
@@ -78,7 +78,7 @@ public class MachinePlayer extends Player {
     for(int i = 0; i < moves.length && i < 15; i++){
       Grid temp = new Grid(g.board());
       temp.makeMove(moves[i],color);
-      Best t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
+      BestMove t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = t.score;
       if(score>= b){
         bestMove.score = b;
@@ -93,8 +93,8 @@ public class MachinePlayer extends Player {
     return bestMove;
   }
 
-  public Best abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
-    Best bestMove = new Best();
+  public BestMove abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
+    BestMove bestMove = new BestMove();
     int score;
     if (g.hasWinningNetwork()) {
       bestMove.score = Integer.MIN_VALUE;
@@ -108,7 +108,7 @@ public class MachinePlayer extends Player {
     for(int i = 0; i < moves.length && i < 15; i++){
       Grid temp = new Grid(g.board());
       temp.makeMove(moves[i],color);
-      Best t = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);
+      BestMove t = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = t.score;
       if(score <= a){
         bestMove.score = a;
@@ -125,10 +125,10 @@ public class MachinePlayer extends Player {
 
 }
 
-class Best{
+class BestMove{
   Move move;
   int score;
-  public Best(){
+  public BestMove(){
     move = null;
     score = 0;
   }
