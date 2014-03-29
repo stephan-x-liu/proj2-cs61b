@@ -135,7 +135,7 @@ public class Grid{
 	}
 
 	public void makeMove(Move move, int color){
-		if ((move != null) && isValidMove(move, color)){
+		if ((move != null)){
 			if (move.moveKind == Move.STEP){
 				board[move.x2][move.y2].removePiece();
 				board[move.x1][move.y1].setPiece(color);
@@ -203,7 +203,8 @@ public class Grid{
 			Square[][] squares = new Square[3][10];
 			squares[1] = whiteSquares;
 			squares[0] = blackSquares;
-			for (Square add: squares[color]){
+			for (int i = 0; i < squares[color].length && squares[color][i]!= null; i++){
+				Square add = squares[color][i];
 				for (int x = 0; x < DIMENSION; x++){
 					for (int y = 0; y < DIMENSION && moveIndex < 64; y++){
 						move = new Move(x, y, add.position()[0], add.position()[1]);
