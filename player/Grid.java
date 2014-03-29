@@ -134,7 +134,7 @@ public class Grid{
 	}
 
 	public void makeMove(Move move, int color){
-		if ((move != null) && isValidMove(move, color)){
+		if ((move != null)){
 			if (move.moveKind == Move.STEP){
 				get(move.x2, move.y2).removePiece();
 				get(move.x1,move.y1).setPiece(color);
@@ -182,16 +182,16 @@ public class Grid{
 				if (add != null){
 					for (int x = 0; x < DIMENSION; x++){
 						for (int y = 0; y < DIMENSION && moveIndex < 64; y++){
-						move = new Move(x, y, add.position()[0], add.position()[1]);
-						if (isValidMove(move, color)){
-							validMoves[moveIndex] = move;
-							moveIndex++;
-							}
-						}	
+							move = new Move(x, y, add.position()[0], add.position()[1]);
+							if (isValidMove(move, color)){
+								validMoves[moveIndex] = move;
+								moveIndex++;
+								}
+							}	
+						}
 					}
 				}
 			}
-		}
 		return validMoves;
 	}
 
