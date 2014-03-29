@@ -132,7 +132,7 @@ public class MachinePlayer extends Player {
       return bestMove;
     }
     Move[] moves = g.validMoves(color);
-    for(int i = 0; i < moves.length && i < 15; i++){
+    for(int i = 0; i < moves.length && moves[i]!=null; i++){
       Grid temp = new Grid(g.board());
       temp.makeMove(moves[i],color);
       BestMove t = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);

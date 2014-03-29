@@ -26,10 +26,14 @@ public class Grid{
 				board[i][j] = new Square(i,j,this);
 			}
 		}
+		blackSquareCount = 0;
+		whiteSquareCount = 0;
 	}
 
 	public Grid(int[][] model){
 	  	board = new Square[DIMENSION][DIMENSION];
+	  	blackSquareCount = 0;
+		whiteSquareCount = 0;
 		for(int i = 0; i < DIMENSION; i ++){
 			for(int j = 0; j < DIMENSION; j++){
 				board[i][j] = new Square(i,j,this);
@@ -65,6 +69,8 @@ public class Grid{
 	}
 
 	public Grid(String pieces){
+		blackSquareCount = 0;
+		whiteSquareCount = 0;
 	    pieces = pieces.replaceAll("W", Integer.toString(WHITE));
 	    pieces = pieces.replaceAll("B", Integer.toString(BLACK));
 	    pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
@@ -181,7 +187,7 @@ public class Grid{
 			squares[0] = blackSquares;
 			for (Square add: squares[color]){
 				for (int x = 0; x < DIMENSION; x++){
-					for (int y = 0; y < DIMENSION; y++){
+					for (int y = 0; y < DIMENSION && moveIndex < 64; y++){
 						move = new Move(x, y, add.position()[0], add.position()[1]);
 						if (isValidMove(move, color)){
 							validMoves[moveIndex] = move;
@@ -229,6 +235,9 @@ public class Grid{
 		}
 		if (move.moveKind==Move.ADD){
 			Square[] neighbors = board[move.x1][move.y1].neighbor(color);
+			if(!add){
+				return false;
+			}
 			if(neighbors[1]!=null){
 				move.error=("INVALID: neighbors");
 				return false;
