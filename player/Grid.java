@@ -39,29 +39,15 @@ public class Grid{
 				board[i][j] = new Square(i,j,this);
 	    		//For every single x and y value, check if it's black or white, then set the pieces.
 		        if(model[i][j] == BLACK){
-		        	// try{
 						blackSquares[blackSquareCount] = board[i][j];
 						blackSquareCount++;
 						if (blackSquareCount>=10){
 							add = false;
 						}
-		        	// } catch(ArrayIndexOutOfBoundsException e){
-		        	// 	System.out.println("ARRAY INDEX OUT OF BOUNDS B " + blackSquareCount);
-		        	// 	for (Square a: blackSquares){
-		        	// 		System.out.println(a);
-		        	 	//}
-		        	//}
 		        }
 		        if(model[i][j] == WHITE){
-		        	// try{
 						whiteSquares[whiteSquareCount] = board[i][j];
 						whiteSquareCount++;
-		        	// } catch(ArrayIndexOutOfBoundsException e){
-		        	// 	System.out.println("ARRAY INDEX OUT OF BOUNDS W " + whiteSquareCount);
-		        	// 	for (Square b: whiteSquares){
-		        		//}
-		        	//}
-
 		        }
 	    		board[i][j].setPiece(model[i][j]);
 			}
@@ -138,6 +124,9 @@ public class Grid{
 			if (color==BLACK){
 				blackSquares[blackSquareCount]=get(x,y);
 				blackSquareCount++;
+				if (blackSquareCount==10){
+					add = false;
+				}
 			}
 		} catch(ArrayIndexOutOfBoundsException e){
 			return ;
@@ -481,14 +470,34 @@ public class Grid{
 	}
 	
 
-	public static void main(String[] args){
-		Grid g = new Grid();
-		g.set(1,5,WHITE);
-		g.set(6,3,BLACK);
-		g.set(6,4,WHITE);
-		g.set(3,6,BLACK);
-		System.out.println(g);
-		System.out.println(g.cloneGrid());
-	}
+	// public static void main(String[] args){
+	// 	Grid g = new Grid();
+	// 	g.set(1,5,WHITE);
+	// 	g.set(6,3,BLACK);
+	// 	g.set(6,4,WHITE);
+	// 	g.set(3,6,BLACK);
+	// 	g.set(0,5,WHITE);
+	// 	g.set(0,3,BLACK);
+	// 	g.set(0,4,WHITE);
+	// 	g.set(0,6,BLACK);
+	// 	g.set(2,5,WHITE);
+	// 	g.set(2,3,BLACK);
+	// 	g.set(2,4,WHITE);
+	// 	g.set(2,6,BLACK);
+	// 	g.set(4,5,WHITE);
+	// 	g.set(4,3,BLACK);
+	// 	g.set(4,4,WHITE);
+	// 	g.set(4,6,BLACK);
+	// 	g.set(7,5,WHITE);
+	// 	g.set(7,3,BLACK);
+	// 	g.set(7,4,WHITE);
+	// 	g.set(7,6,BLACK);
+	// 	System.out.println(g);
+	// 	Grid a = g.cloneGrid();
+	// 	System.out.println(a);
+
+	// 	System.out.println(g.add);
+	// 	System.out.println(a.add);
+	// }
 
 }
