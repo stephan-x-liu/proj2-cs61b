@@ -18,6 +18,8 @@ public class Move {
   public final static int ADD = 1;
   public final static int STEP = 2;
 
+  public String error = "";
+
   public int moveKind;  // ADD, STEP, or QUIT.
                         
   public int x1;        // If moveKind == ADD, then x1, y1 are the new

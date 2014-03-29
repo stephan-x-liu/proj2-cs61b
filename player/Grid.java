@@ -10,9 +10,9 @@ public class Grid{
 	public static final int DIMENSION = 8;
 	protected boolean add = true;
 	private Square[][] board;
-	private Square[] blackSquares = new Square[10];
+	public Square[] blackSquares = new Square[10];
   	protected int blackSquareCount = 0;
-	private Square[] whiteSquares = new Square[10];
+	public Square[] whiteSquares = new Square[10];
   	protected int whiteSquareCount = 0;
   	static final int[][] DIRECTIONS = Square.DIRECTIONS;
 	
@@ -35,12 +35,26 @@ public class Grid{
 				board[i][j] = new Square(i,j,this);
 	    		//For every single x and y value, check if it's black or white, then set the pieces.
 		        if(model[i][j] == BLACK){
-		          blackSquares[blackSquareCount] = board[i][j];
-		          blackSquareCount++;
+		        	// try{
+						blackSquares[blackSquareCount] = board[i][j];
+						blackSquareCount++;
+		        	// } catch(ArrayIndexOutOfBoundsException e){
+		        	// 	System.out.println("ARRAY INDEX OUT OF BOUNDS B " + blackSquareCount);
+		        	// 	for (Square a: blackSquares){
+		        	// 		System.out.println(a);
+		        	 	//}
+		        	//}
 		        }
 		        if(model[i][j] == WHITE){
-		          whiteSquares[whiteSquareCount] = board[i][j];
-		          whiteSquareCount++;
+		        	// try{
+						whiteSquares[whiteSquareCount] = board[i][j];
+						whiteSquareCount++;
+		        	// } catch(ArrayIndexOutOfBoundsException e){
+		        	// 	System.out.println("ARRAY INDEX OUT OF BOUNDS W " + whiteSquareCount);
+		        	// 	for (Square b: whiteSquares){
+		        		//}
+		        	//}
+
 		        }
 	    		board[i][j].setPiece(model[i][j]);
 			}
@@ -97,7 +111,7 @@ public class Grid{
 	}
 
 	public void makeMove(Move move, int color){
-		if (isValidMove(move, color)){
+		if ((move != null) && isValidMove(move, color)){
 			if (move.moveKind == Move.STEP){
 				board[move.x2][move.y2].removePiece();
 				board[move.x1][move.y1].setPiece(color);
@@ -121,20 +135,33 @@ public class Grid{
 				if (color==BLACK){
 					blackSquares[blackSquareCount] = board[move.x1][move.y1];
 					blackSquareCount++;
+
 				}
 				if (color==WHITE){
 					whiteSquares[whiteSquareCount] = board[move.x1][move.y1];
 					whiteSquareCount++;
+					// for (Square a: blackSquares){
+						// System.out.println(a);
+					// }
 				}
 				if (blackSquareCount==10 && whiteSquareCount==10){
 					add = false;
 				}
 			}
 		}
+		// else {
+		// 	if (color==BLACK){
+		// 		System.out.println("Player BLACK is trying to make an invalid move!");
+		// 	}
+		// 	else {
+		// 		System.out.println("Player WHITE is trying to make an invalid move!");
+		// 	}
+		// 	System.out.println(" ERROR " + move.error);
+		// }
 	}
 
 	public Move[] validMoves(int color){
-		Move[] validMoves = new Move[64];
+		Move[] validMoves = new Move[300];
 		int moveIndex = 0;
 		Move move;
 		if (add){
@@ -169,63 +196,76 @@ public class Grid{
 
 	public boolean isValidMove(Move move, int color){
 		if(move == null){
+			//move.error=("INVALID: null move");
 			return false;
 		}
-		if (board[move.x1][move.y1].hasPiece()){
+		if (get(move.x1, move.y1).hasPiece()){
+			move.error=("INVALID: has piece at" + move.x1 + ","+move.y1 + " " + get(move.x1, move.y1).getPiece());
 			return false;
 		}
 		if (move.x1 == 0){ //checking four corners 
 			if (move.y1 == 0 || move.y1 == 7){
+				move.error=("INVALID: corner");
 				return false;
 			}
 		}
 		if (move.y1 == 0){
 			if (move.x1 == 0 || move.x1 == 7){
+				move.error=("INVALID: corner");
 				return false;
 			}
 		}
 		if (color == WHITE){ //checking opponent goals
 			if (move.y1 == 0 || move.y1 == 7){
+				move.error=("INVALID: opponent goal");
 				return false;
 			}
 		}
 		if (color == BLACK){
 			if (move.x1 == 0 || move.x1 == 7){
+				move.error=("INVALID: opponent goal");
 				return false;
 			}
 		}
 		if (move.moveKind==Move.ADD){
 			Square[] neighbors = board[move.x1][move.y1].neighbor(color);
 			if(neighbors[1]!=null){
+				move.error=("INVALID: neighbors");
 				return false;
 			}
 			if (neighbors[0] != null){
 				if (neighbors[0].neighbor(color)[0] != null){
+					move.error=("INVALID: neighbors2");
 					return false;
 				}
 			}
 		}
 		if (move.moveKind==Move.STEP){
 			if (add){
+				move.error=("INVALID: stepped when should add");
 				return false;
 			}
 			if ((board[move.x2][move.y2]).getPiece() != color){
+				move.error="INVALID: trying to step opponent's piece";
 				return false;
 			}	
 			if (move.x1==move.x2 || move.y1==move.y2){ //stepping to same square
+				move.error=("INVALID: stepping on same square");
 				return false;
 			}
 			board[move.x2][move.y2].removePiece();
-			Square[] neighbors = board[move.x1][move.y1].neighbor(color);
+			Square[] neighbors = get(move.x1, move.y1).neighbor(color);
 			if(neighbors[1]!=null){
+				move.error=("INVALID: neighbors");
 				return false;
 			}
 			if (neighbors[0] != null){
 				if (neighbors[0].neighbor(color)[0] != null){
+					move.error=("INVALID: neighbors2");
 					return false;
 				}
 			}
-			board[move.x2][move.y2].setPiece(color);
+			get(move.x2, move.y2).setPiece(color);
 		}
 		return true;
 	}
@@ -351,21 +391,56 @@ public class Grid{
 	}
 
 	public String toString(){
-		String s = "=========================================\n";
-	    s+= "Stringified version:\n";
-	    s+= serializeToString();
-	    s+= "\n";
-	    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
-	    s += "-----------------------------------------";
+		return simpleToString();
+		// String s = "=========================================\n";
+	 //    s+= "Stringified version:\n";
+	 //    s+= serializeToString();
+	 //    s+= "\n";
+	 //    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
+	 //    s += "-----------------------------------------";
+		// for (int y = 0; y < DIMENSION; y++){
+		// 	s+= "\n|";
+		// 	for (int x = 0; x < DIMENSION; x++){
+	 //       		s += " "+get(x, y).toString()+" |";
+		// 	}
+		// 	s+="\n";
+		// }
+		// s += "-----------------------------------------";
+		// return s;
+	}
+
+	public String simpleToString(){
+
+	    String s = "==================================\n";
+	    s+="   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |";
 		for (int y = 0; y < DIMENSION; y++){
-			s+= "\n|";
+			s+= "\n----------------------------------\n";
+			s+= y+"_ |";
 			for (int x = 0; x < DIMENSION; x++){
-	       		s += " "+get(x, y).toString()+" |";
+				if (get(x,y).getPiece()==BLACK){
+					s+=" B |";
+				}
+				if (get(x,y).getPiece()==WHITE){
+					s+=" W |";
+				}
+				if (get(x,y).getPiece()==NONE){
+					s+="   |";
+				}
+				//s += " "+get(x,y).getPiece()+" |";
 			}
-			s+="\n";
 		}
-		s += "-----------------------------------------";
+		s += "\n==================================";
+		s += "\n BLACK SQUARES: ";
+		for (Square a: blackSquares){
+			s += "\n"+a;
+		}
+		s += "\n WHITE SQUARES: ";
+		for (Square b: whiteSquares){
+			s += "\n"+b;
+		}
+
 		return s;
 	}
+	
 
 }
