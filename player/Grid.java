@@ -42,6 +42,9 @@ public class Grid{
 		        	// try{
 						blackSquares[blackSquareCount] = board[i][j];
 						blackSquareCount++;
+						if (blackSquareCount>=10){
+							add = false;
+						}
 		        	// } catch(ArrayIndexOutOfBoundsException e){
 		        	// 	System.out.println("ARRAY INDEX OUT OF BOUNDS B " + blackSquareCount);
 		        	// 	for (Square a: blackSquares){
@@ -63,9 +66,7 @@ public class Grid{
 	    		board[i][j].setPiece(model[i][j]);
 			}
 		}
-		if (blackSquareCount==10 && whiteSquareCount==10){
-	 		add = false;
-	 	}
+
 	}
 
 	public Grid(String pieces){
@@ -89,15 +90,25 @@ public class Grid{
 	 			if (charArray[i] == BLACK){
 	 				blackSquares[blackSquareCount] = s;
 	 				blackSquareCount++;
+	 				if (blackSquareCount==10){
+	 					add = false;
+	 				}
 	 			}
 	    		i++;
 	 		}
 	 	}
-	 	if (blackSquareCount==10 && whiteSquareCount==10){
-	 		add = false;
-	 	}
  	}
  	
+ 	public Grid cloneGrid(){
+ 		Grid g = new Grid();
+ 		for (int x = 0; x < DIMENSION; x++){
+ 			for (int y = 0; y < DIMENSION; y++){
+ 				g.set(x, y, getColor(x,y));
+ 			}
+ 		}
+ 		return g;
+ 	}
+
  	public int[][] board(){
  		int[][] temp = new int[DIMENSION][DIMENSION];
  		for(int i = 0; i < DIMENSION; i ++){
@@ -114,6 +125,19 @@ public class Grid{
 		} catch(ArrayIndexOutOfBoundsException e){
 			return null;
 		}
+	}
+
+	public int getColor(int x, int y){
+		return get(x,y).getPiece();
+	}
+
+	public void set(int x, int y, int color){
+		try {
+			board[x][y].setPiece(color);
+		} catch(ArrayIndexOutOfBoundsException e){
+			return ;
+		}
+
 	}
 
 	public void makeMove(Move move, int color){
@@ -141,6 +165,9 @@ public class Grid{
 				if (color==BLACK){
 					blackSquares[blackSquareCount] = board[move.x1][move.y1];
 					blackSquareCount++;
+					if (blackSquareCount==10){
+						add = false;
+					}
 
 				}
 				if (color==WHITE){
@@ -149,9 +176,6 @@ public class Grid{
 					// for (Square a: blackSquares){
 						// System.out.println(a);
 					// }
-				}
-				if (blackSquareCount==10 && whiteSquareCount==10){
-					add = false;
 				}
 			}
 		}
@@ -451,5 +475,15 @@ public class Grid{
 		return s;
 	}
 	
+
+	// public static void main(String[] args){
+	// 	Grid g = new Grid();
+	// 	g.set(1,5,WHITE);
+	// 	g.set(6,3,BLACK);
+	// 	g.set(6,4,WHITE);
+	// 	g.set(3,6,BLACK);
+	// 	System.out.println(g);
+	// 	System.out.println(g.cloneGrid());
+	// }
 
 }
