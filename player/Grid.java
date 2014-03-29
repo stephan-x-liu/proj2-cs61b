@@ -1,4 +1,5 @@
 package player;
+import java.lang.Math;
 import list.*;
 
 public class Grid{
@@ -10,10 +11,10 @@ public class Grid{
 	private boolean add = true;
 	private Square[][] board;
 	private Square[] blackSquares = new Square[10];
-  	private int blackSquareCount;
+  private int blackSquareCount;
 	private Square[] whiteSquares = new Square[10];
-  	private int whiteSquareCount;
-  	static final int[][] DIRECTIONS = Square.DIRECTIONS;
+  private int whiteSquareCount;
+  static final int[][] DIRECTIONS = Square.DIRECTIONS;
 	
 	//put in length 10 array of black pieces
 	//put in length 10 array of white pieces
@@ -231,6 +232,14 @@ public class Grid{
       		}
     	}
 	}
+
+  public boolean hasWinningNetwork(){
+    return false;
+  }
+
+  public int evaluate(){
+    return (int)Math.floor(100*Math.random());
+  }
 
 	public void updateNetworkList(){
 	    int i = 0;
