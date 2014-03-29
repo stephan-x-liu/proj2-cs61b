@@ -103,7 +103,7 @@ public class Grid{
  		Grid g = new Grid();
  		for (int x = 0; x < DIMENSION; x++){
  			for (int y = 0; y < DIMENSION; y++){
- 				g.set(x, y, getColor(x,y));
+  				g.set(x,y,get(x,y).getPiece());
  			}
  		}
  		return g;
@@ -127,13 +127,18 @@ public class Grid{
 		}
 	}
 
-	public int getColor(int x, int y){
-		return get(x,y).getPiece();
-	}
 
 	public void set(int x, int y, int color){
 		try {
-			board[x][y].setPiece(color);
+			get(x,y).setPiece(color);
+			if (color==WHITE){
+				whiteSquares[whiteSquareCount]=get(x,y);
+				whiteSquareCount++;
+			}
+			if (color==BLACK){
+				blackSquares[blackSquareCount]=get(x,y);
+				blackSquareCount++;
+			}
 		} catch(ArrayIndexOutOfBoundsException e){
 			return ;
 		}
@@ -476,14 +481,14 @@ public class Grid{
 	}
 	
 
-	// public static void main(String[] args){
-	// 	Grid g = new Grid();
-	// 	g.set(1,5,WHITE);
-	// 	g.set(6,3,BLACK);
-	// 	g.set(6,4,WHITE);
-	// 	g.set(3,6,BLACK);
-	// 	System.out.println(g);
-	// 	System.out.println(g.cloneGrid());
-	// }
+	public static void main(String[] args){
+		Grid g = new Grid();
+		g.set(1,5,WHITE);
+		g.set(6,3,BLACK);
+		g.set(6,4,WHITE);
+		g.set(3,6,BLACK);
+		System.out.println(g);
+		System.out.println(g.cloneGrid());
+	}
 
 }
