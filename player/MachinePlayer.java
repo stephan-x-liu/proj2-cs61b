@@ -45,7 +45,12 @@ public class MachinePlayer extends Player {
     }
 
     grid.makeMove(bestMove.move, color);
-    System.out.println("BLACK MOVE!");
+    if (color==BLACK){
+      System.out.println("BLACK MOVE!");
+    }
+    else {
+      System.out.println("WHITE MOVE!");
+    }
     System.out.println(grid);
 
     // for (Square a: grid.blackSquares){
@@ -65,7 +70,12 @@ public class MachinePlayer extends Player {
       return false;
     } else {
       grid.makeMove(m, this.opponent);
-      System.out.println("WHITE MOVE!");
+      if (color==BLACK){
+        System.out.println("WHITE MOVE!");
+      }
+      else {
+        System.out.println("BLACK MOVE!");
+      }
       System.out.println(grid);
       // for (Square a: grid.whiteSquares){
       //   System.out.println(a);
