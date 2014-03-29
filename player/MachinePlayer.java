@@ -32,6 +32,7 @@ public class MachinePlayer extends Player {
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
+    grid.makeMove(bestMove.move, color);
     return bestMove.move;
   
   } 

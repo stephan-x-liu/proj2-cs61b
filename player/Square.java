@@ -96,7 +96,7 @@ public class Square{
   *  @return true if occupied and false if unoccupied.
   **/
   public boolean hasPiece(){
-    return (piece == 0);
+    return !(piece == NONE);
   }
 
   /**
