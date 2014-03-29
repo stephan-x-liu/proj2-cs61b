@@ -112,7 +112,7 @@ public class MachinePlayer extends Player {
     }
 
     for(int i = 0; i < moves.length && moves[i]!=null; i++){
-      Grid temp = new Grid(g.board());
+      Grid temp = g.cloneGrid();
       temp.makeMove(moves[i],color);
       BestMove t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = t.score;
@@ -143,7 +143,7 @@ public class MachinePlayer extends Player {
     }
     Move[] moves = g.validMoves(color);
     for(int i = 0; i < moves.length && moves[i]!=null; i++){
-      Grid temp = new Grid(g.board());
+      Grid temp = g.cloneGrid();
       temp.makeMove(moves[i],color);
       BestMove t = abMaximizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = t.score;
