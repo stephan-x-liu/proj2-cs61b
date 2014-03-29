@@ -79,7 +79,7 @@ public class Square{
   *  Removes the piece of a Square.
   **/
   public void removePiece(){
-    piece = 0;
+    piece = NONE;
   }
 
   /**
