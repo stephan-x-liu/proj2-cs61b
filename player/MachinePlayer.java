@@ -31,8 +31,11 @@ public class MachinePlayer extends Player {
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
+    
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
     grid.makeMove(bestMove.move, color);
+
+    
     return bestMove.move;
   
   } 
@@ -67,6 +70,7 @@ public class MachinePlayer extends Player {
   public BestMove abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
     BestMove bestMove = new BestMove();
     int score;
+    Move[] moves = g.validMoves(color);
     if (g.hasWinningNetwork()) {
       bestMove.score = Integer.MAX_VALUE;
       return bestMove;
@@ -75,8 +79,8 @@ public class MachinePlayer extends Player {
       bestMove.score = g.evaluate();
       return bestMove;
     }
-    Move[] moves = g.validMoves(color);
-    for(int i = 0; i < moves.length && i < 15; i++){
+
+    for(int i = 0; i < moves.length && moves[i]!=null; i++){
       Grid temp = new Grid(g.board());
       temp.makeMove(moves[i],color);
       BestMove t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
@@ -91,6 +95,7 @@ public class MachinePlayer extends Player {
         bestMove.move = moves[i];
       }
     }
+
     return bestMove;
   }
 

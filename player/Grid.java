@@ -8,13 +8,13 @@ public class Grid{
 	static final int WHITE = 1;
 	static final int NONE = 2;
 	public static final int DIMENSION = 8;
-	private boolean add = true;
+	protected boolean add = true;
 	private Square[][] board;
 	private Square[] blackSquares = new Square[10];
-  private int blackSquareCount;
+  	protected int blackSquareCount = 0;
 	private Square[] whiteSquares = new Square[10];
-  private int whiteSquareCount;
-  static final int[][] DIRECTIONS = Square.DIRECTIONS;
+  	protected int whiteSquareCount = 0;
+  	static final int[][] DIRECTIONS = Square.DIRECTIONS;
 	
 	//put in length 10 array of black pieces
 	//put in length 10 array of white pieces
@@ -155,7 +155,7 @@ public class Grid{
 			for (Square add: squares[color]){
 				for (int x = 0; x < DIMENSION; x++){
 					for (int y = 0; y < DIMENSION; y++){
-						move = new Move(add.position()[0], add.position()[1], x, y);
+						move = new Move(x, y, add.position()[0], add.position()[1]);
 						if (isValidMove(move, color)){
 							validMoves[moveIndex] = move;
 							moveIndex++;
@@ -168,6 +168,9 @@ public class Grid{
 	}
 
 	public boolean isValidMove(Move move, int color){
+		if(move == null){
+			return false;
+		}
 		if (board[move.x1][move.y1].hasPiece()){
 			return false;
 		}
@@ -192,9 +195,12 @@ public class Grid{
 			}
 		}
 		if (move.moveKind==Move.ADD){
-			Square neighbor = board[move.x1][move.y1].neighbor(color);
-			if (neighbor != null){
-				if (neighbor.neighbor(color) != null){
+			Square[] neighbors = board[move.x1][move.y1].neighbor(color);
+			if(neighbors[1]!=null){
+				return false;
+			}
+			if (neighbors[0] != null){
+				if (neighbors[0].neighbor(color)[0] != null){
 					return false;
 				}
 			}
@@ -210,9 +216,12 @@ public class Grid{
 				return false;
 			}
 			board[move.x2][move.y2].removePiece();
-			Square neighbor = board[move.x1][move.y1].neighbor(color);
-			if (neighbor != null){
-				if (neighbor.neighbor(color) != null){
+			Square[] neighbors = board[move.x1][move.y1].neighbor(color);
+			if(neighbors[1]!=null){
+				return false;
+			}
+			if (neighbors[0] != null){
+				if (neighbors[0].neighbor(color)[0] != null){
 					return false;
 				}
 			}

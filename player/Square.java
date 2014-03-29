@@ -114,14 +114,17 @@ public class Square{
   *  @return is a Square if there is a neighbor (occupied adjacent Square).
   *   @return is null if there is not a neighbor.
   **/
-  public Square neighbor(int color){
+  public Square[] neighbor(int color){
+    Square[] neighbors = new Square[8];
+    int count = 0;
     for(int[] dir : DIRECTIONS){
       Square adj = adjacent(dir);
       if(adj!=null&&adj.getPiece()==color){
-        return adj;
+        neighbors[count] = adj;
+        count++;
       }
     }
-    return null;
+    return neighbors;
   }
 
   /**
