@@ -318,6 +318,27 @@ public class Grid{
     return -4* count*count;
   }
 
+  public int maxNetworkLength(int color){
+  	int length = 0;
+  	if(color == BLACK){
+  		for(int i = 0; i < blackSquareCount; i++){
+  			int temp = networkLength(blackSquares[i]);
+  			if(temp>length){
+  				length = temp;
+  			}
+  		}
+  	}
+  	if(color == WHITE){
+  		for(int i = 0; i < whiteSquareCount; i++){
+  			int temp = networkLength(whiteSquares[i]);
+  			if(temp>length){
+  				length = temp;
+  			}
+  		}
+  	}
+  	return length;
+  }
+
   public int networkLength(Square current){
   	Square[] network = new Square[10];
   	int length = 0;
@@ -338,7 +359,6 @@ public class Grid{
   					already_connected = true;
   				}
   			}
-  			System.out.println(already_connected);
   			if(!already_connected&&(prev_dir[0]!=direction[0]||prev_dir[1]!=direction[1])){
 	  			connections[num_connects] = temp;
 	  			dirConnection[num_connects] = direction;
@@ -601,6 +621,9 @@ public class Grid{
 		g.set(4,4,WHITE);
 
 		System.out.println(g.networkLength(g.get(2,0)));
+		System.out.println(g.maxNetworkLength(BLACK));
+		System.out.println(g.maxNetworkLength(WHITE));
+		System.out.println(g.simpleToString());
 	}
 
 }
