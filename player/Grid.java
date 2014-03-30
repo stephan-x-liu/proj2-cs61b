@@ -472,8 +472,9 @@ public class Grid{
         }
       }
     }
-    int multiplier = 1+getGoalZones(friendly);
-    return multiplier*(fComputedPotential+eComputedPotential+fComputedNetwork+eComputedNetwork);
+    int multiplier = getGoalZones(friendly);
+    int emultiplier = getGoalZones(enemy);
+    return multiplier*(fComputedPotential+eComputedPotential)+emultiplier*(fComputedNetwork+eComputedNetwork);
         
     //We make seperate functions so we can change the algorithm for each.
 

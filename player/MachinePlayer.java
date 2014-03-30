@@ -24,7 +24,7 @@ public class MachinePlayer extends Player {
   public MachinePlayer(int color, int searchDepth) {
     this.color = color;
     grid = new Grid();
-    this.searchDepth = 1;
+    this.searchDepth = searchDepth;
     opponent = (color + 1)%2;
   }
 
