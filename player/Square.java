@@ -195,20 +195,20 @@ public class Square{
    * Just a normal to string method
    * @return a string representing piece contents including: color, potential and actual networks
    **/
-  // public String toString(){
-  //   String pieceStr = " ";
-  //   if(piece == WHITE){
-  //     pieceStr = "W";
-  //   }else if(piece == BLACK){
-  //     pieceStr = "B";
-  //   }
-  //   if(DEBUG == "simple"){
-  //     return pieceStr;
-  //   }else{
-  //     return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
-  //   }
-  // }
-
+   public String toString(){
+     String pieceStr = " ";
+     if(piece == WHITE){
+       pieceStr = "W";
+     }else if(piece == BLACK){
+       pieceStr = "B";
+     }
+     if(DEBUG == "simple"){
+       return pieceStr;
+     }else{
+       return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
+     }
+   }
+/*
   public String toString(){
     String s = "("+x+","+y+")-";
     if (piece==NONE){
@@ -222,4 +222,5 @@ public class Square{
     }
     return s;
   }
+  */
 }

@@ -110,7 +110,9 @@ public class MachinePlayer extends Player {
       return bestMove;
     }
     if(searchDepth == 0){
+      g.updateNetworkList();
       bestMove.score = g.evaluate(color);
+      System.out.println("Best move score: "+bestMove.score);
       return bestMove;
     }
 
@@ -142,6 +144,7 @@ public class MachinePlayer extends Player {
     }
     if(searchDepth == 0){
       bestMove.score = g.evaluate(color);
+      System.out.println("(Worst) Best move score: "+bestMove.score);
       return bestMove;
     }
     Move[] moves = g.validMoves(color);

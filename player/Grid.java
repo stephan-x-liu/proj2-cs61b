@@ -30,60 +30,60 @@ public class Grid{
 		whiteSquareCount = 0;
 	}
 
-	// public Grid(int[][] model){
-	//   	board = new Square[DIMENSION][DIMENSION];
-	//   	blackSquareCount = 0;
-	// 	whiteSquareCount = 0;
-	// 	for(int i = 0; i < DIMENSION; i ++){
-	// 		for(int j = 0; j < DIMENSION; j++){
-	// 			board[i][j] = new Square(i,j,this);
-	//     		//For every single x and y value, check if it's black or white, then set the pieces.
-	// 	        if(model[i][j] == BLACK){
-	// 					blackSquares[blackSquareCount] = board[i][j];
-	// 					blackSquareCount++;
-	// 					if (blackSquareCount>=10){
-	// 						add = false;
-	// 					}
-	// 	        }
-	// 	        if(model[i][j] == WHITE){
-	// 					whiteSquares[whiteSquareCount] = board[i][j];
-	// 					whiteSquareCount++;
-	// 	        }
-	//     		board[i][j].setPiece(model[i][j]);
-	// 		}
-	// 	}
+	public Grid(int[][] model){
+	 	board = new Square[DIMENSION][DIMENSION];
+	  	blackSquareCount = 0;
+		whiteSquareCount = 0;
+		for(int i = 0; i < DIMENSION; i ++){
+			for(int j = 0; j < DIMENSION; j++){
+				board[i][j] = new Square(i,j,this);
+	   		//For every single x and y value, check if it's black or white, then set the pieces.
+	        if(model[i][j] == BLACK){
+					blackSquares[blackSquareCount] = board[i][j];
+					blackSquareCount++;
+					if (blackSquareCount>=10){
+						add = false;
+					}
+		        }
+		        if(model[i][j] == WHITE){
+						whiteSquares[whiteSquareCount] = board[i][j];
+						whiteSquareCount++;
+		        }
+	    		board[i][j].setPiece(model[i][j]);
+			}
+		}
 
-	// }
+	}
 
-	// public Grid(String pieces){
-	// 	blackSquareCount = 0;
-	// 	whiteSquareCount = 0;
-	//     pieces = pieces.replaceAll("W", Integer.toString(WHITE));
-	//     pieces = pieces.replaceAll("B", Integer.toString(BLACK));
-	//     pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
-	// 	board = new Square[DIMENSION][DIMENSION];
-	//     char[] charArray = pieces.toCharArray();
-	// 	Square s;
-	// 	int i = 0;
-	//  	for (int y = 0; y < DIMENSION; y++){
-	//  		for (int x = 0; x < DIMENSION; x++){
-	//  			s = new Square(x, y, Integer.parseInt(String.valueOf(charArray[i])), this);
-	//  			board[x][y] = s;
-	//  			if (charArray[i] == WHITE){
-	//  				whiteSquares[whiteSquareCount] = s;
-	//  				whiteSquareCount++;
-	//  			}
-	//  			if (charArray[i] == BLACK){
-	//  				blackSquares[blackSquareCount] = s;
-	//  				blackSquareCount++;
-	//  				if (blackSquareCount==10){
-	//  					add = false;
-	//  				}
-	//  			}
-	//     		i++;
-	//  		}
-	//  	}
- // 	}
+	public Grid(String pieces){
+		blackSquareCount = 0;
+		whiteSquareCount = 0;
+	    pieces = pieces.replaceAll("W", Integer.toString(WHITE));
+	    pieces = pieces.replaceAll("B", Integer.toString(BLACK));
+	    pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
+		board = new Square[DIMENSION][DIMENSION];
+	    char[] charArray = pieces.toCharArray();
+		Square s;
+		int i = 0;
+	 	for (int y = 0; y < DIMENSION; y++){
+	 		for (int x = 0; x < DIMENSION; x++){
+	 			s = new Square(x, y, Integer.parseInt(String.valueOf(charArray[i])), this);
+	 			board[x][y] = s;
+	 			if (charArray[i] == WHITE){
+	 				whiteSquares[whiteSquareCount] = s;
+	 				whiteSquareCount++;
+	 			}
+	 			if (charArray[i] == BLACK){
+	 				blackSquares[blackSquareCount] = s;
+	 				blackSquareCount++;
+	 				if (blackSquareCount==10){
+	 					add = false;
+	 				}
+	 			}
+	    		i++;
+	 		}
+	 	}
+ 	}
  	
  	public Grid cloneGrid(){
  		Grid g = new Grid();
@@ -157,6 +157,7 @@ public class Grid{
 				set(move.x1, move.y1, color);
 				}
 			}
+    updateNetworkList();
 	}
 
 	public Move[] validMoves(int color){
@@ -296,6 +297,9 @@ public class Grid{
     //Heavy bias for overlap because we can make great networks out of overlap.
     //We subtract one because potential doesn't really help us unless it's overlapping.
     //We'll see if that's good.
+    if(count == 0){
+      return 0;
+    }
     return (count-1)*(count-1);
   }
 
@@ -311,7 +315,7 @@ public class Grid{
 
   private int eComputeNetwork(int count){
     //The less networks the better
-    return -2* count*count;
+    return -4* count*count;
   }
 
 
@@ -322,6 +326,7 @@ public class Grid{
     int fComputedNetwork = 0;
     int eComputedPotential = 0;
     int eComputedNetwork = 0;
+    updateNetworkList();
     if(friendly == Square.BLACK){
       enemy = Square.WHITE;
     }else{
@@ -367,6 +372,7 @@ public class Grid{
 	        //Reset varialbes, since we're in a new direction (a new path)
 	        squaresToChange = new SList();
 	        curSquare = mainSquare.adjacent(dir);
+          squaresToChange.insertBack(mainSquare);
 
 	        //Iterate through all squares on the path.
 	        while(true){
@@ -378,7 +384,7 @@ public class Grid{
 	            }
 	            break;
             //We need a seperate case anyway because if we hit a square we want to change its values too.
-            }else if(curSquare.getPiece() == Square.BLACK){
+            }else if(curSquare.getPiece() == Square.WHITE){
 	            squaresToChange.insertBack(curSquare);
               for(Object item : squaresToChange){
                 Square sq = (Square) item;
@@ -415,14 +421,25 @@ public class Grid{
 	        
 	        squaresToChange = new SList();
 	        curSquare = mainSquare.adjacent(dir);
+          squaresToChange.insertBack(mainSquare);
 
 	        while(true){
-	          if(curSquare == null || curSquare.getPiece() == Square.BLACK){
+	          //If we hit the edge or a white square, it's only a potential network.
+	          if(curSquare == null){
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
 	              sq.addWhitePotential();
 	            }
 	            break;
+            //We need a seperate case anyway because if we hit a square we want to change its values too.
+            }else if(curSquare.getPiece() == Square.BLACK){
+	            squaresToChange.insertBack(curSquare);
+              for(Object item : squaresToChange){
+                Square sq = (Square) item;
+                sq.addWhitePotential();
+              }
+	            break;
+           //it's a network! 
 	          }else if(curSquare.getPiece() == Square.WHITE){
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
@@ -436,6 +453,9 @@ public class Grid{
 	        }
 	      }
 	      i++;
+        if(i == 10){
+          break;
+        }
 	      mainSquare = whiteSquares[i];
 	    }
 	}
@@ -461,22 +481,22 @@ public class Grid{
 	}
 
 	public String toString(){
-		return simpleToString();
-		// String s = "=========================================\n";
-	 //    s+= "Stringified version:\n";
-	 //    s+= serializeToString();
-	 //    s+= "\n";
-	 //    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
-	 //    s += "-----------------------------------------";
-		// for (int y = 0; y < DIMENSION; y++){
-		// 	s+= "\n|";
-		// 	for (int x = 0; x < DIMENSION; x++){
-	 //       		s += " "+get(x, y).toString()+" |";
-		// 	}
-		// 	s+="\n";
-		// }
-		// s += "-----------------------------------------";
-		// return s;
+		//return simpleToString();
+		String s = "=========================================\n";
+    s+= "Stringified version:\n";
+    s+= serializeToString();
+    s+= "\n";
+    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
+    s += "-----------------------------------------";
+    for (int y = 0; y < DIMENSION; y++){
+      s+= "\n|";
+      for (int x = 0; x < DIMENSION; x++){
+        s += " "+get(x, y).toString()+" |";
+      }
+    s+="\n";
+    }
+    s += "-----------------------------------------";
+    return s;
 	}
 
 	public String simpleToString(){
@@ -502,14 +522,14 @@ public class Grid{
 			s += "\n";
 		}
 		s += "|=====================================|\n";
-		s += "BLACK SQUARES: ";
+		/*s += "BLACK SQUARES: ";
 		for (Square a: blackSquares){
 			s += "\n"+a;
 		}
 		s += "\n WHITE SQUARES: ";
 		for (Square b: whiteSquares){
 			s += "\n"+b;
-		}
+		}*/
 
 		return s;
 	}
