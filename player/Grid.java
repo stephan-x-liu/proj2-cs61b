@@ -292,8 +292,63 @@ public class Grid{
     return false;
   }
 
-  public int evaluate(){
-    return (int)Math.floor(100*Math.random());
+  private int fComputePotential(int count){
+    //Heavy bias for overlap because we can make great networks out of overlap.
+    //We subtract one because potential doesn't really help us unless it's overlapping.
+    //We'll see if that's good.
+    return (count-1)*(count-1);
+  }
+
+  private int fComputeNetwork(int count){
+    //Weigh it more heavily (2*) with heavy bias for overlap.
+    return 2*count*count;
+  }
+
+  private int eComputePotential(int count){
+    //Negative because it's bad, bias towards overlap because overlap bad.
+    return -1* count*count;
+  }
+
+  private int eComputeNetwork(int count){
+    //The less networks the better
+    return -2* count*count;
+  }
+
+
+
+  public int evaluate(int friendly){
+    int enemy;
+    int fComputedPotential = 0;
+    int fComputedNetwork = 0;
+    int eComputedPotential = 0;
+    int eComputedNetwork = 0;
+    if(friendly == Square.BLACK){
+      enemy = Square.WHITE;
+    }else{
+      enemy = Square.BLACK;
+    }
+
+    for (int y = 0; y < DIMENSION; y++){
+      for (int x = 0; x < DIMENSION; x++){
+        Square sq = get(x, y);
+        if(friendly == Square.BLACK){
+          fComputedPotential += fComputePotential(sq.getBlackPotential());
+          eComputedPotential += eComputePotential(sq.getWhitePotential());
+          fComputedNetwork += fComputeNetwork(sq.getBlackNetworks());
+          eComputedNetwork += eComputeNetwork(sq.getWhiteNetworks());
+        }
+        if(friendly == Square.WHITE){
+          eComputedPotential += eComputePotential(sq.getBlackPotential());
+          fComputedPotential += fComputePotential(sq.getWhitePotential());
+          eComputedNetwork += eComputeNetwork(sq.getBlackNetworks());
+          fComputedNetwork += fComputeNetwork(sq.getWhiteNetworks());
+        }
+      }
+    }
+    return fComputedPotential+eComputedPotential+fComputedNetwork+eComputedNetwork;
+        
+    //We make seperate functions so we can change the algorithm for each.
+
   }
 
 	public void updateNetworkList(){
@@ -316,14 +371,23 @@ public class Grid{
 	        //Iterate through all squares on the path.
 	        while(true){
 	          //If we hit the edge or a white square, it's only a potential network.
-	          if(curSquare == null || curSquare.getPiece() == Square.WHITE){
+	          if(curSquare == null){
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
 	              sq.addBlackPotential();
 	            }
 	            break;
+            //We need a seperate case anyway because if we hit a square we want to change its values too.
+            }else if(curSquare.getPiece() == Square.BLACK){
+	            squaresToChange.insertBack(curSquare);
+              for(Object item : squaresToChange){
+                Square sq = (Square) item;
+                sq.addBlackPotential();
+              }
+	            break;
 	          //If we hit a black square, it's a network.
 	          }else if(curSquare.getPiece() == Square.BLACK){
+	            squaresToChange.insertBack(curSquare);
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
 	              sq.addBlackNetwork();
