@@ -206,7 +206,7 @@ public class Grid{
 			for (Square add: squares[color]){
 				if (add != null){
 					for (int x = 0; x < DIMENSION; x++){
-						for (int y = 0; y < DIMENSION && moveIndex < 64; y++){
+						for (int y = 0; y < DIMENSION && moveIndex < 300; y++){
 							move = new Move(x, y, add.position()[0], add.position()[1]);
 							if (isValidMove(move, color)){
 								validMoves[moveIndex] = move;
@@ -313,10 +313,6 @@ public class Grid{
     	}
 	}
 
-  public boolean hasWinningNetwork(){
-    return false;
-  }
-
   private int fComputePotential(int count){
     //Heavy bias for overlap because we can make great networks out of overlap.
     //We subtract one because potential doesn't really help us unless it's overlapping.
@@ -363,14 +359,50 @@ public class Grid{
   	return length;
   }
 
+  public Network getNetwork(Square current){
+  	Square[] network = new Square[10];
+  	int length = 0;
+  	int[] temp = {0,0};
+  	Network n = findNetwork(current,network,length,temp);
+  	return n;
+  }
+
+  public boolean hasWinningNetwork(int color){
+  	if(color == BLACK){
+  		for(int i = 1; i < DIMENSION-1; i++){
+  			Network n = getNetwork(get(i,0));
+  			if(n.length>=6){
+  				for(int k = 5; k < n.length; k++){
+  					if(n.network[k].position()[1]==7)
+  						return true;
+  				}
+  			}
+  		}
+  	}
+  	else{
+  		for(int i = 1; i < DIMENSION-1; i++){
+  			Network n = getNetwork(get(0,i));
+  			if(n.length>=6){
+  				for(int k = 5; k < n.length; k++){
+  					if(n.network[k].position()[0]==7)
+  						return true;
+  				}
+  			}
+  		}
+  	}
+  	return false;
+  }
+
+
   public int networkLength(Square current){
   	Square[] network = new Square[10];
   	int length = 0;
   	int[] temp = {0,0};
-  	return networkLengthHelper(current,network,length,temp);
+  	Network n = findNetwork(current,network,length,temp);
+  	return n.length;
   }
 
-  private int networkLengthHelper(Square current, Square[] network, int length, int[] prev_dir){
+  private Network findNetwork(Square current, Square[] network, int length, int[] prev_dir){
   	int num_connects = 0;
   	Square[] connections = new Square[8];
   	int[][] dirConnection = new int[8][2];
@@ -391,17 +423,20 @@ public class Grid{
   		}
   	}
   	if(num_connects==0){
-  		return length;
+  		Network temp = new Network(network,length);
+  		return temp;
   	}
   	int score = 0;
+  	Network longest = null;
   	for(int i = 0; i< num_connects; i++){
   		network[length] = current;
-  		int s = networkLengthHelper(connections[i],network,length+1, dirConnection[i]);
-  		if(s>score){
-  			score=s;
+  		Network s = findNetwork(connections[i],network,length+1, dirConnection[i]);
+  		if(s.length>score){
+  			score=s.length;
+  			longest = s;
   		}
   	}
-  	return score;
+  	return longest;
 
   }
 
@@ -627,27 +662,48 @@ public class Grid{
 
 	// public static void main(String[] args){
 	// 	Grid g = new Grid();
-	// 	g.set(2,0,BLACK);
+	// 	g.set(6,3,BLACK);
+	// 	g.set(6,7,BLACK);
+	// 	g.set(6,6,BLACK);
+	// 	g.set(4,5,BLACK);
+	// 	g.set(3,4,BLACK);
+	// 	g.set(4,1,BLACK);
 	// 	g.set(6,1,BLACK);
-	// 	g.set(5,4,BLACK);
-	// 	//g.set(1,7,BLACK);
-	// 	g.set(2,1,BLACK);
-	// 	g.set(1,4,BLACK);
-	// 	//g.set(4,7,BLACK);
-	// 	g.set(2,5,BLACK);
-	// 	g.set(1,1,WHITE);
-	// 	g.set(1,2,WHITE);
-	// 	g.set(1,4,WHITE);
-	// 	g.set(2,2,WHITE);
-	// 	g.set(3,4,WHITE);
-	// 	g.set(1,6,WHITE);
-	// 	g.set(2,6,WHITE);
+	// 	g.set(5,3,BLACK);
+	// 	g.set(1,2,BLACK);
+	// 	g.set(4,0,BLACK);
 	// 	g.set(4,4,WHITE);
+	// 	g.set(1,5,WHITE);
+	// 	g.set(5,2,WHITE);
+	// 	g.set(6,5,WHITE);
+	// 	g.set(0,2,WHITE);
+	// 	g.set(7,1,WHITE);
+	// 	g.set(3,6,WHITE);
+	// 	g.set(2,3,WHITE);
+	// 	g.set(3,1,WHITE);
+	// 	g.set(7,3,WHITE);
 
 	// 	System.out.println(g.simpleToString());
+	// 	System.out.println(g.networkLength(g.get(4,0)));
 
-	// 	System.out.println(g.getGoalZones(WHITE));
-	// 	System.out.println(g.getGoalZones(BLACK));
+	// 	System.out.println(g.maxNetworkLength(BLACK));
+	// 	System.out.println(g.maxNetworkLength(WHITE));
+	// 	System.out.println(g.hasWinningNetwork(BLACK));
+	// 	System.out.println(g.hasWinningNetwork(WHITE));
 	// }
-
 }
+
+class Network{
+	Square[] network;
+	int length;
+	public Network(Square[] n, int l){
+		length = l;
+		network = n;
+	}
+}
+
+
+
+
+
+

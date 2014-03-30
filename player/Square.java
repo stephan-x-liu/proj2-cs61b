@@ -8,7 +8,7 @@ package player;
 
 public class Square{
   
-  //Set to "simple" for short toString, "complex" for debug info.
+  //Set to "simple" for short toString, "location" for pieces with coordinates, and "complex" for debug info.
   private static final String DEBUG = "complex";
   
   static final int NONE = 2;
@@ -200,18 +200,23 @@ public class Square{
    * @return a string representing piece contents including: color, potential and actual networks
    **/
    public String toString(){
-     String pieceStr = " ";
-     if(piece == WHITE){
-       pieceStr = "W";
-     }else if(piece == BLACK){
-       pieceStr = "B";
-     }
-     if(DEBUG == "simple"){
-       return pieceStr;
-     }else{
-       return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
-     }
-   }
+    String pieceStr = " ";
+    if(piece == WHITE){
+      pieceStr = "W";
+    }
+    else if(piece == BLACK){
+      pieceStr = "B";
+    }
+    if(DEBUG == "locations"){
+      return pieceStr+" ( "+ x + ", "+y+")";
+    }
+    else if(DEBUG == "simple"){
+      return pieceStr;
+    }
+    else{
+      return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
+    }
+  }
 /*
   public String toString(){
     String s = "("+x+","+y+")-";
