@@ -57,10 +57,10 @@ public class MachinePlayer extends Player {
     //System.out.println(grid);
 
     for (Square a: grid.blackSquares){
-      System.out.println(a);
+      //System.out.println(a);
     }
     for (Square a: grid.whiteSquares){
-      System.out.println(a);
+      //System.out.println(a);
     }
 
     return bestMove.move;
