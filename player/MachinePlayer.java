@@ -128,6 +128,7 @@ public class MachinePlayer extends Player {
       if(score > a){
         bestMove.score = score;
         bestMove.move = moves[i];
+        a = score;
       }
     }
 
@@ -159,6 +160,7 @@ public class MachinePlayer extends Player {
       if(score < b){
         bestMove.score = score;
         bestMove.move = moves[i];
+        b = score;
       }
     }
     return bestMove;

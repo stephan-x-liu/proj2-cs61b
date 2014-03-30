@@ -410,6 +410,9 @@ public class Grid{
 
 	      //Increment to the next mainSquare, depends on array being initialized to null
 	      i++;
+        if(i == 10){
+          break;
+        }
 	      mainSquare = blackSquares[i];
 	    }
 
