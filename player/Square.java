@@ -173,6 +173,10 @@ public class Square{
     return whiteNetworks/2;
   }
 
+  public boolean samePlace(Square s){
+    return s.position()[0] == x && s.position()[1]==y;
+  }
+
   /**
   *  Finds closest piece in given direction.
   *  @param dir is a length 2 integer array defining direction.
@@ -180,11 +184,11 @@ public class Square{
   *   @return null if it hits the edge of the Grid.
   **/
   public Square getInDirection(int[] dir){
+    if(grid.get(x+dir[0],y+dir[1])==null){
+      return null;
+    }
     if(grid.get(x+dir[0],y+dir[1]).hasPiece()){
       return grid.get(x+dir[0],y+dir[1]);
-    }
-    else if(grid.get(x+dir[0],y+dir[1])==null){
-      return null;
     }
     else{
       return grid.get(x+dir[0],y+dir[1]).getInDirection(dir);
@@ -195,20 +199,20 @@ public class Square{
    * Just a normal to string method
    * @return a string representing piece contents including: color, potential and actual networks
    **/
-  // public String toString(){
-  //   String pieceStr = " ";
-  //   if(piece == WHITE){
-  //     pieceStr = "W";
-  //   }else if(piece == BLACK){
-  //     pieceStr = "B";
-  //   }
-  //   if(DEBUG == "simple"){
-  //     return pieceStr;
-  //   }else{
-  //     return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
-  //   }
-  // }
-
+   public String toString(){
+     String pieceStr = " ";
+     if(piece == WHITE){
+       pieceStr = "W";
+     }else if(piece == BLACK){
+       pieceStr = "B";
+     }
+     if(DEBUG == "simple"){
+       return pieceStr;
+     }else{
+       return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
+     }
+   }
+/*
   public String toString(){
     String s = "("+x+","+y+")-";
     if (piece==NONE){
@@ -222,4 +226,5 @@ public class Square{
     }
     return s;
   }
+  */
 }

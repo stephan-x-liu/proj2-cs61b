@@ -30,60 +30,60 @@ public class Grid{
 		whiteSquareCount = 0;
 	}
 
-	// public Grid(int[][] model){
-	//   	board = new Square[DIMENSION][DIMENSION];
-	//   	blackSquareCount = 0;
-	// 	whiteSquareCount = 0;
-	// 	for(int i = 0; i < DIMENSION; i ++){
-	// 		for(int j = 0; j < DIMENSION; j++){
-	// 			board[i][j] = new Square(i,j,this);
-	//     		//For every single x and y value, check if it's black or white, then set the pieces.
-	// 	        if(model[i][j] == BLACK){
-	// 					blackSquares[blackSquareCount] = board[i][j];
-	// 					blackSquareCount++;
-	// 					if (blackSquareCount>=10){
-	// 						add = false;
-	// 					}
-	// 	        }
-	// 	        if(model[i][j] == WHITE){
-	// 					whiteSquares[whiteSquareCount] = board[i][j];
-	// 					whiteSquareCount++;
-	// 	        }
-	//     		board[i][j].setPiece(model[i][j]);
-	// 		}
-	// 	}
+	public Grid(int[][] model){
+	 	board = new Square[DIMENSION][DIMENSION];
+	  	blackSquareCount = 0;
+		whiteSquareCount = 0;
+		for(int i = 0; i < DIMENSION; i ++){
+			for(int j = 0; j < DIMENSION; j++){
+				board[i][j] = new Square(i,j,this);
+	   		//For every single x and y value, check if it's black or white, then set the pieces.
+	        if(model[i][j] == BLACK){
+					blackSquares[blackSquareCount] = board[i][j];
+					blackSquareCount++;
+					if (blackSquareCount>=10){
+						add = false;
+					}
+		        }
+		        if(model[i][j] == WHITE){
+						whiteSquares[whiteSquareCount] = board[i][j];
+						whiteSquareCount++;
+		        }
+	    		board[i][j].setPiece(model[i][j]);
+			}
+		}
 
-	// }
+	}
 
-	// public Grid(String pieces){
-	// 	blackSquareCount = 0;
-	// 	whiteSquareCount = 0;
-	//     pieces = pieces.replaceAll("W", Integer.toString(WHITE));
-	//     pieces = pieces.replaceAll("B", Integer.toString(BLACK));
-	//     pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
-	// 	board = new Square[DIMENSION][DIMENSION];
-	//     char[] charArray = pieces.toCharArray();
-	// 	Square s;
-	// 	int i = 0;
-	//  	for (int y = 0; y < DIMENSION; y++){
-	//  		for (int x = 0; x < DIMENSION; x++){
-	//  			s = new Square(x, y, Integer.parseInt(String.valueOf(charArray[i])), this);
-	//  			board[x][y] = s;
-	//  			if (charArray[i] == WHITE){
-	//  				whiteSquares[whiteSquareCount] = s;
-	//  				whiteSquareCount++;
-	//  			}
-	//  			if (charArray[i] == BLACK){
-	//  				blackSquares[blackSquareCount] = s;
-	//  				blackSquareCount++;
-	//  				if (blackSquareCount==10){
-	//  					add = false;
-	//  				}
-	//  			}
-	//     		i++;
-	//  		}
-	//  	}
- // 	}
+	public Grid(String pieces){
+		blackSquareCount = 0;
+		whiteSquareCount = 0;
+	    pieces = pieces.replaceAll("W", Integer.toString(WHITE));
+	    pieces = pieces.replaceAll("B", Integer.toString(BLACK));
+	    pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
+		board = new Square[DIMENSION][DIMENSION];
+	    char[] charArray = pieces.toCharArray();
+		Square s;
+		int i = 0;
+	 	for (int y = 0; y < DIMENSION; y++){
+	 		for (int x = 0; x < DIMENSION; x++){
+	 			s = new Square(x, y, Integer.parseInt(String.valueOf(charArray[i])), this);
+	 			board[x][y] = s;
+	 			if (charArray[i] == WHITE){
+	 				whiteSquares[whiteSquareCount] = s;
+	 				whiteSquareCount++;
+	 			}
+	 			if (charArray[i] == BLACK){
+	 				blackSquares[blackSquareCount] = s;
+	 				blackSquareCount++;
+	 				if (blackSquareCount==10){
+	 					add = false;
+	 				}
+	 			}
+	    		i++;
+	 		}
+	 	}
+ 	}
  	
  	public Grid cloneGrid(){
  		Grid g = new Grid();
@@ -157,6 +157,7 @@ public class Grid{
 				set(move.x1, move.y1, color);
 				}
 			}
+    updateNetworkList();
 	}
 
 	public Move[] validMoves(int color){
@@ -292,8 +293,130 @@ public class Grid{
     return false;
   }
 
-  public int evaluate(){
-    return (int)Math.floor(100*Math.random());
+  private int fComputePotential(int count){
+    //Heavy bias for overlap because we can make great networks out of overlap.
+    //We subtract one because potential doesn't really help us unless it's overlapping.
+    //We'll see if that's good.
+    if(count == 0){
+      return 0;
+    }
+    return (count-1)*(count-1);
+  }
+
+  private int fComputeNetwork(int count){
+    //Weigh it more heavily (2*) with heavy bias for overlap.
+    return 2*count*count;
+  }
+
+  private int eComputePotential(int count){
+    //Negative because it's bad, bias towards overlap because overlap bad.
+    return -1* count*count;
+  }
+
+  private int eComputeNetwork(int count){
+    //The less networks the better
+    return -4* count*count;
+  }
+
+  public int maxNetworkLength(int color){
+  	int length = 0;
+  	if(color == BLACK){
+  		for(int i = 0; i < blackSquareCount; i++){
+  			int temp = networkLength(blackSquares[i]);
+  			if(temp>length){
+  				length = temp;
+  			}
+  		}
+  	}
+  	if(color == WHITE){
+  		for(int i = 0; i < whiteSquareCount; i++){
+  			int temp = networkLength(whiteSquares[i]);
+  			if(temp>length){
+  				length = temp;
+  			}
+  		}
+  	}
+  	return length;
+  }
+
+  public int networkLength(Square current){
+  	Square[] network = new Square[10];
+  	int length = 0;
+  	int[] temp = {0,0};
+  	return networkLengthHelper(current,network,length,temp);
+  }
+
+  private int networkLengthHelper(Square current, Square[] network, int length, int[] prev_dir){
+  	int num_connects = 0;
+  	Square[] connections = new Square[8];
+  	int[][] dirConnection = new int[8][2];
+  	for(int[] direction : DIRECTIONS){
+  		Square temp = current.getInDirection(direction);
+  		if(temp!=null&&temp.getPiece()==current.getPiece()){
+  			boolean already_connected = false;
+  			for(Square prev: network){
+  				if(prev!= null && temp.samePlace(prev)){
+  					already_connected = true;
+  				}
+  			}
+  			if(!already_connected&&(prev_dir[0]!=direction[0]||prev_dir[1]!=direction[1])){
+	  			connections[num_connects] = temp;
+	  			dirConnection[num_connects] = direction;
+	  			num_connects++;
+	  		}
+  		}
+  	}
+  	if(num_connects==0){
+  		return length;
+  	}
+  	int score = 0;
+  	for(int i = 0; i< num_connects; i++){
+  		network[length] = current;
+  		int s = networkLengthHelper(connections[i],network,length+1, dirConnection[i]);
+  		if(s>score){
+  			score=s;
+  		}
+  	}
+  	return score;
+
+  }
+
+
+
+  public int evaluate(int friendly){
+    int enemy;
+    int fComputedPotential = 0;
+    int fComputedNetwork = 0;
+    int eComputedPotential = 0;
+    int eComputedNetwork = 0;
+    updateNetworkList();
+    if(friendly == Square.BLACK){
+      enemy = Square.WHITE;
+    }else{
+      enemy = Square.BLACK;
+    }
+
+    for (int y = 0; y < DIMENSION; y++){
+      for (int x = 0; x < DIMENSION; x++){
+        Square sq = get(x, y);
+        if(friendly == Square.BLACK){
+          fComputedPotential += fComputePotential(sq.getBlackPotential());
+          eComputedPotential += eComputePotential(sq.getWhitePotential());
+          fComputedNetwork += fComputeNetwork(sq.getBlackNetworks());
+          eComputedNetwork += eComputeNetwork(sq.getWhiteNetworks());
+        }
+        if(friendly == Square.WHITE){
+          eComputedPotential += eComputePotential(sq.getBlackPotential());
+          fComputedPotential += fComputePotential(sq.getWhitePotential());
+          eComputedNetwork += eComputeNetwork(sq.getBlackNetworks());
+          fComputedNetwork += fComputeNetwork(sq.getWhiteNetworks());
+        }
+      }
+    }
+    return fComputedPotential+eComputedPotential+fComputedNetwork+eComputedNetwork;
+        
+    //We make seperate functions so we can change the algorithm for each.
+
   }
 
 	public void updateNetworkList(){
@@ -312,18 +435,28 @@ public class Grid{
 	        //Reset varialbes, since we're in a new direction (a new path)
 	        squaresToChange = new SList();
 	        curSquare = mainSquare.adjacent(dir);
+          squaresToChange.insertBack(mainSquare);
 
 	        //Iterate through all squares on the path.
 	        while(true){
 	          //If we hit the edge or a white square, it's only a potential network.
-	          if(curSquare == null || curSquare.getPiece() == Square.WHITE){
+	          if(curSquare == null){
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
 	              sq.addBlackPotential();
 	            }
 	            break;
+            //We need a seperate case anyway because if we hit a square we want to change its values too.
+            }else if(curSquare.getPiece() == Square.WHITE){
+	            squaresToChange.insertBack(curSquare);
+              for(Object item : squaresToChange){
+                Square sq = (Square) item;
+                sq.addBlackPotential();
+              }
+	            break;
 	          //If we hit a black square, it's a network.
 	          }else if(curSquare.getPiece() == Square.BLACK){
+	            squaresToChange.insertBack(curSquare);
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
 	              sq.addBlackNetwork();
@@ -340,6 +473,9 @@ public class Grid{
 
 	      //Increment to the next mainSquare, depends on array being initialized to null
 	      i++;
+        if(i == 10){
+          break;
+        }
 	      mainSquare = blackSquares[i];
 	    }
 
@@ -351,14 +487,25 @@ public class Grid{
 	        
 	        squaresToChange = new SList();
 	        curSquare = mainSquare.adjacent(dir);
+          squaresToChange.insertBack(mainSquare);
 
 	        while(true){
-	          if(curSquare == null || curSquare.getPiece() == Square.BLACK){
+	          //If we hit the edge or a white square, it's only a potential network.
+	          if(curSquare == null){
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
 	              sq.addWhitePotential();
 	            }
 	            break;
+            //We need a seperate case anyway because if we hit a square we want to change its values too.
+            }else if(curSquare.getPiece() == Square.BLACK){
+	            squaresToChange.insertBack(curSquare);
+              for(Object item : squaresToChange){
+                Square sq = (Square) item;
+                sq.addWhitePotential();
+              }
+	            break;
+           //it's a network! 
 	          }else if(curSquare.getPiece() == Square.WHITE){
 	            for(Object item : squaresToChange){
 	              Square sq = (Square) item;
@@ -372,6 +519,9 @@ public class Grid{
 	        }
 	      }
 	      i++;
+        if(i == 10){
+          break;
+        }
 	      mainSquare = whiteSquares[i];
 	    }
 	}
@@ -397,22 +547,22 @@ public class Grid{
 	}
 
 	public String toString(){
-		return simpleToString();
-		// String s = "=========================================\n";
-	 //    s+= "Stringified version:\n";
-	 //    s+= serializeToString();
-	 //    s+= "\n";
-	 //    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
-	 //    s += "-----------------------------------------";
-		// for (int y = 0; y < DIMENSION; y++){
-		// 	s+= "\n|";
-		// 	for (int x = 0; x < DIMENSION; x++){
-	 //       		s += " "+get(x, y).toString()+" |";
-		// 	}
-		// 	s+="\n";
-		// }
-		// s += "-----------------------------------------";
-		// return s;
+		//return simpleToString();
+		String s = "=========================================\n";
+    s+= "Stringified version:\n";
+    s+= serializeToString();
+    s+= "\n";
+    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
+    s += "-----------------------------------------";
+    for (int y = 0; y < DIMENSION; y++){
+      s+= "\n|";
+      for (int x = 0; x < DIMENSION; x++){
+        s += " "+get(x, y).toString()+" |";
+      }
+    s+="\n";
+    }
+    s += "-----------------------------------------";
+    return s;
 	}
 
 	public String simpleToString(){
@@ -438,47 +588,42 @@ public class Grid{
 			s += "\n";
 		}
 		s += "|=====================================|\n";
-		s += "BLACK SQUARES: ";
+		/*s += "BLACK SQUARES: ";
 		for (Square a: blackSquares){
 			s += "\n"+a;
 		}
 		s += "\n WHITE SQUARES: ";
 		for (Square b: whiteSquares){
 			s += "\n"+b;
-		}
+		}*/
 
 		return s;
 	}
 	
 
-	// public static void main(String[] args){
-	// 	Grid g = new Grid();
-	// 	g.set(1,5,WHITE);
-	// 	g.set(6,3,BLACK);
-	// 	g.set(6,4,WHITE);
-	// 	g.set(3,6,BLACK);
-	// 	g.set(0,5,WHITE);
-	// 	g.set(0,3,BLACK);
-	// 	g.set(0,4,WHITE);
-	// 	g.set(0,6,BLACK);
-	// 	g.set(2,5,WHITE);
-	// 	g.set(2,3,BLACK);
-	// 	g.set(2,4,WHITE);
-	// 	g.set(2,6,BLACK);
-	// 	g.set(4,5,WHITE);
-	// 	g.set(4,3,BLACK);
-	// 	g.set(4,4,WHITE);
-	// 	g.set(4,6,BLACK);
-	// 	g.set(7,5,WHITE);
-	// 	g.set(7,3,BLACK);
-	// 	g.set(7,4,WHITE);
-	// 	g.set(7,6,BLACK);
-	// 	System.out.println(g);
-	// 	Grid a = g.cloneGrid();
-	// 	System.out.println(a);
+	public static void main(String[] args){
+		Grid g = new Grid();
+		g.set(2,0,BLACK);
+		g.set(6,1,BLACK);
+		g.set(5,4,BLACK);
+		g.set(1,7,BLACK);
+		g.set(2,1,BLACK);
+		g.set(1,4,BLACK);
+		g.set(4,7,BLACK);
+		g.set(2,5,BLACK);
+		g.set(0,1,WHITE);
+		g.set(0,2,WHITE);
+		g.set(0,4,WHITE);
+		g.set(2,2,WHITE);
+		g.set(2,4,WHITE);
+		g.set(0,6,WHITE);
+		g.set(2,6,WHITE);
+		g.set(4,4,WHITE);
 
-	// 	System.out.println(g.add);
-	// 	System.out.println(a.add);
-	// }
+		System.out.println(g.networkLength(g.get(2,0)));
+		System.out.println(g.maxNetworkLength(BLACK));
+		System.out.println(g.maxNetworkLength(WHITE));
+		System.out.println(g.simpleToString());
+	}
 
 }

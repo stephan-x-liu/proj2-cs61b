@@ -24,7 +24,7 @@ public class MachinePlayer extends Player {
   public MachinePlayer(int color, int searchDepth) {
     this.color = color;
     grid = new Grid();
-    this.searchDepth = searchDepth;
+    this.searchDepth = 1;
     opponent = (color + 1)%2;
   }
 
@@ -47,13 +47,18 @@ public class MachinePlayer extends Player {
     // }
 
     grid.makeMove(bestMove.move, color);
-    // if (color==BLACK){
-    //   System.out.println("BLACK MOVE!");
-    // }
-    // else {
-    //   System.out.println("WHITE MOVE!");
-    // }
-    // System.out.println(grid);
+
+    if (color==BLACK){
+      System.out.println("BLACK MOVE!");
+    }
+    else {
+      System.out.println("WHITE MOVE!");
+    }
+    //System.out.println(grid);
+
+    for (Square a: grid.blackSquares){
+      System.out.println(a);
+    }
 
     return bestMove.move;
   
@@ -69,6 +74,7 @@ public class MachinePlayer extends Player {
       return false;
     } else {
       grid.makeMove(m, this.opponent);
+<<<<<<< HEAD
       // if (color==BLACK){
       //   System.out.println("WHITE MOVE!");
       // }
@@ -77,6 +83,18 @@ public class MachinePlayer extends Player {
       // }
       // System.out.println(grid);
 
+=======
+      if (color==BLACK){
+        System.out.println("WHITE MOVE!");
+      }
+      else {
+        System.out.println("BLACK MOVE!");
+      }
+      //System.out.println(grid);
+      for (Square a: grid.whiteSquares){
+        System.out.println(a);
+      }
+>>>>>>> 2f44189dc6251fc57603c607e9c7bafd0e51bbc2
       return true;
     }
   }
@@ -104,7 +122,8 @@ public class MachinePlayer extends Player {
       return bestMove;
     }
     if(searchDepth == 0){
-      bestMove.score = g.evaluate();
+      g.updateNetworkList();
+      bestMove.score = g.evaluate(color);
       return bestMove;
     }
 
@@ -121,6 +140,7 @@ public class MachinePlayer extends Player {
       if(score > a){
         bestMove.score = score;
         bestMove.move = moves[i];
+        a = score;
       }
     }
 
@@ -135,7 +155,7 @@ public class MachinePlayer extends Player {
       return bestMove;
     }
     if(searchDepth == 0){
-      bestMove.score = g.evaluate();
+      bestMove.score = g.evaluate(color);
       return bestMove;
     }
     Move[] moves = g.validMoves(color);
@@ -152,6 +172,7 @@ public class MachinePlayer extends Player {
       if(score < b){
         bestMove.score = score;
         bestMove.move = moves[i];
+        b = score;
       }
     }
     return bestMove;
