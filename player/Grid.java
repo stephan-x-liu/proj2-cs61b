@@ -473,6 +473,7 @@ public class Grid{
         }
       }
     }
+    int networkEncourage = 10*maxNetworkLength(friendly);
     int multiplier = getGoalZones(friendly);
     int emultiplier = getGoalZones(enemy);
     return multiplier*(fComputedPotential+eComputedPotential)+emultiplier*(fComputedNetwork+eComputedNetwork);
