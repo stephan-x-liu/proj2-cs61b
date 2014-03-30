@@ -24,7 +24,7 @@ public class MachinePlayer extends Player {
   public MachinePlayer(int color, int searchDepth) {
     this.color = color;
     grid = new Grid();
-    this.searchDepth = searchDepth;
+    this.searchDepth = 1;
     opponent = (color + 1)%2;
   }
 
@@ -112,7 +112,6 @@ public class MachinePlayer extends Player {
     if(searchDepth == 0){
       g.updateNetworkList();
       bestMove.score = g.evaluate(color);
-      System.out.println("Best move score: "+bestMove.score);
       return bestMove;
     }
 
@@ -144,7 +143,6 @@ public class MachinePlayer extends Player {
     }
     if(searchDepth == 0){
       bestMove.score = g.evaluate(color);
-      System.out.println("(Worst) Best move score: "+bestMove.score);
       return bestMove;
     }
     Move[] moves = g.validMoves(color);
