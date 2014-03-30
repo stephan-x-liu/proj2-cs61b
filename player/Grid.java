@@ -95,16 +95,6 @@ public class Grid{
  		return g;
  	}
 
- 	// public int[][] board(){
- 	// 	int[][] temp = new int[DIMENSION][DIMENSION];
- 	// 	for(int i = 0; i < DIMENSION; i ++){
-		// 	for(int j = 0; j < DIMENSION; j++){
-		// 		temp[i][j] = board[i][j].getPiece();
-		// 	}
-		// }
-		// return temp;
- 	// }
-
 	public Square get(int x, int y){
 		try {
 			return board[x][y];
@@ -131,6 +121,40 @@ public class Grid{
 			return ;
 		}
 
+	}
+
+	public int getGoalZones(int color){
+		int goals = 0;
+		if (color==BLACK){
+			for (int x0 = 0; x0 < DIMENSION; x0++){
+				if (get(x0,0).getPiece() == BLACK){
+					goals++;
+					break;
+				}
+			}
+			for (int x7 = 0; x7 < DIMENSION; x7++){
+				if (get(x7,7).getPiece() == BLACK){
+					goals++;
+					break;
+				}
+			}
+			return goals;
+		}
+		else{
+			for (int y0 = 0; y0 < DIMENSION; y0++){
+				if (get(0,y0).getPiece() == WHITE){
+					goals++;
+					break;
+				}
+			}
+			for (int y7 = 0; y7 < DIMENSION; y7++){
+				if (get(7,y7).getPiece() == WHITE){
+					goals++;
+					break;
+				}
+			}
+			return goals;
+		}
 	}
 
 	public void makeMove(Move move, int color){
@@ -601,29 +625,29 @@ public class Grid{
 	}
 	
 
-	public static void main(String[] args){
-		Grid g = new Grid();
-		g.set(2,0,BLACK);
-		g.set(6,1,BLACK);
-		g.set(5,4,BLACK);
-		g.set(1,7,BLACK);
-		g.set(2,1,BLACK);
-		g.set(1,4,BLACK);
-		g.set(4,7,BLACK);
-		g.set(2,5,BLACK);
-		g.set(0,1,WHITE);
-		g.set(0,2,WHITE);
-		g.set(0,4,WHITE);
-		g.set(2,2,WHITE);
-		g.set(2,4,WHITE);
-		g.set(0,6,WHITE);
-		g.set(2,6,WHITE);
-		g.set(4,4,WHITE);
+	// public static void main(String[] args){
+	// 	Grid g = new Grid();
+	// 	g.set(2,0,BLACK);
+	// 	g.set(6,1,BLACK);
+	// 	g.set(5,4,BLACK);
+	// 	//g.set(1,7,BLACK);
+	// 	g.set(2,1,BLACK);
+	// 	g.set(1,4,BLACK);
+	// 	//g.set(4,7,BLACK);
+	// 	g.set(2,5,BLACK);
+	// 	g.set(1,1,WHITE);
+	// 	g.set(1,2,WHITE);
+	// 	g.set(1,4,WHITE);
+	// 	g.set(2,2,WHITE);
+	// 	g.set(3,4,WHITE);
+	// 	g.set(1,6,WHITE);
+	// 	g.set(2,6,WHITE);
+	// 	g.set(4,4,WHITE);
 
-		System.out.println(g.networkLength(g.get(2,0)));
-		System.out.println(g.maxNetworkLength(BLACK));
-		System.out.println(g.maxNetworkLength(WHITE));
-		System.out.println(g.simpleToString());
-	}
+	// 	System.out.println(g.simpleToString());
+
+	// 	System.out.println(g.getGoalZones(WHITE));
+	// 	System.out.println(g.getGoalZones(BLACK));
+	// }
 
 }

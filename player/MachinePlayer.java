@@ -74,7 +74,6 @@ public class MachinePlayer extends Player {
       return false;
     } else {
       grid.makeMove(m, this.opponent);
-<<<<<<< HEAD
       // if (color==BLACK){
       //   System.out.println("WHITE MOVE!");
       // }
@@ -83,18 +82,6 @@ public class MachinePlayer extends Player {
       // }
       // System.out.println(grid);
 
-=======
-      if (color==BLACK){
-        System.out.println("WHITE MOVE!");
-      }
-      else {
-        System.out.println("BLACK MOVE!");
-      }
-      //System.out.println(grid);
-      for (Square a: grid.whiteSquares){
-        System.out.println(a);
-      }
->>>>>>> 2f44189dc6251fc57603c607e9c7bafd0e51bbc2
       return true;
     }
   }
