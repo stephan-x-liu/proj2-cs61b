@@ -53,11 +53,11 @@ public class MachinePlayer extends Player {
     else {
       System.out.println("WHITE MOVE!");
     }
-    System.out.println(grid);
+    //System.out.println(grid);
 
-    // for (Square a: grid.blackSquares){
-    //   System.out.println(a);
-    // }
+    for (Square a: grid.blackSquares){
+      System.out.println(a);
+    }
 
     return bestMove.move;
   
@@ -79,10 +79,10 @@ public class MachinePlayer extends Player {
       else {
         System.out.println("BLACK MOVE!");
       }
-      System.out.println(grid);
-      // for (Square a: grid.whiteSquares){
-      //   System.out.println(a);
-      // }
+      //System.out.println(grid);
+      for (Square a: grid.whiteSquares){
+        System.out.println(a);
+      }
       return true;
     }
   }

@@ -173,6 +173,10 @@ public class Square{
     return whiteNetworks/2;
   }
 
+  public boolean samePlace(Square s){
+    return s.position()[0] == x && s.position()[1]==y;
+  }
+
   /**
   *  Finds closest piece in given direction.
   *  @param dir is a length 2 integer array defining direction.
@@ -180,11 +184,11 @@ public class Square{
   *   @return null if it hits the edge of the Grid.
   **/
   public Square getInDirection(int[] dir){
+    if(grid.get(x+dir[0],y+dir[1])==null){
+      return null;
+    }
     if(grid.get(x+dir[0],y+dir[1]).hasPiece()){
       return grid.get(x+dir[0],y+dir[1]);
-    }
-    else if(grid.get(x+dir[0],y+dir[1])==null){
-      return null;
     }
     else{
       return grid.get(x+dir[0],y+dir[1]).getInDirection(dir);

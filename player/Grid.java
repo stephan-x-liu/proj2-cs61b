@@ -318,6 +318,49 @@ public class Grid{
     return -4* count*count;
   }
 
+  public int networkLength(Square current){
+  	Square[] network = new Square[10];
+  	int length = 0;
+  	int[] temp = {0,0};
+  	return networkLengthHelper(current,network,length,temp);
+  }
+
+  private int networkLengthHelper(Square current, Square[] network, int length, int[] prev_dir){
+  	int num_connects = 0;
+  	Square[] connections = new Square[8];
+  	int[][] dirConnection = new int[8][2];
+  	for(int[] direction : DIRECTIONS){
+  		Square temp = current.getInDirection(direction);
+  		if(temp!=null&&temp.getPiece()==current.getPiece()){
+  			boolean already_connected = false;
+  			for(Square prev: network){
+  				if(prev!= null && temp.samePlace(prev)){
+  					already_connected = true;
+  				}
+  			}
+  			System.out.println(already_connected);
+  			if(!already_connected&&(prev_dir[0]!=direction[0]||prev_dir[1]!=direction[1])){
+	  			connections[num_connects] = temp;
+	  			dirConnection[num_connects] = direction;
+	  			num_connects++;
+	  		}
+  		}
+  	}
+  	if(num_connects==0){
+  		return length;
+  	}
+  	int score = 0;
+  	for(int i = 0; i< num_connects; i++){
+  		network[length] = current;
+  		int s = networkLengthHelper(connections[i],network,length+1, dirConnection[i]);
+  		if(s>score){
+  			score=s;
+  		}
+  	}
+  	return score;
+
+  }
+
 
 
   public int evaluate(int friendly){
@@ -538,34 +581,26 @@ public class Grid{
 	}
 	
 
-	// public static void main(String[] args){
-	// 	Grid g = new Grid();
-	// 	g.set(1,5,WHITE);
-	// 	g.set(6,3,BLACK);
-	// 	g.set(6,4,WHITE);
-	// 	g.set(3,6,BLACK);
-	// 	g.set(0,5,WHITE);
-	// 	g.set(0,3,BLACK);
-	// 	g.set(0,4,WHITE);
-	// 	g.set(0,6,BLACK);
-	// 	g.set(2,5,WHITE);
-	// 	g.set(2,3,BLACK);
-	// 	g.set(2,4,WHITE);
-	// 	g.set(2,6,BLACK);
-	// 	g.set(4,5,WHITE);
-	// 	g.set(4,3,BLACK);
-	// 	g.set(4,4,WHITE);
-	// 	g.set(4,6,BLACK);
-	// 	g.set(7,5,WHITE);
-	// 	g.set(7,3,BLACK);
-	// 	g.set(7,4,WHITE);
-	// 	g.set(7,6,BLACK);
-	// 	System.out.println(g);
-	// 	Grid a = g.cloneGrid();
-	// 	System.out.println(a);
+	public static void main(String[] args){
+		Grid g = new Grid();
+		g.set(2,0,BLACK);
+		g.set(6,1,BLACK);
+		g.set(5,4,BLACK);
+		g.set(1,7,BLACK);
+		g.set(2,1,BLACK);
+		g.set(1,4,BLACK);
+		g.set(4,7,BLACK);
+		g.set(2,5,BLACK);
+		g.set(0,1,WHITE);
+		g.set(0,2,WHITE);
+		g.set(0,4,WHITE);
+		g.set(2,2,WHITE);
+		g.set(2,4,WHITE);
+		g.set(0,6,WHITE);
+		g.set(2,6,WHITE);
+		g.set(4,4,WHITE);
 
-	// 	System.out.println(g.add);
-	// 	System.out.println(a.add);
-	// }
+		System.out.println(g.networkLength(g.get(2,0)));
+	}
 
 }
