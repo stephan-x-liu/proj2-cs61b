@@ -423,7 +423,8 @@ public class Grid{
   		}
   	}
   	if(num_connects==0){
-  		Network temp = new Network(network,length);
+  		network[length] = current;
+  		Network temp = new Network(network,length+1);
   		return temp;
   	}
   	int score = 0;
@@ -662,37 +663,37 @@ public class Grid{
 	}
 	
 
-	// public static void main(String[] args){
-	// 	Grid g = new Grid();
-	// 	g.set(6,3,BLACK);
-	// 	g.set(6,7,BLACK);
-	// 	g.set(6,6,BLACK);
-	// 	g.set(4,5,BLACK);
-	// 	g.set(3,4,BLACK);
-	// 	g.set(4,1,BLACK);
-	// 	g.set(6,1,BLACK);
-	// 	g.set(5,3,BLACK);
-	// 	g.set(1,2,BLACK);
-	// 	g.set(4,0,BLACK);
-	// 	g.set(4,4,WHITE);
-	// 	g.set(1,5,WHITE);
-	// 	g.set(5,2,WHITE);
-	// 	g.set(6,5,WHITE);
-	// 	g.set(0,2,WHITE);
-	// 	g.set(7,1,WHITE);
-	// 	g.set(3,6,WHITE);
-	// 	g.set(2,3,WHITE);
-	// 	g.set(3,1,WHITE);
-	// 	g.set(7,3,WHITE);
+	public static void main(String[] args){
+		Grid g = new Grid();
+		g.set(6,3,BLACK);
+		g.set(6,7,BLACK);
+		g.set(6,6,BLACK);
+		g.set(4,5,BLACK);
+		g.set(3,4,BLACK);
+		g.set(4,1,BLACK);
+		g.set(6,1,BLACK);
+		g.set(5,3,BLACK);
+		g.set(1,2,BLACK);
+		g.set(4,0,BLACK);
+		g.set(4,4,WHITE);
+		g.set(1,5,WHITE);
+		g.set(5,2,WHITE);
+		g.set(6,5,WHITE);
+		g.set(0,2,WHITE);
+		g.set(7,1,WHITE);
+		g.set(3,6,WHITE);
+		g.set(2,3,WHITE);
+		g.set(3,1,WHITE);
+		g.set(7,3,WHITE);
 
-	// 	System.out.println(g.simpleToString());
-	// 	System.out.println(g.networkLength(g.get(4,0)));
+		System.out.println(g.simpleToString());
+		System.out.println(g.networkLength(g.get(4,0)));
 
-	// 	System.out.println(g.maxNetworkLength(BLACK));
-	// 	System.out.println(g.maxNetworkLength(WHITE));
-	// 	System.out.println(g.hasWinningNetwork(BLACK));
-	// 	System.out.println(g.hasWinningNetwork(WHITE));
-	// }
+		System.out.println(g.maxNetworkLength(BLACK));
+		System.out.println(g.maxNetworkLength(WHITE));
+		System.out.println(g.hasWinningNetwork(BLACK));
+		System.out.println(g.hasWinningNetwork(WHITE));
+	}
 }
 
 class Network{
