@@ -34,15 +34,6 @@ public class MachinePlayer extends Player {
     
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
 
-    // if (!grid.isValidMove(bestMove.move, color)){
-    //   System.out.println("INVALID MACHINE PLAYER MOVE! " + bestMove.move);
-    //   System.out.println("Valid Moves:");
-    //   Move[] moves = grid.validMoves(color);
-    //   for (Move a: moves){
-    //     System.out.println(a);
-    //   }
-    // }
-
     grid.makeMove(bestMove.move, color);
 
     if (color==BLACK){
@@ -51,14 +42,7 @@ public class MachinePlayer extends Player {
     else {
       System.out.println("WHITE MOVE!");
     }
-    //System.out.println(grid);
-
-    for (Square a: grid.blackSquares){
-      //System.out.println(a);
-    }
-    for (Square a: grid.whiteSquares){
-      //System.out.println(a);
-    }
+    System.out.println(grid.simpleToString());
 
     return bestMove.move;
   
@@ -73,13 +57,13 @@ public class MachinePlayer extends Player {
       return false;
     } else {
       grid.makeMove(m, this.opponent);
-      // if (color==BLACK){
-      //   System.out.println("WHITE MOVE!");
-      // }
-      // else {
-      //   System.out.println("BLACK MOVE!");
-      // }
-      // System.out.println(grid);
+      if (color==BLACK){
+        System.out.println("WHITE MOVE!");
+      }
+      else {
+        System.out.println("BLACK MOVE!");
+      }
+      System.out.println(grid.simpleToString());
 
       return true;
     }
