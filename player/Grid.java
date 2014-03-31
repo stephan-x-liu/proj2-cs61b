@@ -355,7 +355,7 @@ public class Grid{
   }
 
   public boolean hasWinningNetwork(int color){
-  	int goal1 = 0;
+  	int goal1 = 1;
   	int goal2 = 0;
   	if(color == BLACK){
   		for(int i = 1; i < DIMENSION-1; i++){
