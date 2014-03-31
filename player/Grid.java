@@ -388,9 +388,6 @@ public class Grid{
 
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(0,i));
-  			for(Square s : n.network){
-				System.out.println(s);
-			}
   			if(n.length>=6){
   				for(int k = 1; k < n.length; k++){
   					if(n.network[k].position()[0]==7)
@@ -427,21 +424,27 @@ public class Grid{
   	return n.length;
   }
 
+  private Square[] copyNetworkArray(Square[] network){
+  	Square[] temp = new Square[10];
+  	for(int i = 0; i<10; i++){
+  		temp[i] = network[i];
+  	}
+  	return temp;
+  }
 
 
   private Network findNetwork(Square current, Square[] network, int length, int[] prev_dir){
   	network[length] = current;
   	length++;
+  	
   	Square[] connections = current.connections(prev_dir);
-  	int score = 0;
   	Network longest = new Network(network,length);
   	for(int i = 0; i < connections.length; i++){
   		if(connections[i]!=null && connections[i].alreadyInNetwork(network)==false){
-  			Network s = findNetwork(connections[i],network,length, DIRECTIONS[i]);
-	  		if(s!=null && s.length>=score){
-	  			score=s.length;
-	  			longest = s;
-  			}
+  			Network s = findNetwork(connections[i],copyNetworkArray(network),length, DIRECTIONS[i]);
+	  		if(s.length>longest.length){
+	  			longest = new Network(s.network,s.length);
+	  		}
   		}	
   	}
   	return longest;
@@ -681,33 +684,39 @@ public class Grid{
 		return s;
 	}
 	
+	public static void printSquares(Square[] squares){
+		for(Square s: squares){
+			System.out.println(s);
+		}
+	}
 
 	public static void main(String[] args){
 		Grid g = new Grid();
-		g.set(3,2,BLACK);
-		g.set(3,1,BLACK);
-		g.set(6,2,BLACK);
-		g.set(2,5,BLACK);
-		g.set(4,6,BLACK);
-		g.set(4,5,BLACK);
+		g.set(1,1,BLACK);
+		g.set(5,6,BLACK);
+		g.set(4,1,BLACK);
+		g.set(4,0,BLACK);
 		g.set(1,0,BLACK);
-		g.set(6,0,BLACK);
-		g.set(1,3,BLACK);
-		g.set(6,0,BLACK);
+		g.set(2,5,BLACK);
+		g.set(6,6,BLACK);
+		g.set(6,2,BLACK);
+		//g.set(1,3,BLACK);
+		//g.set(6,0,BLACK);
 		g.set(0,1,WHITE);
-		g.set(4,3,WHITE);
-		g.set(3,6,WHITE);
-		g.set(5,5,WHITE);
-		g.set(1,5,WHITE);
-		g.set(2,2,WHITE);
-		g.set(3,5,WHITE);
-		g.set(7,5,WHITE);
-		g.set(0,4,WHITE);
-		g.set(4,2,WHITE);
+		g.set(2,1,WHITE);
+		g.set(1,4,WHITE);
+		g.set(3,3,WHITE);
+		g.set(0,3,WHITE);
+		g.set(3,4,WHITE);
+		g.set(5,3,WHITE);
+		g.set(7,6,WHITE);
+		// g.set(0,4,WHITE);
+		// g.set(4,2,WHITE);
 
 		System.out.println(g.simpleToString());
+		printSquares(g.get(5,3).connections(Square.LEFT));
 		Network temp = g.getNetwork(g.get(0,1));
-		Network temp2 = g.getNetwork(g.get(0,4));
+
 		System.out.println(g.hasWinningNetwork(WHITE));
 
 	}
