@@ -35,7 +35,7 @@ def simulate(i):
     return NETWORK_ERROR, output
 
 # Start thread pool
-pool = Pool(processes=15)
+pool = Pool(processes=10)
 
 # Get num iterations
 num_simulations = int(sys.argv[1])
@@ -61,13 +61,14 @@ def show_results():
     num_results = len(async_results)
     for i in range(num_results):
         result = async_results.pop(0).get()
-        output_str+="\n\n\n"+result[1]
         if result[0] == NETWORK_WIN:
             wins += 1
         elif result[0] == NETWORK_LOSS:
             losses += 1
+            output_str+="\n\n\n"+result[1]
         else:
             errors += 1
+            output_str+="\n\n\n"+result[1]
     print ("TOTAL: %s, Wins: %s, Losses: %s, Errors: %s" % tuple(str(i) for i in [sys.argv[1], wins, losses, errors]))
 
     if filename:
