@@ -362,7 +362,7 @@ public class Grid{
   			Network n = getNetwork(get(i,0));
 
   			if(n.length>=6){
-  				for(int k = 5; k < n.length; k++){
+  				for(int k = 1; k < n.length; k++){
   					if(n.network[k].position()[1]==7)
   						goal2++;
   				}
@@ -377,7 +377,7 @@ public class Grid{
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(0,i));
   			if(n.length>=6){
-  				for(int k = 5; k < n.length; k++){
+  				for(int k = 1; k < n.length; k++){
   					if(n.network[k].position()[0]==7)
   						goal2++;
   				}
