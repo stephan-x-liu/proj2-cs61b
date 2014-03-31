@@ -9,7 +9,7 @@
 #	the number of games it has completed each time it runs a game.
 #	It's h if you're running 1000 games, for example, and you
 #	want to see how close it is to being done. In this scenario,
-#	use 'python run_games.py 5 n'
+#	use 'python run_games.py 1000 n'
 
 import os
 import sys
