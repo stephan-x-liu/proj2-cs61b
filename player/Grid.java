@@ -201,9 +201,26 @@ public class Grid{
 		}
 		else {
 			Square[][] squares = new Square[3][10];
+			Network[] goals = goalNetworks(color);
+			Network longest = null;
 			squares[1] = whiteSquares;
 			squares[0] = blackSquares;
-			for (Square add: squares[color]){
+			int count = 0;
+			Square[] movable = new Square[10];
+			for(Square s: squares[color]){
+				boolean inNetwork = false;
+				for(Network n: goals){
+					if(n!=null && (longest==null || n.length>longest.length))
+						longest = n;
+				}
+			}
+			for(Square s: squares[color]){
+				if(s.alreadyInNetwork(longest.network)==false){
+					movable[count] = s;
+					count++;
+				}
+			}
+			for (Square add: movable){
 				if (add != null){
 					for (int x = 0; x < DIMENSION; x++){
 						for (int y = 0; y < DIMENSION && moveIndex < 300; y++){
@@ -219,6 +236,7 @@ public class Grid{
 			}
 		return validMoves;
 	}
+
 
 	public boolean isValidMove(Move move, int color){
 		if(move == null){
@@ -317,7 +335,7 @@ public class Grid{
 
   private int eComputePotential(int count){
     //Negative because it's bad, bias towards overlap because overlap bad.
-    return -1* count*count;
+    return -2* count*count;
   }
 
   private int eComputeNetwork(int count){
@@ -344,6 +362,28 @@ public class Grid{
   		}
   	}
   	return length;
+  }
+
+  public Network[] goalNetworks(int color){
+  	Network[] temp = new Network[10];
+  	int count = 0;
+  	if(color==WHITE){
+  		for(int i = 1; i<DIMENSION-1; i++){
+  			if(get(0,i).getPiece()==WHITE){
+  				temp[count] = getNetwork(get(0,i));
+  				count++;
+  			}
+  		}
+  	}
+  	else{
+  		for(int i = 1; i<DIMENSION-1; i++){
+  			if(get(i,0).getPiece()==BLACK){
+  				temp[count] = getNetwork(get(i,0));
+  				count++;
+  			}
+  		}
+  	}
+  	return temp;
   }
 
   public Network getNetwork(Square current){
@@ -438,6 +478,14 @@ public class Grid{
   	length++;
   	
   	Square[] connections = current.connections(prev_dir);
+  	if(current.getPiece()==WHITE && (current.position()[1]==0 || current.position()[1]==7)){
+  		connections[0]=null;
+  		connections[1]=null;
+  	}
+  	if(current.getPiece()==BLACK && (current.position()[0]==0 || current.position()[0]==7)){
+  		connections[3]=null;
+  		connections[4]=null;
+  	}
   	Network longest = new Network(network,length);
   	for(int i = 0; i < connections.length; i++){
   		if(connections[i]!=null && connections[i].alreadyInNetwork(network)==false){
@@ -449,6 +497,49 @@ public class Grid{
   	}
   	return longest;
 
+  }
+
+  public int squaresInGoalZones(int color){
+  	int count = 0;
+  	if (color==BLACK){
+			for (int x0 = 0; x0 < DIMENSION; x0++){
+				if (get(x0,0).getPiece() == BLACK){
+					count++;
+				}
+			}
+			if(count>2){
+				return 0;
+			}
+			count = 0;
+			for (int x7 = 0; x7 < DIMENSION; x7++){
+				if (get(x7,7).getPiece() == BLACK){
+					count++;
+				}
+			}
+			if(count>2){
+				return 0;
+			}
+		}
+		else{
+			for (int y0 = 0; y0 < DIMENSION; y0++){
+				if (get(0,y0).getPiece() == WHITE){
+					count++;
+				}
+			}
+			if(count>2){
+				return 0;
+			}
+			count = 0;
+			for (int y7 = 0; y7 < DIMENSION; y7++){
+				if (get(7,y7).getPiece() == WHITE){
+					count++;
+				}
+			}
+			if(count>2){
+				return 0;
+			}
+		}
+		return 1;
   }
 
 
@@ -485,10 +576,28 @@ public class Grid{
         }
       }
     }
+    Network[] fNetworks = goalNetworks(friendly);
+    Network[] eNetworks = goalNetworks(enemy);
+    int i = 0;
+    int flongest = 0;
+    int elongest = 0;
+    while(fNetworks[i]!=null){
+    	if(flongest<fNetworks[i].length){
+    		flongest=fNetworks[i].length;
+    	}
+    	i++;
+    }
+    i = 0;
+    while(eNetworks[i]!=null){
+    	if(elongest<eNetworks[i].length){
+    		elongest=eNetworks[i].length;
+    	}
+    	i++;
+    }
     int networkEncourage = 10*maxNetworkLength(friendly);
-    int multiplier = getGoalZones(friendly);
+    int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly);
     int emultiplier = getGoalZones(enemy);
-    return multiplier*(fComputedPotential+fComputedNetwork)+emultiplier*(eComputedPotential+eComputedNetwork);
+    return multiplier*flongest*(fComputedPotential+fComputedNetwork)+emultiplier*elongest*(eComputedPotential+eComputedNetwork);
         
     //We make seperate functions so we can change the algorithm for each.
 
