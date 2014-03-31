@@ -99,6 +99,30 @@ public class Square{
     return !(piece == NONE);
   }
 
+  public Square[] connections(int[] dir){
+    Square[] temp = new Square[8];
+    int connect = 0;
+    for(int[] d : DIRECTIONS){
+      if((d[0]!=dir[0] || d[1]!=dir[1])){
+        if(getInDirection(d)!=null&&getInDirection(d).getPiece()==piece)
+          temp[connect] = getInDirection(d);
+        else
+          temp[connect] = null;
+      }
+      connect++;
+    }
+    return temp;
+  }
+
+  public boolean alreadyInNetwork(Square[] network){
+    for(Square s: network){
+      if(s!=null && this.samePlace(s)){
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
   *  Gets a Square in an adjacdent direction
   *  @param dir is a length 2 integer array defining direction.

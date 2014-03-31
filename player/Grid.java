@@ -361,12 +361,6 @@ public class Grid{
   	if(color == BLACK){
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(i,0));
-  			for(int j = 0; j < n.length; j++){
-				for(int k = i+1; k<n.length; k++){
-					if(n.network[j].samePlace(n.network[k]))
-						return false;
-				}
-			}
   			if(n.length>=6){
   				for(int k = 1; k < n.length; k++){
   					if(n.network[k].position()[1]==7)
@@ -418,50 +412,31 @@ public class Grid{
   	return n.length;
   }
 
+
+
   private Network findNetwork(Square current, Square[] network, int length, int[] prev_dir){
-  	length = 0;
-  	while(network[length]!=null){
-  		length++;
-  	}
   	network[length] = current;
   	length++;
-  	int num_connects = 0;
-  	Square[] connections = new Square[8];
-  	int[][] dirConnection = new int[8][2];
-  	for(int[] direction : DIRECTIONS){
-  		Square temp = current.getInDirection(direction);
-  		if(temp!=null&&temp.getPiece()==current.getPiece()){
-  			boolean already_connected = false;
-
-  			for(Square prev: network){
-  				if(prev!= null && temp.samePlace(prev)){
-  					already_connected = true;
-  				}
-  			}
-  			if(already_connected==false&&(prev_dir[0]!=direction[0]||prev_dir[1]!=direction[1])){
-	  			connections[num_connects] = temp;
-	  			dirConnection[num_connects] = direction;
-	  			num_connects++;
-	  		}
-  		}
-  	}
-  	if(num_connects==0){
-  		Network temp = new Network(network,length);
-  		return temp;
-  	}
+  	Square[] connections = current.connections(prev_dir);
   	int score = 0;
   	Network longest = null;
-  	for(int i = 0; i< num_connects; i++){
-  		Network s = findNetwork(connections[i],network,length, dirConnection[i]);
-  		if(s!=null && s.length>=score){
-  			score=s.length;
-  			longest = s;
-  		}
+  	for(int i = 0; i < connections.length; i++){
+  		if(connections[i]!=null && connections[i].alreadyInNetwork(network)==false){
+  			Network s = findNetwork(connections[i],network,length, DIRECTIONS[i]);
+	  		if(s!=null && s.length>=score){
+	  			score=s.length;
+	  			longest = s;
+  			}
+  		}	
   	}
-  	
+  	if(score==0){
+  		return new Network(network,length);
+  	}
   	return longest;
 
   }
+
+
 
 
 
@@ -715,11 +690,11 @@ public class Grid{
 		g.set(5,2,WHITE);
 
 		System.out.println(g.simpleToString());
-		System.out.println(g.hasWinningNetwork(WHITE));
 		Network temp = g.getNetwork(g.get(0,1));
 		for(Square s : temp.network){
 			System.out.println(s);
 		}
+		System.out.println(g.hasWinningNetwork(WHITE));
 
 	}
 }
