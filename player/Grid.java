@@ -362,10 +362,12 @@ public class Grid{
   			Network n = getNetwork(get(i,0));
 
   			if(n.length>=6){
-  				for(int k = 0; k < n.length; k++){
+  				for(int k = 5; k < n.length; k++){
   					if(n.network[k].position()[1]==7)
   						goal2++;
-  					if(n.network[k].position()[1]==0)
+  				}
+  				for(int j = 1; j < n.length; j++){
+  					if(n.network[j].position()[1]==0)
   						goal1++;
   				}
   			}
@@ -375,10 +377,12 @@ public class Grid{
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(0,i));
   			if(n.length>=6){
-  				for(int k = 0; k < n.length; k++){
+  				for(int k = 5; k < n.length; k++){
   					if(n.network[k].position()[0]==7)
   						goal2++;
-  					if(n.network[k].position()[0]==0)
+  				}
+  				for(int j = 1; j < n.length; j++){
+  					if(n.network[j].position()[0]==0)
   						goal1++;
   				}
   			}
@@ -660,26 +664,22 @@ public class Grid{
 
 	public static void main(String[] args){
 		Grid g = new Grid();
-		g.set(6,3,BLACK);
-		g.set(6,7,BLACK);
-		g.set(6,6,BLACK);
-		g.set(4,5,BLACK);
-		g.set(3,4,BLACK);
-		g.set(4,1,BLACK);
-		g.set(6,1,BLACK);
-		g.set(5,3,BLACK);
 		g.set(1,2,BLACK);
-		g.set(4,0,BLACK);
-		g.set(4,4,WHITE);
-		g.set(1,5,WHITE);
-		g.set(5,2,WHITE);
-		g.set(6,5,WHITE);
-		g.set(0,2,WHITE);
-		g.set(7,1,WHITE);
+		g.set(2,5,BLACK);
+		g.set(3,1,BLACK);
+		g.set(3,5,BLACK);
+		g.set(5,1,BLACK);
+		g.set(5,5,BLACK);
+		g.set(6,0,BLACK);
+		g.set(6,4,BLACK);
+		g.set(0,1,WHITE);
+		g.set(0,4,WHITE);
+		g.set(1,3,WHITE);
+		g.set(2,1,WHITE);
 		g.set(3,6,WHITE);
-		g.set(2,3,WHITE);
-		g.set(3,1,WHITE);
-		g.set(7,3,WHITE);
+		g.set(4,1,WHITE);
+		g.set(4,3,WHITE);
+		g.set(7,4,WHITE);
 
 		System.out.println(g.simpleToString());
 		System.out.println(g.networkLength(g.get(4,0)));
