@@ -8,8 +8,8 @@ package player;
 
 public class Square{
   
-  //Set to "simple" for short toString, "location" for pieces with coordinates, and "complex" for debug info.
-  private static final String DEBUG = "complex";
+  //Set to "simple" for short toString, "locations" for pieces with coordinates, and "complex" for debug info.
+  private static final String DEBUG = "locations";
   
   static final int NONE = 2;
   static final int WHITE = 1;
