@@ -36,9 +36,6 @@ public class MachinePlayer extends Player {
 
     // if (!grid.isValidMove(bestMove.move, color)){
     //   System.out.println("INVALID MACHINE PLAYER MOVE! " + bestMove.move);
-    //   if (bestMove.move != null){
-    //     System.out.println(bestMove.move.error);
-    //   }
     //   System.out.println("Valid Moves:");
     //   Move[] moves = grid.validMoves(color);
     //   for (Move a: moves){
@@ -73,7 +70,6 @@ public class MachinePlayer extends Player {
   // player.  This method allows your opponents to inform you of their moves.
   public boolean opponentMove(Move m) {
     if (!grid.isValidMove(m, this.opponent)){
-      System.out.println("OPPONENT INVALID MOVE: " + m.error);
       return false;
     } else {
       grid.makeMove(m, this.opponent);

@@ -222,34 +222,28 @@ public class Grid{
 
 	public boolean isValidMove(Move move, int color){
 		if(move == null){
-			//move.error=("INVALID: null move");
 			return false;
 		}
 		if (get(move.x1, move.y1).hasPiece()){
-			move.error=("INVALID: has piece at" + move.x1 + ","+move.y1 + " " + get(move.x1, move.y1).getPiece());
 			return false;
 		}
 		if (move.x1 == 0){ //checking four corners 
 			if (move.y1 == 0 || move.y1 == 7){
-				move.error=("INVALID: corner");
 				return false;
 			}
 		}
 		if (move.y1 == 0){
 			if (move.x1 == 0 || move.x1 == 7){
-				move.error=("INVALID: corner");
 				return false;
 			}
 		}
 		if (color == WHITE){ //checking opponent goals
 			if (move.y1 == 0 || move.y1 == 7){
-				move.error=("INVALID: opponent goal");
 				return false;
 			}
 		}
 		if (color == BLACK){
 			if (move.x1 == 0 || move.x1 == 7){
-				move.error=("INVALID: opponent goal");
 				return false;
 			}
 		}
@@ -259,39 +253,32 @@ public class Grid{
 				return false;
 			}
 			if(neighbors[1]!=null){
-				move.error=("INVALID: neighbors");
 				return false;
 			}
 			if (neighbors[0] != null){
 				if (neighbors[0].neighbor(color)[0] != null){
-					move.error=("INVALID: neighbors2");
 					return false;
 				}
 			}
 		}
 		if (move.moveKind==Move.STEP){
 			if (add){
-				move.error=("INVALID: stepped when should add");
 				return false;
 			}
 			if (get(move.x2, move.y2).getPiece() != color){
-				move.error="INVALID: trying to step opponent's piece";
 				return false;
 			}	
 			if (move.x1==move.x2 && move.y1==move.y2){ //stepping to same square
-				move.error=("INVALID: stepping on same square");
 				return false;
 			}
 			get(move.x2, move.y2).removePiece();
 			Square[] neighbors = get(move.x1, move.y1).neighbor(color);
 			if(neighbors[1]!=null){
-				move.error=("INVALID: neighbors");
 				get(move.x2, move.y2).setPiece(color);
 				return false;
 			}
 			if (neighbors[0] != null){
 				if (neighbors[0].neighbor(color)[0] != null){
-					move.error=("INVALID: neighbors2");
 					get(move.x2, move.y2).setPiece(color);
 					return false;
 				}
