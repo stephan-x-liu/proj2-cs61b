@@ -44,6 +44,7 @@ num_simulations = int(sys.argv[1])
 async_results = []
 
 #File name
+filename = None
 if len(sys.argv) > 2:
     filename = sys.argv[2]
 
