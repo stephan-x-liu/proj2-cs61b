@@ -16,6 +16,7 @@ def simulate(i):
     print "---- Running iteration %s ----" % str(i)
     output = os.popen('java Network -q machine random').read()
     if "MachinePlayer returned a null move, quitting." in output:
+        print(output)
         return NETWORK_ERROR
     if ">>>> MachinePlayer <<<< WINS!" in output:
         return NETWORK_WIN

@@ -370,6 +370,11 @@ public class Grid{
   					if(n.network[j].position()[1]==0)
   						goal1++;
   				}
+  				if(goal1==1 && goal2==1){
+  					return true;
+  				}
+  				goal1=1;
+  				goal2=0;
   			}
   		}
   	}
@@ -385,10 +390,15 @@ public class Grid{
   					if(n.network[j].position()[0]==0)
   						goal1++;
   				}
+  				if(goal1==1 && goal2==1){
+  					return true;
+  				}
+  				goal1=1;
+  				goal2=0;
   			}
   		}
   	}
-  	return goal1==1 && goal2==1;
+  	return false;
   }
 
 
