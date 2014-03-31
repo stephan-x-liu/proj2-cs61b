@@ -538,7 +538,7 @@ public class Grid{
 				}
 			}
 			if(count>2){
-				return 0;
+				return 2 - count;
 			}
 			count = 0;
 			for (int x7 = 0; x7 < DIMENSION; x7++){
@@ -547,7 +547,7 @@ public class Grid{
 				}
 			}
 			if(count>2){
-				return 0;
+				return 2 - count;
 			}
 		}
 		else{
@@ -557,7 +557,7 @@ public class Grid{
 				}
 			}
 			if(count>2){
-				return 0;
+				return 2 - count;
 			}
 			count = 0;
 			for (int y7 = 0; y7 < DIMENSION; y7++){
@@ -566,7 +566,7 @@ public class Grid{
 				}
 			}
 			if(count>2){
-				return 0;
+				return 2 - count;
 			}
 		}
 		return 1;
@@ -624,10 +624,9 @@ public class Grid{
     	}
     	i++;
     }
-    int networkEncourage = 10*maxNetworkLength(friendly);
     int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly);
     int emultiplier = getGoalZones(enemy);
-    return multiplier*flongest*(fComputedPotential+fComputedNetwork)+emultiplier*elongest*(eComputedPotential+eComputedNetwork);
+    return multiplier*multiplier*flongest*(fComputedPotential+fComputedNetwork)+elongest*(eComputedPotential+eComputedNetwork);
         
     //We make seperate functions so we can change the algorithm for each.
 
