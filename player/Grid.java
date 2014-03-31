@@ -357,6 +357,7 @@ public class Grid{
   public boolean hasWinningNetwork(int color){
   	int goal1 = 1;
   	int goal2 = 0;
+  	int goal3 = 0;
 
   	if(color == BLACK){
   		for(int i = 1; i < DIMENSION-1; i++){
@@ -370,17 +371,26 @@ public class Grid{
   					if(n.network[j].position()[1]==0)
   						goal1++;
   				}
-  				if(goal1==1 && goal2==1){
+  				for(int j = 5; j < n.length; j++){
+  					if(n.network[j].position()[1]==7)
+  						goal3++;
+  				}
+  				if(goal1==1 && goal2==1 && goal3==1){
   					return true;
   				}
   				goal1=1;
   				goal2=0;
+  				goal3=0;
   			}
   		}
   	}
   	else{
+
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(0,i));
+  			for(Square s : n.network){
+				System.out.println(s);
+			}
   			if(n.length>=6){
   				for(int k = 1; k < n.length; k++){
   					if(n.network[k].position()[0]==7)
@@ -390,11 +400,16 @@ public class Grid{
   					if(n.network[j].position()[0]==0)
   						goal1++;
   				}
-  				if(goal1==1 && goal2==1){
+  				for(int j = 5; j < n.length; j++){
+  					if(n.network[j].position()[0]==7)
+  						goal3++;
+  				}
+  				if(goal1==1 && goal2==1 && goal3==1){
   					return true;
   				}
   				goal1=1;
   				goal2=0;
+  				goal3=0;
   			}
   		}
   	}
@@ -419,7 +434,7 @@ public class Grid{
   	length++;
   	Square[] connections = current.connections(prev_dir);
   	int score = 0;
-  	Network longest = null;
+  	Network longest = new Network(network,length);
   	for(int i = 0; i < connections.length; i++){
   		if(connections[i]!=null && connections[i].alreadyInNetwork(network)==false){
   			Network s = findNetwork(connections[i],network,length, DIRECTIONS[i]);
@@ -428,9 +443,6 @@ public class Grid{
 	  			longest = s;
   			}
   		}	
-  	}
-  	if(score==0){
-  		return new Network(network,length);
   	}
   	return longest;
 
@@ -672,28 +684,30 @@ public class Grid{
 
 	public static void main(String[] args){
 		Grid g = new Grid();
-		g.set(5,1,BLACK);
-		g.set(2,0,BLACK);
-		g.set(5,6,BLACK);
-		g.set(3,5,BLACK);
-		g.set(4,0,BLACK);
-		g.set(3,4,BLACK);
-		g.set(6,4,BLACK);
-		g.set(1,1,BLACK);
+		g.set(3,2,BLACK);
+		g.set(3,1,BLACK);
+		g.set(6,2,BLACK);
+		g.set(2,5,BLACK);
+		g.set(4,6,BLACK);
+		g.set(4,5,BLACK);
+		g.set(1,0,BLACK);
+		g.set(6,0,BLACK);
+		g.set(1,3,BLACK);
+		g.set(6,0,BLACK);
 		g.set(0,1,WHITE);
-		g.set(7,4,WHITE);
-		g.set(1,4,WHITE);
+		g.set(4,3,WHITE);
+		g.set(3,6,WHITE);
+		g.set(5,5,WHITE);
+		g.set(1,5,WHITE);
+		g.set(2,2,WHITE);
+		g.set(3,5,WHITE);
+		g.set(7,5,WHITE);
 		g.set(0,4,WHITE);
-		g.set(3,3,WHITE);
-		g.set(0,6,WHITE);
-		g.set(1,2,WHITE);
-		g.set(5,2,WHITE);
+		g.set(4,2,WHITE);
 
 		System.out.println(g.simpleToString());
 		Network temp = g.getNetwork(g.get(0,1));
-		for(Square s : temp.network){
-			System.out.println(s);
-		}
+		Network temp2 = g.getNetwork(g.get(0,4));
 		System.out.println(g.hasWinningNetwork(WHITE));
 
 	}
