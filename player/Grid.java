@@ -368,13 +368,18 @@ public class Grid{
   }
 
   public boolean hasWinningNetwork(int color){
+  	int goal1 = 0;
+  	int goal2 = 0;
   	if(color == BLACK){
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(i,0));
+
   			if(n.length>=6){
-  				for(int k = 5; k < n.length; k++){
+  				for(int k = 0; k < n.length; k++){
   					if(n.network[k].position()[1]==7)
-  						return true;
+  						goal2++;
+  					if(n.network[k].position()[1]==0)
+  						goal1++;
   				}
   			}
   		}
@@ -383,14 +388,16 @@ public class Grid{
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(0,i));
   			if(n.length>=6){
-  				for(int k = 5; k < n.length; k++){
+  				for(int k = 0; k < n.length; k++){
   					if(n.network[k].position()[0]==7)
-  						return true;
+  						goal2++;
+  					if(n.network[k].position()[0]==0)
+  						goal1++;
   				}
   			}
   		}
   	}
-  	return false;
+  	return goal1==1 && goal2==1;
   }
 
 
@@ -476,7 +483,7 @@ public class Grid{
     int networkEncourage = 10*maxNetworkLength(friendly);
     int multiplier = getGoalZones(friendly);
     int emultiplier = getGoalZones(enemy);
-    return multiplier*(fComputedPotential+eComputedPotential)+emultiplier*(fComputedNetwork+eComputedNetwork);
+    return multiplier*(fComputedPotential+fComputedNetwork)+emultiplier*(eComputedPotential+eComputedNetwork);
         
     //We make seperate functions so we can change the algorithm for each.
 
