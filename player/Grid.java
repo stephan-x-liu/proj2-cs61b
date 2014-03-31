@@ -659,15 +659,24 @@ public class Grid{
 			s += "\n";
 		}
 		s += "|=====================================|\n";
-		/*s += "BLACK SQUARES: ";
+		s += "BLACK SQUARES: ";
 		for (Square a: blackSquares){
-			s += "\n"+a;
+			if (a == null){
+				s += "\nnull";
+			}
+			else {
+				s += "\n"+a.simpleToString();
+			}
 		}
 		s += "\n WHITE SQUARES: ";
 		for (Square b: whiteSquares){
-			s += "\n"+b;
-		}*/
-
+			if (b == null){
+				s += "\nnull";
+			}
+			else {
+				s += "\n"+b.simpleToString();
+			}
+		}
 		return s;
 	}
 	

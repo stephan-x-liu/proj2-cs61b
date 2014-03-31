@@ -217,8 +217,8 @@ public class Square{
       return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
     }
   }
-/*
-  public String toString(){
+
+  public String simpleToString(){
     String s = "("+x+","+y+")-";
     if (piece==NONE){
       s+="N";
@@ -231,5 +231,5 @@ public class Square{
     }
     return s;
   }
-  */
+
 }
