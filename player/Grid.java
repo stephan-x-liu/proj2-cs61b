@@ -374,17 +374,17 @@ public class Grid{
 
   private int fComputeNetwork(int count){
     //Weigh it more heavily (2*) with heavy bias for overlap.
-    return 2*count*count;
+    return count*count;
   }
 
   private int eComputePotential(int count){
     //Negative because it's bad, bias towards overlap because overlap bad.
-    return -2* count*count;
+    return -4* count*count;
   }
 
   private int eComputeNetwork(int count){
     //The less networks the better
-    return -4* count*count;
+    return -8* count*count;
   }
 
   public int maxNetworkLength(int color){
@@ -447,24 +447,28 @@ public class Grid{
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(i,0));
   			if(n.length>=6){
-  				for(int k = 1; k < n.length; k++){
+  				for(int k = 1; k<n.length; k++){
   					if(n.network[k].position()[1]==7)
-  						goal2++;
+  						return true;
   				}
-  				for(int j = 1; j < n.length; j++){
-  					if(n.network[j].position()[1]==0)
-  						goal1++;
-  				}
-  				for(int j = 5; j < n.length; j++){
-  					if(n.network[j].position()[1]==7)
-  						goal3++;
-  				}
-  				if(goal1==1 && goal2==1 && goal3==1){
-  					return true;
-  				}
-  				goal1=1;
-  				goal2=0;
-  				goal3=0;
+  				// for(int k = 1; k < n.length; k++){
+  				// 	if(n.network[k].position()[1]==7)
+  				// 		goal2++;
+  				// }
+  				// for(int j = 1; j < n.length; j++){
+  				// 	if(n.network[j].position()[1]==0)
+  				// 		goal1++;
+  				// }
+  				// for(int j = 5; j < n.length; j++){
+  				// 	if(n.network[j].position()[1]==7)
+  				// 		goal3++;
+  				// }
+  				// if(goal1==1 && goal2==1 && goal3==1){
+  				// 	return true;
+  				// }
+  				// goal1=1;
+  				// goal2=0;
+  				// goal3=0;
   			}
   		}
   	}
@@ -473,21 +477,25 @@ public class Grid{
   		for(int i = 1; i < DIMENSION-1; i++){
   			Network n = getNetwork(get(0,i));
   			if(n.length>=6){
-  				for(int k = 1; k < n.length; k++){
+  				for(int k = 1; k<n.length; k++){
   					if(n.network[k].position()[0]==7)
-  						goal2++;
+  						return true;
   				}
-  				for(int j = 1; j < n.length; j++){
-  					if(n.network[j].position()[0]==0)
-  						goal1++;
-  				}
-  				for(int j = 5; j < n.length; j++){
-  					if(n.network[j].position()[0]==7)
-  						goal3++;
-  				}
-  				if(goal1==1 && goal2==1 && goal3==1){
-  					return true;
-  				}
+  				// for(int k = 1; k < n.length; k++){
+  				// 	if(n.network[k].position()[0]==7)
+  				// 		goal2++;
+  				// }
+  				// for(int j = 1; j < n.length; j++){
+  				// 	if(n.network[j].position()[0]==0)
+  				// 		goal1++;
+  				// }
+  				// for(int j = 5; j < n.length; j++){
+  				// 	if(n.network[j].position()[0]==7)
+  				// 		goal3++;
+  				// }
+  				// if(goal1==1 && goal2==1 && goal3==1){
+  				// 	return true;
+  				// }
   				goal1=1;
   				goal2=0;
   				goal3=0;
@@ -523,13 +531,13 @@ public class Grid{
   	Network longest = new Network(network,length);
   	Square[] connections = current.connections(prev_dir);
   	if(current.getPiece()==WHITE && current.position()[0]==0){
+  		connections[2]=null;
   		connections[3]=null;
-  		connections[4]=null;
   	}
 
   	if(current.getPiece()==BLACK && current.position()[1]==0){
+  		connections[0]=null;
   		connections[1]=null;
-  		connections[2]=null;
   	}
   	if(current.position()[1]==7||current.position()[0]==7){
   		return longest;
@@ -633,25 +641,25 @@ public class Grid{
     }
     Network[] fNetworks = goalNetworks(friendly);
     Network[] eNetworks = goalNetworks(enemy);
-    int i = 0;
+
     int flongest = 0;
+    int fgoals = 0;
+    int egoals = 0;
     int elongest = 0;
-    while(fNetworks[i]!=null){
-    	if(flongest<fNetworks[i].length){
-    		flongest=fNetworks[i].length;
-    	}
-    	i++;
+    while(fNetworks[fgoals]!=null){
+    	if(flongest<fNetworks[fgoals].length)
+    		flongest = fNetworks[fgoals].length;
+    	fgoals++;
     }
-    i = 0;
-    while(eNetworks[i]!=null){
-    	if(elongest<eNetworks[i].length){
-    		elongest=eNetworks[i].length;
-    	}
-    	i++;
+
+    while(eNetworks[egoals]!=null){
+    	if(elongest<eNetworks[egoals].length)
+    		elongest = eNetworks[egoals].length;
+    	egoals++;
     }
-    int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly);
-    int emultiplier = getGoalZones(enemy);
-    return multiplier*multiplier*flongest*(fComputedPotential+fComputedNetwork)+elongest*(eComputedPotential+eComputedNetwork);
+    int emultiplier = maxNetworkLength(enemy)*(elongest-1);
+    int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly) *(maxNetworkLength(friendly) + 2*(flongest));
+    return multiplier*(fComputedPotential+fComputedNetwork)+emultiplier*(eComputedPotential+eComputedNetwork);
 
         
     //We make seperate functions so we can change the algorithm for each.
@@ -856,32 +864,31 @@ public class Grid{
 
 	public static void main(String[] args){
 		Grid g = new Grid();
-		g.set(1,6,BLACK);
-		g.set(2,3,BLACK);
-		g.set(3,1,BLACK);
-		g.set(2,1,BLACK);
-		g.set(4,3,BLACK);
-		g.set(6,7,BLACK);
-		g.set(4,6,BLACK);
+		g.set(3,3,BLACK);
+		g.set(3,4,BLACK);
+		g.set(5,5,BLACK);
+		g.set(5,6,BLACK);
+		g.set(6,3,BLACK);
+		// g.set(6,7,BLACK);
+		// g.set(4,6,BLACK);
 		// g.set(1,6,BLACK);
 		// g.set(6,7,BLACK);
 		// g.set(6,3,BLACK);
-		g.set(0,2,WHITE);
-		g.set(3,5,WHITE);
-		g.set(5,4,WHITE);
-		g.set(3,2,WHITE);
-		g.set(7,3,WHITE);
-		g.set(0,6,WHITE);
 		g.set(0,3,WHITE);
-		g.set(5,5,WHITE);
+		g.set(2,3,WHITE);
+		g.set(2,4,WHITE);
+		g.set(4,6,WHITE);
+		g.set(0,5,WHITE);
+		// g.set(0,6,WHITE);
+		// g.set(0,3,WHITE);
+		// g.set(5,5,WHITE);
 		// g.set(5,6,WHITE);
 		// g.set(4,6,WHITE);
 
 		System.out.println(g.simpleToString());
 		Move[] temp = g.validMoves(BLACK);
-		
-		System.out.println(g.hasWinningNetwork(BLACK));
-		MachinePlayer m = new MachinePlayer(BLACK,g);
+		int[] t ={0,0};
+		MachinePlayer m = new MachinePlayer(WHITE,g);
 		System.out.println(m.chooseMove());
 
 	}
