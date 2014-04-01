@@ -189,12 +189,25 @@ public class Grid{
 		int moveIndex = 0;
 		Move move;
 		if (add){
-			for (int x = 0; x < DIMENSION; x++){
+			if(color == BLACK){
 				for (int y = 0; y < DIMENSION; y++){
-					move = new Move(x, y);
-					if (isValidMove(move, color)){
-						validMoves[moveIndex] = move;
-						moveIndex++;
+					for (int x = 0; x < DIMENSION; x++){
+						move = new Move(x, y);
+						if (isValidMove(move, color)){
+							validMoves[moveIndex] = move;
+							moveIndex++;
+						}
+					}
+				}
+			}
+			else{
+				for (int x = 0; x < DIMENSION; x++){
+					for (int y = 0; y < DIMENSION; y++){
+						move = new Move(x, y);
+						if (isValidMove(move, color)){
+							validMoves[moveIndex] = move;
+							moveIndex++;
+						}
 					}
 				}
 			}
@@ -240,18 +253,31 @@ public class Grid{
 			}
 			for (Square add: movable){
 				if (add != null){
-					for (int x = 0; x < DIMENSION; x++){
-						for (int y = 0; y < DIMENSION && moveIndex < 300; y++){
-							move = new Move(x, y, add.position()[0], add.position()[1]);
-							if (isValidMove(move, color)){
-								validMoves[moveIndex] = move;
-								moveIndex++;
-								}
-							}	
+					if(color == BLACK){
+						for (int y = 0; y < DIMENSION; y++){
+							for (int x = 0; x < DIMENSION && moveIndex < 300; x++){
+								move = new Move(x, y, add.position()[0], add.position()[1]);
+								if (isValidMove(move, color)){
+									validMoves[moveIndex] = move;
+									moveIndex++;
+								}	
+							}
+						}
+					}
+					else{
+						for (int x = 0; x < DIMENSION; x++){
+							for (int y = 0; y < DIMENSION && moveIndex < 300; y++){
+								move = new Move(x, y, add.position()[0], add.position()[1]);
+								if (isValidMove(move, color)){
+									validMoves[moveIndex] = move;
+									moveIndex++;
+								}	
+							}
 						}
 					}
 				}
 			}
+		}
 		return validMoves;
 	}
 
@@ -830,34 +856,33 @@ public class Grid{
 
 	public static void main(String[] args){
 		Grid g = new Grid();
-		g.set(2,3,BLACK);
-		g.set(3,0,BLACK);
-		g.set(2,0,BLACK);
-		g.set(4,2,BLACK);
-		g.set(6,1,BLACK);
-		g.set(1,2,BLACK);
-		g.set(1,7,BLACK);
 		g.set(1,6,BLACK);
+		g.set(2,3,BLACK);
+		g.set(3,1,BLACK);
+		g.set(2,1,BLACK);
+		g.set(4,3,BLACK);
 		g.set(6,7,BLACK);
-		g.set(6,3,BLACK);
+		g.set(4,6,BLACK);
+		// g.set(1,6,BLACK);
+		// g.set(6,7,BLACK);
+		// g.set(6,3,BLACK);
+		g.set(0,2,WHITE);
+		g.set(3,5,WHITE);
 		g.set(5,4,WHITE);
-		g.set(4,1,WHITE);
-		g.set(0,4,WHITE);
-		g.set(5,2,WHITE);
-		g.set(2,2,WHITE);
-		g.set(2,1,WHITE);
-		g.set(2,4,WHITE);
-		g.set(3,4,WHITE);
-		g.set(5,6,WHITE);
-		g.set(4,6,WHITE);
+		g.set(3,2,WHITE);
+		g.set(7,3,WHITE);
+		g.set(0,6,WHITE);
+		g.set(0,3,WHITE);
+		g.set(5,5,WHITE);
+		// g.set(5,6,WHITE);
+		// g.set(4,6,WHITE);
 
 		System.out.println(g.simpleToString());
-		printSquares(g.getNetwork(g.get(0,1)).network);
-		Move[] temp = g.validMoves(WHITE);
-		for(Move m: temp){
-			System.out.println(m);
-		}
-		System.out.println(g.hasWinningNetwork(WHITE));
+		Move[] temp = g.validMoves(BLACK);
+		
+		System.out.println(g.hasWinningNetwork(BLACK));
+		MachinePlayer m = new MachinePlayer(BLACK,g);
+		System.out.println(m.chooseMove());
 
 	}
 }

@@ -2,6 +2,7 @@
 
 package player;
 
+
 /**
  *  An implementation of an automatic Network player.  Keeps track of moves
  *  made by both players.  Can select a move for itself.
@@ -28,11 +29,16 @@ public class MachinePlayer extends Player {
     opponent = (color + 1)%2;
   }
 
+  public MachinePlayer(int color, Grid grid){
+    this.color = color;
+    this.grid = grid;
+    this.searchDepth = 3;
+    opponent = (color + 1)%2;
+  }
+
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    System.out.println(grid.simpleToString());
-    
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
 
     grid.makeMove(bestMove.move, color);
@@ -89,10 +95,20 @@ public class MachinePlayer extends Player {
     BestMove bestMove = new BestMove();
     bestMove.move = moves[0];
     int score;
+<<<<<<< HEAD
     
     if (g.hasWinningNetwork((color+1)%2)) {
       bestMove.move = moves[0];
       bestMove.score = Integer.MIN_VALUE;
+=======
+    Move[] moves = g.validMoves(color);
+    for(Move m: moves){
+      if(m!=null)
+        System.out.println(m);
+    }
+    if (g.hasWinningNetwork((color+1)%2)) {
+      bestMove.score = Integer.MIN_VALUE + 10;
+>>>>>>> 43a9688cf49783ecd0b188033328a0bd53f6a6eb
       return bestMove;
     }
     if(searchDepth == 0){
@@ -106,6 +122,7 @@ public class MachinePlayer extends Player {
       temp.makeMove(moves[i],color);
       BestMove t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = t.score;
+
       if(score>= b){
         bestMove.score = b;
         bestMove.move = moves[i];
@@ -126,8 +143,12 @@ public class MachinePlayer extends Player {
     int score;
     Move[] moves = g.validMoves(color);
     if (g.hasWinningNetwork((color+1)%2)) {
+<<<<<<< HEAD
       bestMove.move = moves[0];
       bestMove.score = Integer.MAX_VALUE;
+=======
+      bestMove.score = Integer.MAX_VALUE - 10;
+>>>>>>> 43a9688cf49783ecd0b188033328a0bd53f6a6eb
       return bestMove;
     }
     if(searchDepth == 0){
