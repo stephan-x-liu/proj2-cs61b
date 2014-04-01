@@ -24,7 +24,7 @@ NETWORK_ERROR = 2
 
 def simulate(i):
     print ("---- Running iteration %s ----" % str(i))
-    output = os.popen('java Network -q machine random').read()
+    output = os.popen('java Network -q random machine').read()
     if "MachinePlayer returned a null move, quitting." in output:
         return NETWORK_ERROR, output
     if ">>>> MachinePlayer <<<< WINS!" in output:
@@ -35,7 +35,7 @@ def simulate(i):
     return NETWORK_ERROR, output
 
 # Start thread pool
-pool = Pool(processes=10)
+pool = Pool(processes=16)
 
 # Get num iterations
 num_simulations = int(sys.argv[1])

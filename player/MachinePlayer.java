@@ -28,11 +28,16 @@ public class MachinePlayer extends Player {
     opponent = (color + 1)%2;
   }
 
+  public MachinePlayer(int color, Grid grid){
+    this.color = color;
+    this.grid = grid;
+    this.searchDepth = 3;
+    opponent = (color + 1)%2;
+  }
+
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    System.out.println(grid.simpleToString());
-    
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
 
     grid.makeMove(bestMove.move, color);
@@ -88,8 +93,13 @@ public class MachinePlayer extends Player {
     BestMove bestMove = new BestMove();
     int score;
     Move[] moves = g.validMoves(color);
+    for(Move m: moves){
+      if(m!=null)
+        System.out.println(m);
+    }
     if (g.hasWinningNetwork((color+1)%2)) {
-      bestMove.score = Integer.MIN_VALUE;
+      System.out.println("Winning Network for search depth " + searchDepth);
+      bestMove.score = Integer.MIN_VALUE + 10;
       return bestMove;
     }
     if(searchDepth == 0){
@@ -109,6 +119,7 @@ public class MachinePlayer extends Player {
         return bestMove;
       }
       if(score > a){
+        System.out.println("HERE for search depth " + searchDepth);
         bestMove.score = score;
         bestMove.move = moves[i];
         a = score;
@@ -122,7 +133,7 @@ public class MachinePlayer extends Player {
     BestMove bestMove = new BestMove();
     int score;
     if (g.hasWinningNetwork((color+1)%2)) {
-      bestMove.score = Integer.MAX_VALUE;
+      bestMove.score = Integer.MAX_VALUE - 10;
       return bestMove;
     }
     if(searchDepth == 0){
