@@ -44,13 +44,13 @@ public class MachinePlayer extends Player {
 
     grid.makeMove(bestMove.move, color);
 
-    // if (color==BLACK){
-    //   System.out.println("BLACK MOVE! " + bestMove.move);
-    // }
-    // else {
-    //   System.out.println("WHITE MOVE! " + bestMove.move);
-    // }
-    // System.out.println(grid.simpleToString());
+    if (color==BLACK){
+      System.out.println("BLACK MOVE! " + bestMove.move);
+    }
+    else {
+      System.out.println("WHITE MOVE! " + bestMove.move);
+    }
+    System.out.println(grid.simpleToString());
 
     return bestMove.move;
   

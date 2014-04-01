@@ -111,19 +111,19 @@ public class GridTester{
 
     // }
     grid = new Grid();
-    grid.set(0,3,WHITE);
+    grid.set(0,1,WHITE);
+    grid.set(7,4,WHITE);
     grid.set(2,3,WHITE);
-    grid.set(3,3,BLACK);
-    grid.set(6,3,BLACK);
-    grid.set(2,4,WHITE);
+    grid.set(2,2,WHITE);
+    //grid.set(4,4,WHITE);
+    grid.set(6,1,WHITE);
+    grid.set(6,7,BLACK);
+    grid.set(6,4,BLACK);
     grid.set(3,4,BLACK);
-    grid.set(0,5,WHITE);
-    grid.set(5,5,BLACK);
-    grid.set(7,5,WHITE);
-    grid.set(4,6,WHITE);
-    grid.set(5,6,BLACK);
+    grid.set(1,0,BLACK);
+    grid.set(1,6,BLACK);
 
-    MachinePlayer.chooseMove(grid,BLACK);
+    MachinePlayer.chooseMove(grid,WHITE);
 
 
   }
