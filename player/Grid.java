@@ -189,12 +189,25 @@ public class Grid{
 		int moveIndex = 0;
 		Move move;
 		if (add){
-			for (int x = 0; x < DIMENSION; x++){
+			if(color == BLACK){
 				for (int y = 0; y < DIMENSION; y++){
-					move = new Move(x, y);
-					if (isValidMove(move, color)){
-						validMoves[moveIndex] = move;
-						moveIndex++;
+					for (int x = 0; x < DIMENSION; x++){
+						move = new Move(x, y);
+						if (isValidMove(move, color)){
+							validMoves[moveIndex] = move;
+							moveIndex++;
+						}
+					}
+				}
+			}
+			else{
+				for (int x = 0; x < DIMENSION; x++){
+					for (int y = 0; y < DIMENSION; y++){
+						move = new Move(x, y);
+						if (isValidMove(move, color)){
+							validMoves[moveIndex] = move;
+							moveIndex++;
+						}
 					}
 				}
 			}
@@ -240,18 +253,31 @@ public class Grid{
 			}
 			for (Square add: movable){
 				if (add != null){
-					for (int x = 0; x < DIMENSION; x++){
-						for (int y = 0; y < DIMENSION && moveIndex < 300; y++){
-							move = new Move(x, y, add.position()[0], add.position()[1]);
-							if (isValidMove(move, color)){
-								validMoves[moveIndex] = move;
-								moveIndex++;
-								}
-							}	
+					if(color == BLACK){
+						for (int y = 0; y < DIMENSION; y++){
+							for (int x = 0; x < DIMENSION && moveIndex < 300; x++){
+								move = new Move(x, y, add.position()[0], add.position()[1]);
+								if (isValidMove(move, color)){
+									validMoves[moveIndex] = move;
+									moveIndex++;
+								}	
+							}
+						}
+					}
+					else{
+						for (int x = 0; x < DIMENSION; x++){
+							for (int y = 0; y < DIMENSION && moveIndex < 300; y++){
+								move = new Move(x, y, add.position()[0], add.position()[1]);
+								if (isValidMove(move, color)){
+									validMoves[moveIndex] = move;
+									moveIndex++;
+								}	
+							}
 						}
 					}
 				}
 			}
+		}
 		return validMoves;
 	}
 

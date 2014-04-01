@@ -2,6 +2,7 @@
 
 package player;
 
+
 /**
  *  An implementation of an automatic Network player.  Keeps track of moves
  *  made by both players.  Can select a move for itself.
@@ -98,7 +99,6 @@ public class MachinePlayer extends Player {
         System.out.println(m);
     }
     if (g.hasWinningNetwork((color+1)%2)) {
-      System.out.println("Winning Network for search depth " + searchDepth);
       bestMove.score = Integer.MIN_VALUE + 10;
       return bestMove;
     }
@@ -113,13 +113,13 @@ public class MachinePlayer extends Player {
       temp.makeMove(moves[i],color);
       BestMove t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = t.score;
+
       if(score>= b){
         bestMove.score = b;
         bestMove.move = moves[i];
         return bestMove;
       }
       if(score > a){
-        System.out.println("HERE for search depth " + searchDepth);
         bestMove.score = score;
         bestMove.move = moves[i];
         a = score;
