@@ -85,10 +85,13 @@ public class MachinePlayer extends Player {
   }
 
   public BestMove abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
-    BestMove bestMove = new BestMove();
-    int score;
     Move[] moves = g.validMoves(color);
+    BestMove bestMove = new BestMove();
+    bestMove.move = moves[0];
+    int score;
+    
     if (g.hasWinningNetwork((color+1)%2)) {
+      bestMove.move = moves[0];
       bestMove.score = Integer.MIN_VALUE;
       return bestMove;
     }
@@ -121,7 +124,9 @@ public class MachinePlayer extends Player {
   public BestMove abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
     BestMove bestMove = new BestMove();
     int score;
+    Move[] moves = g.validMoves(color);
     if (g.hasWinningNetwork((color+1)%2)) {
+      bestMove.move = moves[0];
       bestMove.score = Integer.MAX_VALUE;
       return bestMove;
     }
@@ -129,7 +134,7 @@ public class MachinePlayer extends Player {
       bestMove.score = g.evaluate(this.color);
       return bestMove;
     }
-    Move[] moves = g.validMoves(color);
+    
     for(int i = 0; i < moves.length && moves[i]!=null; i++){
       Grid temp = g.cloneGrid();
       temp.makeMove(moves[i],color);
