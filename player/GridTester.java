@@ -2,6 +2,12 @@ package player;
 import java.io.*;
 
 public class GridTester{
+
+  static final int BLACK = 0;
+  static final int WHITE = 1;
+  static final int NONE = 2;
+  static final int DIMENSION = 8;
+
   public GridTester(){
   }
 
@@ -83,8 +89,6 @@ public class GridTester{
   s += "|=====================================|\n";
   System.out.println(s);
   }
-
-
         
 
 
@@ -96,15 +100,31 @@ public class GridTester{
     //grid.updateNetworkList();
     //System.out.println(grid);
  
-    while(true){
-      grid = tester.gridFromInput();
-      grid.updateNetworkList();
-      System.out.println(grid);
-      System.out.println("Evaluates for white: "+grid.evaluate(Square.WHITE));
-      printFancyEval(grid, Square.WHITE);
-      System.out.println("Evaluates for black: "+grid.evaluate(Square.BLACK));
-      printFancyEval(grid, Square.BLACK);
+    // while(true){
+    //   grid = tester.gridFromInput();
+    //   grid.updateNetworkList();
+    //   System.out.println(grid);
+    //   System.out.println("Evaluates for white: "+grid.evaluate(Square.WHITE));
+    //   printFancyEval(grid, Square.WHITE);
+    //   System.out.println("Evaluates for black: "+grid.evaluate(Square.BLACK));
+    //   printFancyEval(grid, Square.BLACK);
 
-    }
+    // }
+    grid = new Grid();
+    grid.set(0,3,WHITE);
+    grid.set(2,3,WHITE);
+    grid.set(3,3,BLACK);
+    grid.set(6,3,BLACK);
+    grid.set(2,4,WHITE);
+    grid.set(3,4,BLACK);
+    grid.set(0,5,WHITE);
+    grid.set(5,5,BLACK);
+    grid.set(7,5,WHITE);
+    grid.set(4,6,WHITE);
+    grid.set(5,6,BLACK);
+
+    MachinePlayer.chooseMove(grid,BLACK);
+
+
   }
 }

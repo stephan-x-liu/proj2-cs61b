@@ -25,7 +25,7 @@ NETWORK_ERROR = 2
 def simulate(i):
     print ("---- Running iteration %s ----" % str(i))
     output = os.popen('java Network -q machine random').read()
-    if "MachinePlayer returned a null move, quitting." in output:
+    if "MachinePlayer returned a null move, quitting." in output or "Exception" in output:
         return NETWORK_ERROR, output
     if ">>>> MachinePlayer <<<< WINS!" in output:
         return NETWORK_WIN, output

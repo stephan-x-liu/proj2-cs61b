@@ -11,7 +11,7 @@ public class MachinePlayer extends Player {
   static final int WHITE = 1;
   final int color;
   final int opponent;
-  final Grid grid;
+  Grid grid;
   final int searchDepth;
   // Creates a machine player with the given color.  Color is either 0 (black)
   // or 1 (white).  (White has the first move.)
@@ -31,23 +31,34 @@ public class MachinePlayer extends Player {
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    System.out.println(grid.simpleToString());
+    //System.out.println(grid.simpleToString());
     
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
 
     grid.makeMove(bestMove.move, color);
 
-    if (color==BLACK){
-      System.out.println("BLACK MOVE!");
-    }
-    else {
-      System.out.println("WHITE MOVE!");
-    }
-    System.out.println(grid.simpleToString());
+    // if (color==BLACK){
+    //   System.out.println("BLACK MOVE! " + bestMove.move);
+    // }
+    // else {
+    //   System.out.println("WHITE MOVE! " + bestMove.move);
+    // }
+    // System.out.println(grid.simpleToString());
 
     return bestMove.move;
   
-  } 
+  }
+
+  public static Move chooseMove(Grid g, int color){
+
+    MachinePlayer mp = new MachinePlayer(color);
+    mp.grid = g;
+
+    return mp.chooseMove();
+
+  }
+
+
 
   // If the Move m is legal, records the move as a move by the opponent
   // (updates the internal game board) and returns true.  If the move is
@@ -58,13 +69,13 @@ public class MachinePlayer extends Player {
       return false;
     } else {
       grid.makeMove(m, this.opponent);
-      if (color==BLACK){
-        System.out.println("WHITE MOVE!");
-      }
-      else {
-        System.out.println("BLACK MOVE!");
-      }
-      System.out.println(grid.simpleToString());
+      // if (color==BLACK){
+      //   System.out.println("WHITE MOVE!");
+      // }
+      // else {
+      //   System.out.println("BLACK MOVE!");
+      // }
+      // System.out.println(grid.simpleToString());
 
       return true;
     }
