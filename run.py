@@ -35,7 +35,7 @@ def simulate(i):
     return NETWORK_ERROR, output
 
 # Start thread pool
-pool = Pool(processes=10)
+pool = Pool(processes=16)
 
 # Get num iterations
 num_simulations = int(sys.argv[1])

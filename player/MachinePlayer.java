@@ -2,6 +2,7 @@
 
 package player;
 
+
 /**
  *  An implementation of an automatic Network player.  Keeps track of moves
  *  made by both players.  Can select a move for itself.
@@ -28,11 +29,17 @@ public class MachinePlayer extends Player {
     opponent = (color + 1)%2;
   }
 
+  public MachinePlayer(int color, Grid grid){
+    this.color = color;
+    this.grid = grid;
+    this.searchDepth = 3;
+    opponent = (color + 1)%2;
+  }
+
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
   public Move chooseMove() {
-    //System.out.println(grid.simpleToString());
-    
+
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
 
     grid.makeMove(bestMove.move, color);
@@ -96,11 +103,15 @@ public class MachinePlayer extends Player {
   }
 
   public BestMove abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
-    BestMove bestMove = new BestMove();
-    int score;
     Move[] moves = g.validMoves(color);
-    if (g.hasWinningNetwork(color)) {
-      bestMove.score = Integer.MAX_VALUE;
+    BestMove bestMove = new BestMove();
+    bestMove.move = moves[0];
+    int score;
+
+    
+    if (g.hasWinningNetwork((color+1)%2)) {
+      bestMove.move = moves[0];
+      bestMove.score = Integer.MIN_VALUE;
       return bestMove;
     }
     if(searchDepth == 0){
@@ -114,6 +125,7 @@ public class MachinePlayer extends Player {
       temp.makeMove(moves[i],color);
       BestMove t = abMinimizer(a,b,searchDepth-1,temp,(color+1)%2);
       score = t.score;
+
       if(score>= b){
         bestMove.score = b;
         bestMove.move = moves[i];
@@ -132,15 +144,17 @@ public class MachinePlayer extends Player {
   public BestMove abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
     BestMove bestMove = new BestMove();
     int score;
-    if (g.hasWinningNetwork(color)) {
-      bestMove.score = Integer.MIN_VALUE;
+    Move[] moves = g.validMoves(color);
+    if (g.hasWinningNetwork((color+1)%2)) {
+      bestMove.move = moves[0];
+      bestMove.score = Integer.MAX_VALUE;
       return bestMove;
     }
     if(searchDepth == 0){
       bestMove.score = g.evaluate(this.color);
       return bestMove;
     }
-    Move[] moves = g.validMoves(color);
+    
     for(int i = 0; i < moves.length && moves[i]!=null; i++){
       Grid temp = g.cloneGrid();
       temp.makeMove(moves[i],color);
