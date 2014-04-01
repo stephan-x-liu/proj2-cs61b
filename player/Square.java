@@ -85,7 +85,7 @@ public class Square{
   /**
   *  Gets the piece a Square contains.
   *  @return is an int representing piece if Square is occupied.
-  *   @return is null if Square is unoccupied.
+  *  @return is null if Square is unoccupied.
   **/
   public int getPiece(){
     return piece;
@@ -127,7 +127,7 @@ public class Square{
   *  Gets a Square in an adjacdent direction
   *  @param dir is a length 2 integer array defining direction.
   *  @return is a Square if there is a valid Square in the direction.
-  *   @return is null if out of bounds of Grid.
+  *  @return is null if out of bounds of Grid.
   **/
   public Square adjacent(int[] dir){
     return grid.get(x+dir[0],y+dir[1]);
@@ -136,7 +136,7 @@ public class Square{
   /**
   *  Checks if Square has one neighbor.
   *  @return is a Square if there is a neighbor (occupied adjacent Square).
-  *   @return is null if there is not a neighbor.
+  *  @return is null if there is not a neighbor.
   **/
   public Square[] neighbor(int color){
     Square[] neighbors = new Square[8];
@@ -205,7 +205,7 @@ public class Square{
   *  Finds closest piece in given direction.
   *  @param dir is a length 2 integer array defining direction.
   *  @return is a Square if there is an occupied Square in the given direction.
-  *   @return null if it hits the edge of the Grid.
+  *  @return null if it hits the edge of the Grid.
   **/
   public Square getInDirection(int[] dir){
     if(grid.get(x+dir[0],y+dir[1])==null){

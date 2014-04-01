@@ -32,7 +32,7 @@ public class MachinePlayer extends Player {
   public MachinePlayer(int color, Grid grid){
     this.color = color;
     this.grid = grid;
-    this.searchDepth = 2;
+    this.searchDepth = 1;
     opponent = (color + 1)%2;
   }
 
@@ -95,11 +95,11 @@ public class MachinePlayer extends Player {
     
     if (g.hasWinningNetwork((color+1)%2)) {
       bestMove.move = moves[0];
-      bestMove.score = -9999999;
+      bestMove.score = -9999999-100*searchDepth;
       return bestMove;
     }
     if (g.hasWinningNetwork(color) ){
-      bestMove.score = 9999999;
+      bestMove.score = 9999999+100*searchDepth;
       return bestMove;
     }
     if(searchDepth == 0){
@@ -135,11 +135,11 @@ public class MachinePlayer extends Player {
     Move[] moves = g.validMoves(color);
     if (g.hasWinningNetwork((color+1)%2)) {
       bestMove.move = moves[0];
-      bestMove.score = 9999999;
+      bestMove.score = 9999999+100*searchDepth;
       return bestMove;
     }
     if (g.hasWinningNetwork(color) ){
-      bestMove.score = -9999999;
+      bestMove.score = -9999999-100*searchDepth;
       return bestMove;
     }
     if(searchDepth == 0){

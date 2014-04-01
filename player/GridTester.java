@@ -89,41 +89,105 @@ public class GridTester{
   s += "|=====================================|\n";
   System.out.println(s);
   }
-        
+  
+  public static void chanceToWin1(){
+    Grid g = new Grid();
+    g.set(1,1,BLACK);
+    g.set(2,1,BLACK);
+    g.set(4,1,BLACK);
+    g.set(5,1,BLACK);
+    g.set(1,6,BLACK);
+    g.set(0,2,WHITE);
+    g.set(1,2,WHITE);
+    g.set(4,2,WHITE);
+    g.set(1,5,WHITE);
+    g.set(4,5,WHITE);
+
+    System.out.println(g.simpleToString());
+    MachinePlayer m = new MachinePlayer(WHITE,g);
+    System.out.println(m.chooseMove());
+
+  }
+
+  public static void chanceToWin2(){
+    Grid g = new Grid();
+    g.set(1,1,BLACK);
+    g.set(2,1,BLACK);
+    g.set(4,1,BLACK);
+    g.set(5,1,BLACK);
+    g.set(1,6,BLACK);
+    g.set(2,6,BLACK);
+    g.set(5,5,BLACK);
+    g.set(0,2,WHITE);
+    g.set(1,3,WHITE);
+    g.set(3,2,WHITE);
+    g.set(5,3,WHITE);
+    g.set(6,1,WHITE);
+    g.set(3,5,WHITE);
+    g.set(6,5,WHITE);
+    System.out.println(g.simpleToString());
+    MachinePlayer m = new MachinePlayer(WHITE,g);
+    System.out.println(m.chooseMove());
+  }
+
+  public static void blockingTest(){
+    Grid g = new Grid();
+    g.set(6,7,BLACK);
+    g.set(6,4,BLACK);
+    g.set(3,4,BLACK);
+    g.set(1,0,BLACK);
+    g.set(1,6,BLACK);
+    g.set(0,1,WHITE);
+    g.set(7,4,WHITE);
+    g.set(2,3,WHITE);
+    g.set(2,2,WHITE);
+    g.set(6,1,WHITE);
+    System.out.println(g.simpleToString());
+    MachinePlayer m = new MachinePlayer(WHITE,g);
+    System.out.println(m.chooseMove());
+  }
+
+  public static void lookAheadTest1(){
+    Grid g = new Grid();
+    g.set(3,3,BLACK);
+    g.set(3,4,BLACK);
+    g.set(5,5,BLACK);
+    g.set(5,6,BLACK);
+    g.set(6,3,BLACK);
+    g.set(0,3,WHITE);
+    g.set(2,3,WHITE);
+    g.set(2,4,WHITE);
+    g.set(4,6,WHITE);
+    g.set(0,5,WHITE);
+    System.out.println(g.simpleToString());
+    MachinePlayer m = new MachinePlayer(WHITE,g);
+    System.out.println(m.chooseMove());
+  }
+
+  public static void lookAheadTest2(){
+    Grid g = new Grid();
+    g.set(1,2,BLACK);
+    g.set(1,0,BLACK);
+    g.set(6,2,BLACK);
+    g.set(6,7,BLACK);
+    g.set(0,2,WHITE);
+    g.set(4,6,WHITE);
+    g.set(1,6,WHITE);
+    g.set(4,3,WHITE);
+    System.out.println(g.simpleToString());
+    MachinePlayer m = new MachinePlayer(WHITE,g);
+    System.out.println(m.chooseMove());
+  }
 
 
 
 
   public static void main(String args[]){
-    GridTester tester = new GridTester();
-    Grid grid;// = tester.gridFromSerial();
-    //grid.updateNetworkList();
-    //System.out.println(grid);
- 
-    // while(true){
-    //   grid = tester.gridFromInput();
-    //   grid.updateNetworkList();
-    //   System.out.println(grid);
-    //   System.out.println("Evaluates for white: "+grid.evaluate(Square.WHITE));
-    //   printFancyEval(grid, Square.WHITE);
-    //   System.out.println("Evaluates for black: "+grid.evaluate(Square.BLACK));
-    //   printFancyEval(grid, Square.BLACK);
-
-    // }
-    grid = new Grid();
-    grid.set(0,1,WHITE);
-    grid.set(7,4,WHITE);
-    grid.set(2,3,WHITE);
-    grid.set(2,2,WHITE);
-    //grid.set(4,4,WHITE);
-    grid.set(6,1,WHITE);
-    grid.set(6,7,BLACK);
-    grid.set(6,4,BLACK);
-    grid.set(3,4,BLACK);
-    grid.set(1,0,BLACK);
-    grid.set(1,6,BLACK);
-
-    MachinePlayer.chooseMove(grid,WHITE);
+    chanceToWin2();
+    chanceToWin1();
+    blockingTest();
+    lookAheadTest1();
+    lookAheadTest2();
 
 
   }
