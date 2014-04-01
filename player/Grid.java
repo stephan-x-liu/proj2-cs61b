@@ -614,7 +614,6 @@ public class Grid{
     }else{
       enemy = Square.BLACK;
     }
-
     for (int y = 0; y < DIMENSION; y++){
       for (int x = 0; x < DIMENSION; x++){
         Square sq = get(x, y);
@@ -653,6 +652,7 @@ public class Grid{
     int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly);
     int emultiplier = getGoalZones(enemy);
     return multiplier*multiplier*flongest*(fComputedPotential+fComputedNetwork)+elongest*(eComputedPotential+eComputedNetwork);
+
         
     //We make seperate functions so we can change the algorithm for each.
 

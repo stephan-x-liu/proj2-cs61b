@@ -43,14 +43,6 @@ public class MachinePlayer extends Player {
 
     grid.makeMove(bestMove.move, color);
 
-    if (color==BLACK){
-      System.out.println("BLACK MOVE!");
-    }
-    else {
-      System.out.println("WHITE MOVE!");
-    }
-    System.out.println(grid.simpleToString());
-
     return bestMove.move;
   
   } 
@@ -64,13 +56,6 @@ public class MachinePlayer extends Player {
       return false;
     } else {
       grid.makeMove(m, this.opponent);
-      if (color==BLACK){
-        System.out.println("WHITE MOVE!");
-      }
-      else {
-        System.out.println("BLACK MOVE!");
-      }
-      System.out.println(grid.simpleToString());
 
       return true;
     }
@@ -100,6 +85,10 @@ public class MachinePlayer extends Player {
     if (g.hasWinningNetwork((color+1)%2)) {
       bestMove.move = moves[0];
       bestMove.score = Integer.MIN_VALUE;
+      return bestMove;
+    }
+    if (g.hasWinningNetwork(color) ){
+      bestMove.score = Integer.MAX_VALUE;
       return bestMove;
     }
     if(searchDepth == 0){
@@ -136,6 +125,10 @@ public class MachinePlayer extends Player {
     if (g.hasWinningNetwork((color+1)%2)) {
       bestMove.move = moves[0];
       bestMove.score = Integer.MAX_VALUE;
+      return bestMove;
+    }
+    if (g.hasWinningNetwork(color) ){
+      bestMove.score = Integer.MIN_VALUE;
       return bestMove;
     }
     if(searchDepth == 0){
