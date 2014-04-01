@@ -95,20 +95,11 @@ public class MachinePlayer extends Player {
     BestMove bestMove = new BestMove();
     bestMove.move = moves[0];
     int score;
-<<<<<<< HEAD
+
     
     if (g.hasWinningNetwork((color+1)%2)) {
       bestMove.move = moves[0];
       bestMove.score = Integer.MIN_VALUE;
-=======
-    Move[] moves = g.validMoves(color);
-    for(Move m: moves){
-      if(m!=null)
-        System.out.println(m);
-    }
-    if (g.hasWinningNetwork((color+1)%2)) {
-      bestMove.score = Integer.MIN_VALUE + 10;
->>>>>>> 43a9688cf49783ecd0b188033328a0bd53f6a6eb
       return bestMove;
     }
     if(searchDepth == 0){
@@ -143,12 +134,8 @@ public class MachinePlayer extends Player {
     int score;
     Move[] moves = g.validMoves(color);
     if (g.hasWinningNetwork((color+1)%2)) {
-<<<<<<< HEAD
       bestMove.move = moves[0];
       bestMove.score = Integer.MAX_VALUE;
-=======
-      bestMove.score = Integer.MAX_VALUE - 10;
->>>>>>> 43a9688cf49783ecd0b188033328a0bd53f6a6eb
       return bestMove;
     }
     if(searchDepth == 0){
