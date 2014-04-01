@@ -104,7 +104,7 @@ public class GridTester{
     g.set(4,5,WHITE);
 
     System.out.println(g.simpleToString());
-    MachinePlayer m = new MachinePlayer(WHITE,g);
+    MachinePlayer m = new MachinePlayer(WHITE,g,3);
     System.out.println(m.chooseMove());
 
   }
@@ -126,7 +126,7 @@ public class GridTester{
     g.set(3,5,WHITE);
     g.set(6,5,WHITE);
     System.out.println(g.simpleToString());
-    MachinePlayer m = new MachinePlayer(WHITE,g);
+    MachinePlayer m = new MachinePlayer(WHITE,g,3);
     System.out.println(m.chooseMove());
   }
 
@@ -143,7 +143,7 @@ public class GridTester{
     g.set(2,2,WHITE);
     g.set(6,1,WHITE);
     System.out.println(g.simpleToString());
-    MachinePlayer m = new MachinePlayer(WHITE,g);
+    MachinePlayer m = new MachinePlayer(WHITE,g,3);
     System.out.println(m.chooseMove());
   }
 
@@ -160,7 +160,7 @@ public class GridTester{
     g.set(4,6,WHITE);
     g.set(0,5,WHITE);
     System.out.println(g.simpleToString());
-    MachinePlayer m = new MachinePlayer(WHITE,g);
+    MachinePlayer m = new MachinePlayer(WHITE,g,3);
     System.out.println(m.chooseMove());
   }
 
@@ -175,7 +175,7 @@ public class GridTester{
     g.set(1,6,WHITE);
     g.set(4,3,WHITE);
     System.out.println(g.simpleToString());
-    MachinePlayer m = new MachinePlayer(WHITE,g);
+    MachinePlayer m = new MachinePlayer(WHITE,g,3);
     System.out.println(m.chooseMove());
   }
 

@@ -29,10 +29,11 @@ public class MachinePlayer extends Player {
     opponent = (color + 1)%2;
   }
 
-  public MachinePlayer(int color, Grid grid){
+  // Machine player constructor purely for testing purposes.
+  public MachinePlayer(int color, Grid grid, int searchDepth){
     this.color = color;
     this.grid = grid;
-    this.searchDepth = 1;
+    this.searchDepth = searchDepth;
     opponent = (color + 1)%2;
   }
 
