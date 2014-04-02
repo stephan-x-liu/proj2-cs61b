@@ -99,10 +99,6 @@ public class MachinePlayer extends Player {
       bestMove.score = -9999999-100*searchDepth;
       return bestMove;
     }
-    if (g.hasWinningNetwork(color) ){
-      bestMove.score = 9999999+100*searchDepth;
-      return bestMove;
-    }
     if(searchDepth == 0){
       g.updateNetworkList();
       bestMove.score = g.evaluate(this.color);
@@ -139,10 +135,6 @@ public class MachinePlayer extends Player {
       bestMove.score = 9999999+100*searchDepth;
       return bestMove;
     }
-    if (g.hasWinningNetwork(color) ){
-      bestMove.score = -9999999-100*searchDepth;
-      return bestMove;
-    }
     if(searchDepth == 0){
       bestMove.score = g.evaluate(this.color);
       return bestMove;
@@ -169,12 +161,5 @@ public class MachinePlayer extends Player {
 
 }
 
-class BestMove{
-  Move move;
-  int score;
-  public BestMove(){
-    move = null;
-    score = 0;
-  }
-}
+
 

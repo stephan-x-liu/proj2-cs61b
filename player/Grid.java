@@ -18,19 +18,19 @@ public class Grid{
 	static final int[][] DIRECTIONS = Square.DIRECTIONS;
 
 
-    /**
-    *  Grid constructor that creates a grid of squares with NONE pieces.
-    **/
-    public Grid(){
-    	board = new Square[DIMENSION][DIMENSION];
-    	for(int i = 0; i < DIMENSION; i ++){
-    		for(int j = 0; j < DIMENSION; j++){
-    			board[i][j] = new Square(i,j,this);
-    		}
-    	}
-    	blackSquareCount = 0;
-    	whiteSquareCount = 0;
-    }
+  /**
+  *  Grid constructor that creates a grid of squares with NONE pieces.
+  **/
+  public Grid(){
+  	board = new Square[DIMENSION][DIMENSION];
+  	for(int i = 0; i < DIMENSION; i ++){
+  		for(int j = 0; j < DIMENSION; j++){
+  			board[i][j] = new Square(i,j,this);
+  		}
+  	}
+  	blackSquareCount = 0;
+  	whiteSquareCount = 0;
+  }
 
   /**
     *  Grid constructor that creates a grid based on a 2D array.
@@ -56,6 +56,40 @@ public class Grid{
   		}
   	}
   }
+
+  /**
+  *  Constructs a grid from a one line string.
+  *  @param pieces is a string that represents the grid.
+  **/
+  public Grid(String pieces){
+		blackSquareCount = 0;
+		whiteSquareCount = 0;
+	    pieces = pieces.replaceAll("W", Integer.toString(WHITE));
+	    pieces = pieces.replaceAll("B", Integer.toString(BLACK));
+	    pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
+		board = new Square[DIMENSION][DIMENSION];
+	    char[] charArray = pieces.toCharArray();
+		Square s;
+		int i = 0;
+	 	for (int y = 0; y < DIMENSION; y++){
+	 		for (int x = 0; x < DIMENSION; x++){
+	 			s = new Square(x, y, Integer.parseInt(String.valueOf(charArray[i])), this);
+	 			board[x][y] = s;
+	 			if (charArray[i] == WHITE){
+	 				whiteSquares[whiteSquareCount] = s;
+	 				whiteSquareCount++;
+	 			}
+	 			if (charArray[i] == BLACK){
+	 				blackSquares[blackSquareCount] = s;
+	 				blackSquareCount++;
+	 				if (blackSquareCount==10){
+	 					add = false;
+	 				}
+	 			}
+	    		i++;
+	 		}
+	 	}
+ 	}
 
   /**
   *  Makes a deep copy of a grid instance.
@@ -203,15 +237,15 @@ public class Grid{
   	}
   	else {
   		Square[][] squares = new Square[3][10];
-  		Network[] goals = goalNetworks(color);
-  		Network longest = null;
+  		NetworkObject[] goals = goalNetworks(color);
+  		NetworkObject longest = null;
   		squares[1] = whiteSquares;
   		squares[0] = blackSquares;
   		int count = 0;
   		Square[] movable = new Square[10];
   		for(Square s: squares[color]){
   			boolean inNetwork = false;
-  			for(Network n: goals){
+  			for(NetworkObject n: goals){
   				if(n!=null && (longest==null || n.length>longest.length))
   					longest = n;
   			}
@@ -398,10 +432,10 @@ public class Grid{
   /**
   *  Returns a list of networks starting from the goal.
   *  @param color is the integer representation of the color
-  *  @return list of Network objects. 
+  *  @return list of NetworkObject objects. 
   **/
-  protected Network[] goalNetworks(int color){
-  	Network[] temp = new Network[10];
+  protected NetworkObject[] goalNetworks(int color){
+  	NetworkObject[] temp = new NetworkObject[10];
   	int count = 0;
   	if(color==WHITE){
   		for(int i = 1; i<DIMENSION-1; i++){
@@ -425,13 +459,13 @@ public class Grid{
   /**
   *  Find network from a square.
   *  @param current is the starting square of the network.
-  *  @return a Network object
+  *  @return a NetworkObject object
   **/
-  protected Network getNetwork(Square current){
+  protected NetworkObject getNetwork(Square current){
   	Square[] network = new Square[10];
   	int length = 0;
   	int[] temp = {0,0};
-  	Network n = findNetwork(current,network,length,temp);
+  	NetworkObject n = findNetwork(current,network,length,temp);
   	return n;
   }
 
@@ -447,7 +481,7 @@ public class Grid{
 
   	if(color == BLACK){
   		for(int i = 1; i < DIMENSION-1; i++){
-  			Network n = getNetwork(get(i,0));
+  			NetworkObject n = getNetwork(get(i,0));
   			if(n.length>=6){
   				for(int k = 1; k<n.length; k++){
   					if(n.network[k].position()[1]==7)
@@ -459,7 +493,7 @@ public class Grid{
   	else{
 
   		for(int i = 1; i < DIMENSION-1; i++){
-  			Network n = getNetwork(get(0,i));
+  			NetworkObject n = getNetwork(get(0,i));
   			if(n.length>=6){
   				for(int k = 1; k<n.length; k++){
   					if(n.network[k].position()[0]==7)
@@ -480,7 +514,7 @@ public class Grid{
   	Square[] network = new Square[10];
   	int length = 0;
   	int[] temp = {0,0};
-  	Network n = findNetwork(current,network,length,temp);
+  	NetworkObject n = findNetwork(current,network,length,temp);
   	return n.length;
   }
 
@@ -503,12 +537,12 @@ public class Grid{
   *  @param network is length 10 array of squares representing a network
   *  @param length is length of current network
   *  @param prev_dir is a length two integer array representing the direction the network is coming from. 
-  *  @return a Network object
+  *  @return a NetworkObject object
   **/
-  private Network findNetwork(Square current, Square[] network, int length, int[] prev_dir){
+  private NetworkObject findNetwork(Square current, Square[] network, int length, int[] prev_dir){
   	network[length] = current;
   	length++;
-  	Network longest = new Network(network,length);
+  	NetworkObject longest = new NetworkObject(network,length);
   	Square[] connections = current.connections(prev_dir);
   	if(current.getPiece()==WHITE && current.position()[0]==0){
   		connections[2]=null;
@@ -533,9 +567,9 @@ public class Grid{
   		}
   		temp = connections[i];
   		if(temp!=null && temp.alreadyInNetwork(network)==false){
-  			Network s = findNetwork(temp,copyNetworkArray(network),length, DIRECTIONS[i]);
+  			NetworkObject s = findNetwork(temp,copyNetworkArray(network),length, DIRECTIONS[i]);
   			if(s.length>longest.length){
-  				longest = new Network(s.network,s.length);
+  				longest = new NetworkObject(s.network,s.length);
   			}
   		}  
   	}
@@ -629,8 +663,8 @@ public class Grid{
   			}
   		}
   	}
-  	Network[] fNetworks = goalNetworks(friendly);
-  	Network[] eNetworks = goalNetworks(enemy);
+  	NetworkObject[] fNetworks = goalNetworks(friendly);
+  	NetworkObject[] eNetworks = goalNetworks(enemy);
 
   	int flongest = 0;
   	int fgoals = 0;
@@ -767,9 +801,33 @@ public class Grid{
     }
 
   /**
-    *  toString method that prints out Square with all its instance variables for debugging purposes.
-    *  @return a String representation of the board.
-    **/
+  *  Returns the grid as a string representation in one line.
+  *  @return a one line String.
+  **/
+  String serializeToString(){
+	    int tmp;
+	    String out = "";
+			for (int y = 0; y < DIMENSION; y++){
+				for (int x = 0; x < DIMENSION; x++){
+	        tmp = get(x, y).getPiece();
+	        if(tmp == WHITE){
+	          out = out.concat("W");
+	        }else if(tmp == BLACK){
+	          out = out.concat("B");
+	        }else if(tmp == NONE){
+	          out = out.concat(".");
+	        }else{
+	          System.out.println("Internal state warning in seralizeToString");
+	        }
+	      }
+	    }
+	    return out;
+	}
+
+  /**
+  *  toString method that prints out Square with all its instance variables for debugging purposes.
+  *  @return a String representation of the board.
+  **/
   public String toString(){
     //return simpleToString();
   	String s = "=========================================\n";
@@ -847,14 +905,7 @@ public class Grid{
   }
 }
 
-class Network{
-	Square[] network;
-	int length;
-	public Network(Square[] n, int l){
-		length = l;
-		network = n;
-	}
-}
+
 
 
 
