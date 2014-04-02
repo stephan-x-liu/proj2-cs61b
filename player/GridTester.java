@@ -1,6 +1,12 @@
 package player;
 import java.io.*;
 
+/**
+*  Class containing purely test code for various parts of the game.
+*  DOES NOT AFFECT FUNCTIONALITY OF THE GAME.
+**/
+
+
 public class GridTester{
 
   static final int BLACK = 0;
