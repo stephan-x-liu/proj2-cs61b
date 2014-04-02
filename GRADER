@@ -248,6 +248,89 @@ Classes Implemented In:
 
   Grid.java
   Square.java
+  NetworkObject.java
+
+-------------------------------Grid.java-------------------------------
+
+Methods:
+  private NetworkObject findNetwork(Square current, Square[] network, int length, int[] prev_dir): 
+    /**
+    *  Private function used within grid class for all the Network-related functions. Essentially all the logic
+    *  for finding a network goes in here. Perks of it include automatically ending the function if it hits a piece
+    *  in the goal zone and preventing connections between pieces in the goal zone.
+    *  @param current is square of where to start looking for the network
+    *  @param network is length 10 array of squares representing a network
+    *  @param length is length of current network
+    *  @param prev_dir is a length two integer array representing the direction the network is coming from. 
+    *  @return a NetworkObject object
+    **/
+
+  protected NetworkObject getNetwork(Square current)
+    /**
+    *  Find network from a square using a private method within Grid class.
+    *  @param current is the starting square of the network.
+    *  @return a NetworkObject object
+    **/
+
+  
+  protected int maxNetworkLength(int color):
+    /**
+    *  Finds the length of the longest network starting from anywhere on the board.
+    *  @param color is the integer representation of the color
+    *  @return integer length of longest network.
+    **/
+
+  protected NetworkObject[] goalNetworks(int color):
+    /**
+    *  Returns a list of networks starting from the goal.
+    *  @param color is the integer representation of the color
+    *  @return list of NetworkObject objects. 
+    **/
+
+  protected NetworkObject getNetwork(Square current):
+    /**
+    *  Find network from a square.
+    *  @param current is the starting square of the network.
+    *  @return a NetworkObject object
+    **/
+
+  protected boolean hasWinningNetwork(int color):
+    /**
+    *  Finds out whether or not there is a winning network for a color.
+    *  @param color is the integer representation of the color
+    *  @return boolean for whether or not there is a winning network.
+    **/
+
+  protected int networkLength(Square current):
+    /**
+    *  Finds length of a network from a specific square.
+    *  @param current is the starting square of the network.
+    *  @return integer length of network.
+    **/
+    
+
+-------------------------------Square.java-------------------------------
+
+Methods:
+  
+  public Square getInDirection(int[] dir):
+    /**
+    *  Finds closest piece in given direction.
+    *  @param dir is a length 2 integer array defining direction.
+    *  @return is a Square if there is an occupied Square in the given direction.
+    *  @return null if it hits the edge of the Grid.
+    **/
+
+-------------------------------NetworkObject.java-------------------------------
+
+Constructor:
+  
+  public NetworkObject(Square[] n, int l)
+    /**
+    *  Constructor for network object.
+    *  @param n is an array of Squares that represents the network.
+    *  @param l is an integer representing the length of the network.
+    **/
 
 
 
@@ -259,6 +342,37 @@ IMPLEMENTED BY: Stephan Liu
 Classes Implemented In:
 
   MachinePlayer.java
+  BestMove.java
+
+-------------------------------MachinePlayer.java-------------------------------
+
+Methods:
+
+  public BestMove abMaximizer(int a, int b, int searchDepth, Grid g, int color):
+    /**
+    *  Maximizer portion of ab pruning that recursively calls the minimizer function.
+    *  @param a is alpha in ab pruning
+    *  @param b is beta in ab pruning
+    *  @param searchDepth is the recursive depth of the search
+    *  @param g is the grid that is being searched on
+    *  @param color is the integer representation of the color
+    *  @return returns a bestMove object with a score and move.
+    **/
+
+  public BestMove abMinimizer(int a, int b, int searchDepth, Grid g, int color)
+    /**
+    *  Minimizer portion of ab pruning that recursively calls the maximizer function.
+    *  @param a is alpha in ab pruning
+    *  @param b is beta in ab pruning
+    *  @param searchDepth is the recursive depth of the search
+    *  @param g is the grid that is being searched on
+    *  @param color is the integer representation of the color
+    *  @return returns a bestMove object with a score and move.
+    **/
+
+-------------------------------BestMove.java-------------------------------
+
+An object that holds a move and a score used to ab pruning and minimax.
 
 
 ==============================EVALUATION MODULE==============================
