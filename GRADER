@@ -43,7 +43,7 @@ Describe your board evaluation function in some detail.
 
 Does your MachinePlayer use any special method of choosing the first few moves?
 
-  No, it does not use any special methods. But, with the way we implemented the board evaluation function, MachinePlayer's first move will always be something in its goal zones.
+  No, it does not use any special methods. But, with the way we implemented the board evaluation function, MachinePlayer's first move will usually be something in its goal zones.
 
 Is there anything else the graders should know to help them read your project?
 
