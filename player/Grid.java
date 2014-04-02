@@ -19,7 +19,8 @@ public class Grid{
 
 
   /**
-  *  Grid constructor that creates a grid of squares with NONE pieces.
+  *  Grid constructor that creates a new empty game board (where all
+  *  squares on the board are unoccupied).
   **/
   public Grid(){
   	board = new Square[DIMENSION][DIMENSION];
@@ -33,8 +34,9 @@ public class Grid{
   }
 
   /**
-    *  Grid constructor that creates a grid based on a 2D array.
-    *  @param model is a 2D array that models the board.
+    *  Grid constructor that creates a game board based on a 2D array.
+    *  @param model is a 2D array that models the board (tells whether
+    *  each Square is owned by black, white, or unoccupied).
     **/  
   public Grid(int[][] model){
   	board = new Square[DIMENSION][DIMENSION];
@@ -58,8 +60,10 @@ public class Grid{
   }
 
   /**
-  *  Constructs a grid from a one line string.
-  *  @param pieces is a string that represents the grid.
+  *  Grid constructor that creates a game board based on a one-line string.
+  *  @param pieces is a 64-character string that models the board (each
+  *  character tells whether a Square is owned by black, white, or
+  *  unoccupied).
   **/
   public Grid(String pieces){
 		blackSquareCount = 0;
@@ -92,10 +96,12 @@ public class Grid{
  	}
 
   /**
-  *  Makes a deep copy of a grid instance.
+  *  Returns a new Grid that is a copy of this Grid. All Squares on
+  *	 the new grid are owned by the same player as the corresponding
+  *  Squares on this current Grid.
   *  @return a grid that is a an exact copy of the current instance.
   **/
-  public Grid cloneGrid(){
+  protected Grid cloneGrid(){
     Grid g = new Grid();
    	for (int x = 0; x < DIMENSION; x++){
    		for (int y = 0; y < DIMENSION; y++){
@@ -106,7 +112,8 @@ public class Grid{
   }
 
   /**
-  *  Returns the square at the coordinates given, or null if out of bounds.
+  *  Returns the Square at the coordinates give. If the coordinates
+  *  are invalid (x or y is greater than 7), it returns null.
   *  @param x is x coordinate
   *  @param y is the y coordinate
   *  @return the Square at the given position.
@@ -120,10 +127,12 @@ public class Grid{
   }
 
   /**
-  *  Sets the piece of the square at the coordinates to a color and increments respective class values
-  *  @param x is the x coordinate
-  *  @param y is the y coordinate
-  *  @param color is the integer representation of what piece it is.
+  *  Sets the Square at location (x,y) on the game board to belong
+  *  to the color indicated.
+  *  @param x is the x-coordinate of Square to be set
+  *  @param y is the y coordinate of Square to be set
+  *  @param color is the integer representation of who the Square
+  *  should be set to belong to
   **/
   protected void set(int x, int y, int color){
   	try {
@@ -147,8 +156,10 @@ public class Grid{
 
   /**
   *  Returns number of goal zones occupied for a given color.
-  *  @param color is integer representation of color.
-  *  @return 0 for no goal zones, 1 for 1 goal zone, and 2 for 2 goal zones.
+  *  @param color is integer representation of the player whose goal
+  *  zones are in question.
+  *  @return 0 for no goal zones occupied, 1 for 1 goal zone occupied,
+  *  and 2 for 2 goal zones occupied.
   **/
   protected int getGoalZones(int color){
   	int goals = 0;
@@ -185,9 +196,10 @@ public class Grid{
   }
 
   /**
-  *  Makes a move on the board.
-  *  @param move is the move that is going to be made.
-  *  @param color is the integer representation of the board.
+  *  Updates the game board after a move is made.
+  *  @param move is the Move that is being performed.
+  *  @param color is the integer representation of the player
+  *  who is performing the move.
   **/
   protected void makeMove(Move move, int color){
   	if ((move != null)){
@@ -216,9 +228,11 @@ public class Grid{
   	updateNetworkList();
   }
   /**
-  *  Returns a list of moves to be considered for AB Pruning.
-  *  @param color is the integer representation of the color.
-  *  @return an array of valid Moves
+  *  Returns a list of valid moves for a given player to be considered
+  *  for Alpha-Beta Pruning.
+  *  @param color is the integer representation of the player whose
+  *  valid moves are calculated
+  *  @return an array of valid Moves for the given player
   **/
   protected Move[] validMoves(int color){
   	Move[] validMoves = new Move[300];
@@ -291,10 +305,12 @@ public class Grid{
 
 
   /**
-  *  Checks if a move is valid.
-  *  @param move is the move being checked
-  *  @param color is the integer representation of color for the move
-  *  @return returns true or false based on whether or not it is valid.
+  *  Checks if a move is valid according to the rules of Network.
+  *  @param move is the move being checked.
+  *  @param color is the integer representation of the player
+  *  trying to make the move.
+  *  @return returns true if the move is valid, false if the move
+  *  breaks a game rule.
   **/
   protected boolean isValidMove(Move move, int color){
   	if(move == null){
@@ -693,7 +709,7 @@ public class Grid{
     /**
     *  Updates network-related values in each square of a grid.
     **/
-    public void updateNetworkList(){
+    protected void updateNetworkList(){
     	int i = 0;
     	Square mainSquare = blackSquares[i];
     	SList squaresToChange;
@@ -826,7 +842,7 @@ public class Grid{
 
   /**
   *  toString method that prints out Square with all its instance variables for debugging purposes.
-  *  @return a String representation of the board.
+  *  @return a String representation of the game board.
   **/
   public String toString(){
     //return simpleToString();
@@ -848,7 +864,8 @@ public class Grid{
   }
 
   /**
-    *  String method that prints out a simple representation of the board.
+    *  Returns a string that is a simple representation of the board--Shows
+    *  all the Squares on the board along with who occupies each Square.
     *  @return a String representation of the board.
     **/
   public String simpleToString(){
@@ -869,7 +886,6 @@ public class Grid{
   			if (get(x,y).getPiece()==NONE){
   				s+="   |";
   			}
-        //s += " "+get(x,y).getPiece()+" |";
   		}
   		s += "\n";
   	}

@@ -76,7 +76,7 @@ grade.
 
 1.) Grid.java
 
-      A Grid object represents a Network game board. It holds the state of every square on the board (whether it is owned by white, owned by black, or unoccupied), holds whether the game is currently accepting add or step moves, and makes appropriate changes to board when moves are made in the game.
+      A Grid object represents a Network game board. It holds the state of every Square on the board (whether it is owned by white, owned by black, or unoccupied), holds whether the game is currently accepting add or step moves, and makes appropriate changes to board when moves are made in the game.
 
 2.) Square.java
       A Square object represents a square on the game board. It holds its location and its owner (whether it is owned by black, white, or if it is unoccupied)
@@ -115,29 +115,69 @@ CLASSES IMPLEMENTED IN:
 
   -------------------------------Grid.java-------------------------------
 
-  Constructor:
+  Constructors:
 
     public Grid()
 
-      Takes no parameters and creates a new empty game board (where all squares on the game board are unoccupied).
+      Grid constructor that creates a new empty game board (where all Squares on the board are unoccupied).
+
+    public Grid(int[][] model)
+
+      Grid constructor that creates a game board based on a 2D array.
+      @param model is a 2D array that models the board (tells whether each Square is owned by black, white, or unoccupied).
+
+    public Grid(String pieces)
+      Grid constructor that creates a game board based on a one-line string.
+      @param pieces is a 64-character string that models the board (each character tells whether a Square is owned by black, white, or unoccupied).
 
   Methods:
 
     Square get(int x, int y)
 
-      Returns the Square at location (x,y) on the game board. (x is horizontal axis, y is vertical). Takes in two parameters--two ints, that 
+      Returns the Square at the coordinates give. If the coordinates are invalid (x or y is greater than 7), it returns null.
+      @param x is the x-coordinate (horizontal axis)
+      @param y is the y-coordinate (vertical axis)
+      @return the Square at the given (x,y) position.
 
     void set(int x, int y, int color)
 
       Sets the Square at location (x,y) on the game board to belong to the color indicated.
+      @param x is the x-coordinate of Square to be set
+      @param y is the y coordinate of Square to be set
+      @param color is the integer representation of who the Square
+      should be set to belong to
 
     public void makeMove(Move move, int color)
 
-      Updates the game board after a move is made according to the color (the player making the move)
+      Updates the game board after a move is made.
+      @param move is the Move that is being performed.
+      @param color is the integer representation of the player
+      who is performing the move.
 
     public int getGoalZones(int color)
 
+      Returns number of goal zones occupied for a given color.
+      @param color is integer representation of the player whose goal
+      zones are in question.
+      @return 0 for no goal zones occupied, 1 for 1 goal zone occupied,
+      and 2 for 2 goal zones occupied.
+
     public Grid cloneGrid()
+
+      Returns a new Grid that is a copy of this Grid. All Squares on the new grid are owned by the same player as the corresponding Squares on this current Grid.
+      @return a grid that is an exact copy of the current Grid state
+
+    public String toString()
+
+      Returns a string that includes all the instance variables of all the Squares, for debugging purposes.
+      @return a String representation of the game board.
+
+    public String simpleToString
+
+      Returns a string that is a simple representation of the board--
+      Shows all the Squares on the board along with who occupies each
+      Square.
+      @return a String representation of the game board.
 
 ================================SQUARE MODULE================================
 
@@ -146,10 +186,19 @@ IMPLEMENTED BY: Amanda Chow
 Classes Implemented In:
 
   Square.java
+  Grid.java
 
-    A Square object represents a square on the game board. It holds its location and its owner (whether it is owned by black, white, or if it is unoccupied)
+  -------------------------------Square.java-------------------------------
+
+  Constructors:
+
+    public Square(int x, int y, Grid g)
+
+      Constructs a new Square object at location (x,y) on game board g,
+      unoccupied by any players.
 
   -------------------------------Grid.java-------------------------------
+
 
 
 =================================LIST MODULE=================================
@@ -172,6 +221,24 @@ IMPLEMENTED BY: Amanda Chow
 Classes Implemented In:
 
   Grid.java
+
+  -------------------------------Grid.java-------------------------------
+
+  Methods:
+
+    protected Move[] validMoves(int color)
+
+      Returns a list of valid moves for a given player to be considered for Alpha-Beta Pruning.
+      @param color is the integer representation of the player whose valid moves are calculated
+      @return an array of valid Moves for the given player
+
+    protected boolean isValidMove(Move move, int color){
+      
+      Checks if a move is valid according to the rules of Network.
+      @param move is the move being checked.
+      @param color is the integer representation of the player trying to make the move.
+      @return returns true if the move is valid, false if the move breaks a game rule.
+
 
 ===============================NETWORK MODULE===============================
 
