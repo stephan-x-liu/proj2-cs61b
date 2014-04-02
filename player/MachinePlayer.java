@@ -39,6 +39,7 @@ public class MachinePlayer extends Player {
 
   // Returns a new move by "this" player.  Internally records the move (updates
   // the internal game board) as a move by "this" player.
+  // Uses abMaximizer to find a bestMove given a search depth and grid state.
   public Move chooseMove() {
 
     BestMove bestMove = abMaximizer(Integer.MIN_VALUE,Integer.MAX_VALUE,searchDepth,grid,color);
@@ -48,17 +49,6 @@ public class MachinePlayer extends Player {
     return bestMove.move;
   
   }
-
-  public static Move chooseMove(Grid g, int color){
-
-    MachinePlayer mp = new MachinePlayer(color);
-    mp.grid = g;
-
-    return mp.chooseMove();
-
-  }
-
-
 
   // If the Move m is legal, records the move as a move by the opponent
   // (updates the internal game board) and returns true.  If the move is
@@ -87,6 +77,15 @@ public class MachinePlayer extends Player {
     }
   }
 
+  /**
+  *  Maximizer portion of ab pruning that recursively calls the minimizer function.
+  *  @param a is alpha in ab pruning
+  *  @param b is beta in ab pruning
+  *  @param searchDepth is the recursive depth of the search
+  *  @param g is the grid that is being searched on
+  *  @param color is the integer representation of the color
+  *  @return returns a bestMove object with a score and move.
+  **/
   public BestMove abMaximizer(int a, int b, int searchDepth, Grid g, int color) {
     Move[] moves = g.validMoves(color);
     BestMove bestMove = new BestMove();
@@ -125,7 +124,16 @@ public class MachinePlayer extends Player {
 
     return bestMove;
   }
-
+  
+  /**
+  *  Minimizer portion of ab pruning that recursively calls the maximizer function.
+  *  @param a is alpha in ab pruning
+  *  @param b is beta in ab pruning
+  *  @param searchDepth is the recursive depth of the search
+  *  @param g is the grid that is being searched on
+  *  @param color is the integer representation of the color
+  *  @return returns a bestMove object with a score and move.
+  **/
   public BestMove abMinimizer(int a, int b, int searchDepth, Grid g, int color) {
     BestMove bestMove = new BestMove();
     int score;
