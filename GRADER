@@ -4,10 +4,10 @@ Name of student running submit: Stephan Liu
 Login of student running submit: cs61b-wf
 
 Second team member's name: Amanda Chow
-Second team member's login:
+Second team member's login: cs61b-asy
 
 Third team member's name (if any): Sebastian Merz
-Third team member's login:
+Third team member's login: cs61b-oa
 
 IMPORTANT:  Once you've submitted Project 2 once, the same team member should
 submit always.  If a different teammate must submit, inform cs61b@cory.eecs of
@@ -20,21 +20,30 @@ instructor.
 ===============================================================================
 Does your program compile without errors?
 
+  Yes.
 
 Have you tested your program on the 61B lab machines?
 
+  Yes.
 
 Did you successfully implement game tree search?  Did you successfully
 implement alpha-beta pruning?  Are there any limitations on it?  What is the
 default number of search levels set by the one-parameter MachinePlayer
 constructor (or is it a variable-depth search)?
 
+  Yes, I implemeted game tree search.
+
+  Yes, I implemented alpha-beta pruning. The limitation is that the worst run-time is exponential run-time.
+
+  The default number of search levels is 3.
 
 Describe your board evaluation function in some detail.
 
 
+
 Does your MachinePlayer use any special method of choosing the first few moves?
 
+  No, it does not use any special methods. But, with the way we implemented the board evaluation function, MachinePlayer's first move will always be something in its goal zones.
 
 Is there anything else the graders should know to help them read your project?
 
@@ -63,194 +72,138 @@ sure to modify this file to reflect these changes before you submit your
 project.  Your design of classes and interfaces will be worth 10% of your
 grade.
 
-Classes:
-Field.java
-Piece.java
-Grid.java
-MachinePlayer.java
+==================================CLASSES==================================
+
+1.) Grid.java
+
+      A Grid object represents a Network game board. It holds the state of every square on the board (whether it is owned by white, owned by black, or unoccupied), holds whether the game is currently accepting add or step moves, and makes appropriate changes to board when moves are made in the game.
+
+2.) Square.java
+      A Square object represents a square on the game board. It holds its location and its owner (whether it is owned by black, white, or if it is unoccupied)
+
+3.) MachinePlayer.java
 
 
-=================================MODULES=================================
+==================================MODULES==================================
 
-- Grid: Class representation of current state of the game.
-- Move: Finds valid moves
-- Network: Finds existing networks or potential networks
-- AlphaBeta: Performs Alpha-Beta Pruning
-- Eval: Evaluates a score for each board 
+1.) SETTING UP THE GRID OBJECT
+      Consists of: Writing the constructors, fields, get/set methods, toString.
 
+2.) SETTING UP THE SQUARE OBJECT
+      Consists of: Writing the constructors, fields, get/set methods, toString.
 
+3.) SETTING UP THE LIST ABSTRACT DATA TYPE
+      Consists of: Writing the List and ListNode interfaces, and writing the DList, DListNode, SList, and SListNode classes.
 
+4.) FINDING VALID MOVES
+      Consists of: Determining whether a move is valid (ensuring it follows the rules of Network), finding the neighbors of a square on the board, testing all possible moves and returning the valid moves.
 
+5.) FINDING EXISTING NETWORKS OR POTENTIAL NETWORKS
 
-================================GRID MODULE================================
+6.) PERFORMING GAME TREE SEARCH
+  Consists of: (something with game tree search/abpruning)
 
-Classes:
+7.) COMPUTING AN EVALUATION FUNCTION
 
-  - Grid.java: Represents game grid
-  - Field.java: Represents wrapper for a field
-  - Piece.java: Represents a piece, either black or white
+=================================GRID MODULE=================================
 
-  -------------------------------Grid.java-------------------------------
+IMPLEMENTED BY: Amanda Chow
 
-  Fields:
+CLASSES IMPLEMENTED IN:
 
-    private Field[][] grid //2D Square array size 7 x 7 of all Squares in grid
-
-    private boolean addMove //'true' if players are currently performing add moves
-    
-    private Field[] machineSquares //Square array size 10 of Squares claimed by opponent
-    
-    private Field[] opponentSquares //Square array size 10 of Squares claimed by opponent
-
-  Methods:
-
-    public char moveType() //Return "A," "S," or "Q" according to what type of move the next move should be
-
-    public void machineMove(Move) //Changes machineSquares accordingly based on MachinePlayer's move
-
-    public void opponentMove(Move) //Changes opponentSquares accordingly based on OpponentPlayer's move
-
-    public void removeSquare(int[] coord) //Takes in coordinate of square and sets it to unclaimed
-
-    public Grid clone(Grid) //Clones current Grid onto new Grid
-
-
-  ------------------------------Field.java------------------------------
-  
-  /**
-  * Constructor for Field object.
-  * @param x is x coordinate of field.
-  * @param y is y coordinate of field.
-  * @param g is Grid that the field is on.
-  **/
-  public Field( int x, int y, Grid g)
-
-  /**
-  * Gets the coordinates of the Field.
-  * @return is a length 2 integer array contain x and y.
-  **/
-  public int[] position()
-
-  /**
-  * Sets the piece of a Field.
-  * @param p is the Piece that is being placed in the field.
-  **/
-  public void setPiece(Piece p)
-
-  /**
-  * Gets the piece a field contains.
-  * @return is a piece if Field is occupied.
-  *  @return is null if Field is unoccupied.
-  **/
-  public Piece getPiece()
-
-  /**
-  * Returns whether or not the Field has a piece.
-  * @return true if occupied and false if unoccupied.
-  **/
-  public boolean hasPiece()
-
-  /**
-  * Gets a Field in an adjacdent direction
-  * @param dir is a length 2 integer array defining direction.
-  * @return is a Field if there is a valid Field in the direction.
-  *  @return is null if out of bounds of Grid.
-  **/
-  public Field adjacent(int[] dir)
-
-  /**
-  * Checks if Field as one neighbor.
-  * @return is a Field if there is a neighbor (occupied adjacent Field).
-  *  @return is null if there is not a neighbor.
-  **/
-  public Field neighbor()
-
-  /**
-  * Finds closest piece in given direction.
-  * @param dir is a length 2 integer array defining direction.
-  * @return is a Field if there is an occupied Field in the given direction.
-  * @return null if it hits the edge of the Grid.
-  **/
-  public Field getInDirection(int[] dir)
-
-  /**
-  * Removes the piece of a Field.
-  **/
-  public void removePiece()
-
-
-================================MOVE MODULE================================
-
-Classes:
-
-  - Grid.java
+  Grid.java
 
   -------------------------------Grid.java-------------------------------
 
+  Constructor:
+
+    public Grid()
+
+      Takes no parameters and creates a new empty game board (where all squares on the game board are unoccupied).
+
   Methods:
 
-    public boolean isValidMove(Move move) //Returns true if move is valid, false if move is invalid.
+    Square get(int x, int y)
 
-    public Moves[] validAddMoves() //Return list of valid add moves for MachinePlayer
+      Returns the Square at location (x,y) on the game board. (x is horizontal axis, y is vertical). Takes in two parameters--two ints, that 
 
-    public Moves[] validStepMoves() //Return list of valid step moves for MachinePlayer
+    void set(int x, int y, int color)
+
+      Sets the Square at location (x,y) on the game board to belong to the color indicated.
+
+    public void makeMove(Move move, int color)
+
+      Updates the game board after a move is made according to the color (the player making the move)
+
+    public int getGoalZones(int color)
+
+    public Grid cloneGrid()
+
+================================SQUARE MODULE================================
+
+IMPLEMENTED BY: Amanda Chow
+
+Classes Implemented In:
+
+  Square.java
+
+    A Square object represents a square on the game board. It holds its location and its owner (whether it is owned by black, white, or if it is unoccupied)
+
+  -------------------------------Grid.java-------------------------------
 
 
+=================================LIST MODULE=================================
 
+IMPLEMENTED BY: (Taken from CS61B Homework)
 
+  Classes Implemented In:
+
+    InvalidNodeException.java
+    List.java
+    ListIterator.java
+    ListNode.java
+    SList.java
+    SListNode.java
+
+=============================VALID MOVES MODULE=============================
+
+IMPLEMENTED BY: Amanda Chow
+
+Classes Implemented In:
+
+  Grid.java
 
 ===============================NETWORK MODULE===============================
 
-Classes:
+IMPLEMENTED BY: Stephan Liu
 
-  - Grid.java
+Classes Implemented In:
+
+  Grid.java
+  Square.java
+
+
+
+
+===========================GAME TREE SEARCH MODULE===========================
+
+IMPLEMENTED BY: Stephan Liu
+
+Classes Implemented In:
+
+  MachinePlayer.java
+
+
+==============================EVALUATION MODULE==============================
+
+IMPLEMENTED BY: Sebastian Merz
+
+Classes Implemented In:
+
+    Grid.java
+    Square.java
 
   -------------------------------Grid.java-------------------------------
-
-  Methods:
-
-    public char hasNetwork() //Return 'M' if Grid contains a MachinePlayer network, 'O' if Grid contains an opponent player network, 'N' if Grid doesn't contain a network
-
-
-
-
-
-==============================ALPHABETA MODULE==============================
-
-Classes:
-
-- Grid.java
-
-  -------------------------------Grid.java-------------------------------
-
-  Fields:
-
-    - private int searchDepth //Search depth of Alpha-Beta Pruning
-
-  Methods:
-
-    public Move addABPruning(boolean machineTurn=true) //Returns best Add move using Alpha-Beta Pruning. Takes boolean parameter that is true if calculating for MachinePlayer's move, false if calculating for opponent's move
-
-    public Move stepABPruning(boolean machineTurn=true) //Returns best Step move using Alpha-Beta Pruning. Takes boolean parameter that is true if calculating for MachinePlayer's move, false if calculating for opponent's move
-
-
-
-
-
-================================EVAL MODULE================================
-
-Classes:
-
-- Grid.java
-
--------------------------------Grid.java-------------------------------
-
-  Methods:
-
-    public int eval() //Returns evaluation of Grid--Positive value if MachinePlayer is doing well, negative value if MachinePlayer is not.
-
-
-Modules:
 
 
 
