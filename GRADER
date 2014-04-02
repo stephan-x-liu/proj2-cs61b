@@ -39,7 +39,15 @@ constructor (or is it a variable-depth search)?
 
 Describe your board evaluation function in some detail.
 
+Since the goal of the eval function is to create a system where better gamestate --> higher eval, the evaluation function measures both obvious things like Network length as well as more subtle factors like the ability to make more networks. An evaluation follows the following process:
 
+First, before the board is evaluated, the MachinePlayer runs updateNetworkList (a seperate function in order to avoid calling it repeatedly every time the eval is required). The updateNetworkList function goes through every piece on the board and then extends outwards to find potential and actual networks. Then it records those findings on the squares the potential and actual networks pass through.
+
+Once this recording is done, we have a grid where every square contains for pieces of information: how many black potential and actual networks cross it, and how many white potential and actual networks cross it. This means that we can tell if a square can possibly block networks, or can possibly make new networks, ect. In order to usae this information, the actual evaluation function looks at every square and sums up 4 functions. These functions take in and weigh one of each of these four factors. In many cases this weighing is exponential, for example: A square that crosses many of our potential networks is great, because it might enhance our connectivity in a future round. A square that allows our opponent to do this is bad. So, boards where these options are created are better or worse for us.
+
+After these 4 functions are summed, we apply multipliers based on how long our network is, to create a heavy bias towards building long networks. We also factor in if the network touch a goal, which also creates a greater bias towards a winning network (rather than one that goes in circles). Finally we add some weighing for boards that have squares in the goal zone because that is a fundamental component of a good strategy.  
+
+Some of these factors are focused on measuring the quality of the present situation, but many of them also focus on creating future opportunities (while preventing the same for the opponent), so we don't just build any network, we build the best network.
 
 Does your MachinePlayer use any special method of choosing the first few moves?
 
@@ -386,14 +394,60 @@ Classes Implemented In:
 
   -------------------------------Grid.java-------------------------------
 
+Methods:
 
+  protected void resetSquaresPN()
+  /**
+  *  Resets the black/white potential and networks for all squares.
+  **/
 
+  protected void updateNetworkList()
+  /**
+  *  Updates network-related values (potential and actual networks for both
+  *  black and white) in each square of a grid.
+  **/
 
+  private int fComputePotential(int count)
+  /**
+   * Takes in the friendly potential networks and weighs it for evaluating.
+   * @param count is the number of friendly potential networks on a square
+   * @return returns a weighted version of this potential meant for adding to eval sum
+   **/
 
+  private int fComputeNetwork(int count)
+  /**
+   * Takes in the friendly networks crossing and weighs it for evaluating.
+   * @param count is the number of friendly  networks over a square
+   * @return returns a weighted version of this network count meant for adding to eval sum
+   **/
 
+  private int eComputePotential(int count)
+  /**
+   * Takes in the hostile potential networks and weighs it for evaluating.
+   * @param count is the number of hostile potential networks on a square
+   * @return returns a weighted version of this potential meant for adding to eval sum
+   **/
 
+  private int eComputeNetwork(int count)
+  /**
+   * Takes in the number of hostile networks crossing this square  and weighs it for evaluating.
+   * @param count is the number of hostile networks crossing a square
+   * @return returns a weighted version of this newtork count meant for adding to eval sum
+   **/
 
+  private int squaresInGoalZones(int color)
+  /**
+  *  Used for grid evaluate.
+  *  If there are more than 2 squares in either goalzone, it returns a negative multiplier.
+  *  @param color is the integer representation of the color.
+  *  @return integer multiplier used for eval.
+  **/
 
-
+  protected int evaluate(int friendly)
+  /**
+  *  Grid evaluate funciton. Computes a "value" for the grid to allow us to rank measure quality.
+  *  @param friendly is the integer representation of the color.
+  *  @return integer value of the current gamestate.
+  **/
 
 

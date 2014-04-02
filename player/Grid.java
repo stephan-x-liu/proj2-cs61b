@@ -380,45 +380,6 @@ public class Grid{
     return true;
   }
 
-    /**
-    *  Resets the black/white potential and networks for all squares.
-    **/
-    protected void resetSquaresPN(){
-    	for (int x = 0; x < DIMENSION; x++){
-    		for (int y = 0; y < DIMENSION; y++){
-    			get(x, y).resetPN();
-    		}
-    	}
-    }
-
-  /**
-  *  The following methods are all for grid evaluation.
-  **/
-  private int fComputePotential(int count){
-    //Heavy bias for overlap because we can make great networks out of overlap.
-    //We subtract one because potential doesn't really help us unless it's overlapping.
-    //We'll see if that's good.
-  	if(count == 0){
-  		return 0;
-  	}
-  	return (count-1)*(count-1);
-  }
-
-  private int fComputeNetwork(int count){
-    //Weigh it more heavily (2*) with heavy bias for overlap.
-  	return count*count;
-  }
-
-  private int eComputePotential(int count){
-    //Negative because it's bad, bias towards overlap because overlap bad.
-  	return -4* count*count;
-  }
-
-  private int eComputeNetwork(int count){
-    //The less networks the better
-  	return -8* count*count;
-  }
-
   /**
   *  Finds the length of the longest network starting from anywhere on the board.
   *  @param color is the integer representation of the color
@@ -642,13 +603,59 @@ public class Grid{
   	return 1;
   }
 
+  /**
+  *  The following methods are all for grid evaluation.
+  **/
+  /**
+   * Takes in the friendly potential networks and weighs it for evaluating.
+   * @param count is the number of friendly potential networks on a square
+   * @return returns a weighted version of this potential meant for adding to eval sum
+   **/
+  private int fComputePotential(int count){
+    //Heavy bias for overlap because we can make great networks out of overlap.
+    //We subtract one because potential doesn't really help us unless it's overlapping.
+    //We'll see if that's good.
+  	if(count == 0){
+  		return 0;
+  	}
+  	return (count-1)*(count-1);
+  }
 
+  /**
+   * Takes in the friendly networks crossing and weighs it for evaluating.
+   * @param count is the number of friendly  networks over a square
+   * @return returns a weighted version of this network count meant for adding to eval sum
+   **/
+  private int fComputeNetwork(int count){
+    //Squared makes heavy bias for overlap.
+  	return count*count;
+  }
+
+  /**
+   * Takes in the hostile potential networks and weighs it for evaluating.
+   * @param count is the number of hostile potential networks on a square
+   * @return returns a weighted version of this potential meant for adding to eval sum
+   **/
+  private int eComputePotential(int count){
+    //Negative because it's bad, bias towards overlap because overlap bad.
+  	return -4* count*count;
+  }
+
+  /**
+   * Takes in the number of hostile networks crossing this square  and weighs it for evaluating.
+   * @param count is the number of hostile networks crossing a square
+   * @return returns a weighted version of this newtork count meant for adding to eval sum
+   **/
+  private int eComputeNetwork(int count){
+    //The less networks the better
+  	return -8* count*count;
+  }
 
 
   /**
-  *  Grid evaluate funciton.
+  *  Grid evaluate funciton. Computes a "value" for the grid to allow us to rank measure quality.
   *  @param friendly is the integer representation of the color.
-  *  @return integer multiplier used for eval.
+  *  @return integer value of the current gamestate.
   **/
   protected int evaluate(int friendly){
   	int enemy;
@@ -662,9 +669,11 @@ public class Grid{
   	}else{
   		enemy = Square.BLACK;
   	}
+    //For all squares
   	for (int y = 0; y < DIMENSION; y++){
   		for (int x = 0; x < DIMENSION; x++){
   			Square sq = get(x, y);
+        //We need to flip our friendly and hostile functions depending on color
   			if(friendly == Square.BLACK){
   				fComputedPotential += fComputePotential(sq.getBlackPotential());
   				eComputedPotential += eComputePotential(sq.getWhitePotential());
@@ -679,6 +688,8 @@ public class Grid{
   			}
   		}
   	}
+
+    //After evaluating the different squares, factor in networks.
   	NetworkObject[] fNetworks = goalNetworks(friendly);
   	NetworkObject[] eNetworks = goalNetworks(enemy);
 
@@ -697,124 +708,141 @@ public class Grid{
   			elongest = eNetworks[egoals].length;
   		egoals++;
   	}
+
   	int emultiplier = maxNetworkLength(enemy)*(elongest-1);
   	int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly) *(maxNetworkLength(friendly) + 2*(flongest));
+    //Add it all together
   	return multiplier*(fComputedPotential+fComputedNetwork)+emultiplier*(eComputedPotential+eComputedNetwork);
-
-
-    //We make seperate functions so we can change the algorithm for each.
 
   }
 
-    /**
-    *  Updates network-related values in each square of a grid.
-    **/
-    protected void updateNetworkList(){
-    	int i = 0;
-    	Square mainSquare = blackSquares[i];
-    	SList squaresToChange;
-    	Square curSquare;
-
-    	resetSquaresPN();
-
-      //Use while instead of for so we can stop at null instead of at end.
-    	while(mainSquare != null){
-        //For every mainSquare
-    		for(int[] dir : DIRECTIONS){
-
-          //Reset varialbes, since we're in a new direction (a new path)
-    			squaresToChange = new SList();
-    			curSquare = mainSquare.adjacent(dir);
-    			squaresToChange.insertBack(mainSquare);
-
-          //Iterate through all squares on the path.
-    			while(true){
-            //If we hit the edge or a white square, it's only a potential network.
-    				if(curSquare == null){
-    					for(Object item : squaresToChange){
-    						Square sq = (Square) item;
-    						sq.addBlackPotential();
-    					}
-    					break;
-            //We need a seperate case anyway because if we hit a square we want to change its values too.
-    				}else if(curSquare.getPiece() == Square.WHITE){
-    					squaresToChange.insertBack(curSquare);
-    					for(Object item : squaresToChange){
-    						Square sq = (Square) item;
-    						sq.addBlackPotential();
-    					}
-    					break;
-            //If we hit a black square, it's a network.
-    				}else if(curSquare.getPiece() == Square.BLACK){
-    					squaresToChange.insertBack(curSquare);
-    					for(Object item : squaresToChange){
-    						Square sq = (Square) item;
-    						sq.addBlackNetwork();
-    					}
-    					break;
-            //This just leaves NONE, an empty square, in which case
-            //we add the square to the potential and move on.
-    				}else{
-    					squaresToChange.insertBack(curSquare);
-    					curSquare = curSquare.adjacent(dir);
-    				}
-    			}
-    		}
-
-        //Increment to the next mainSquare, depends on array being initialized to null
-    		i++;
-    		if(i == 10){
-    			break;
-    		}
-    		mainSquare = blackSquares[i];
-    	}
-
-      //Repeat for white!
-    	i = 0;
-    	mainSquare = whiteSquares[i];
-    	while(mainSquare != null){
-    		for(int[] dir : DIRECTIONS){
-
-    			squaresToChange = new SList();
-    			curSquare = mainSquare.adjacent(dir);
-    			squaresToChange.insertBack(mainSquare);
-
-    			while(true){
-            //If we hit the edge or a white square, it's only a potential network.
-    				if(curSquare == null){
-    					for(Object item : squaresToChange){
-    						Square sq = (Square) item;
-    						sq.addWhitePotential();
-    					}
-    					break;
-            //We need a seperate case anyway because if we hit a square we want to change its values too.
-    				}else if(curSquare.getPiece() == Square.BLACK){
-    					squaresToChange.insertBack(curSquare);
-    					for(Object item : squaresToChange){
-    						Square sq = (Square) item;
-    						sq.addWhitePotential();
-    					}
-    					break;
-           //it's a network! 
-    				}else if(curSquare.getPiece() == Square.WHITE){
-    					for(Object item : squaresToChange){
-    						Square sq = (Square) item;
-    						sq.addWhiteNetwork();
-    					}
-    					break;
-    				}else{
-    					squaresToChange.insertBack(curSquare);
-    					curSquare = curSquare.adjacent(dir);
-    				}
-    			}
-    		}
-    		i++;
-    		if(i == 10){
-    			break;
-    		}
-    		mainSquare = whiteSquares[i];
-    	}
+  /**
+  *  Resets the black/white potential and networks for all squares.
+  **/
+  protected void resetSquaresPN(){
+    for (int x = 0; x < DIMENSION; x++){
+      for (int y = 0; y < DIMENSION; y++){
+        get(x, y).resetPN();
+      }
     }
+  }
+
+  /**
+  *  Updates network-related values in each square of a grid.
+  **/
+  protected void updateNetworkList(){
+    int i = 0;
+    Square mainSquare = blackSquares[i];
+    SList squaresToChange;
+    Square curSquare;
+
+    resetSquaresPN();
+
+    //Use while instead of for so we can stop at null instead of at end.
+    while(mainSquare != null){
+      //For every mainSquare
+      for(int[] dir : DIRECTIONS){
+
+        //Reset varialbes, since we're in a new direction (a new path)
+        squaresToChange = new SList();
+        curSquare = mainSquare.adjacent(dir);
+        squaresToChange.insertBack(mainSquare);
+
+        //Iterate through all squares on the path.
+        while(true){
+          //If we hit the edge or a white square, it's only a potential network.
+          if(curSquare == null){
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addBlackPotential();
+            }
+            break;
+          //We need a seperate case anyway because if we hit a square we want to change its values too.
+          }else if(curSquare.getPiece() == Square.WHITE){
+            squaresToChange.insertBack(curSquare);
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addBlackPotential();
+            }
+            break;
+          //If we hit a black square, it's a network.
+          }else if(curSquare.getPiece() == Square.BLACK){
+            squaresToChange.insertBack(curSquare);
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addBlackNetwork();
+            }
+            break;
+          //This just leaves NONE, an empty square, in which case
+          //we add the square to the potential and move on.
+          }else{
+            squaresToChange.insertBack(curSquare);
+            curSquare = curSquare.adjacent(dir);
+          }
+        }
+      }
+
+      //Increment to the next mainSquare, depends on array being initialized to null
+      i++;
+      if(i == 10){
+        break;
+      }
+      mainSquare = blackSquares[i];
+    }
+
+    //Repeat for white!
+    i = 0;
+    mainSquare = whiteSquares[i];
+    while(mainSquare != null){
+      for(int[] dir : DIRECTIONS){
+
+        squaresToChange = new SList();
+        curSquare = mainSquare.adjacent(dir);
+        squaresToChange.insertBack(mainSquare);
+
+        while(true){
+          //If we hit the edge or a white square, it's only a potential network.
+          if(curSquare == null){
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addWhitePotential();
+            }
+            break;
+          //We need a seperate case anyway because if we hit a square we want to change its values too.
+          }else if(curSquare.getPiece() == Square.BLACK){
+            squaresToChange.insertBack(curSquare);
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addWhitePotential();
+            }
+            break;
+         //it's a network! 
+          }else if(curSquare.getPiece() == Square.WHITE){
+            for(Object item : squaresToChange){
+              Square sq = (Square) item;
+              sq.addWhiteNetwork();
+            }
+            break;
+          }else{
+            squaresToChange.insertBack(curSquare);
+            curSquare = curSquare.adjacent(dir);
+          }
+        }
+      }
+      i++;
+      if(i == 10){
+        break;
+      }
+      mainSquare = whiteSquares[i];
+    }
+  }
+
+  /**
+   * ALERT: All functions below are for testing purposes (storing and displaying the grid in
+   * various ways). They don't impact the project, and are only worth looking at out of 
+   * curiosity.
+   **/
+
 
   /**
   *  Returns the grid as a string representation in one line.
