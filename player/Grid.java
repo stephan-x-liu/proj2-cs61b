@@ -4,362 +4,377 @@ import list.*;
 
 public class Grid{
   //These fields must be default protected so we can test stuff properly
+
+	protected boolean add = true;
+	private Square[][] board;
+	protected Square[] blackSquares = new Square[10];
+	protected int blackSquareCount = 0;
+	protected Square[] whiteSquares = new Square[10];
+	protected int whiteSquareCount = 0;
+	public static final int DIMENSION = 8;
 	static final int BLACK = 0;
 	static final int WHITE = 1;
 	static final int NONE = 2;
-	public static final int DIMENSION = 8;
-	protected boolean add = true;
-	private Square[][] board;
-	public Square[] blackSquares = new Square[10];
-  	protected int blackSquareCount = 0;
-	public Square[] whiteSquares = new Square[10];
-  	protected int whiteSquareCount = 0;
-  	static final int[][] DIRECTIONS = Square.DIRECTIONS;
-	
-	//put in length 10 array of black pieces
-	//put in length 10 array of white pieces
-	
-	public Grid(){
-		board = new Square[DIMENSION][DIMENSION];
-		for(int i = 0; i < DIMENSION; i ++){
-			for(int j = 0; j < DIMENSION; j++){
-				board[i][j] = new Square(i,j,this);
-			}
-		}
-		blackSquareCount = 0;
-		whiteSquareCount = 0;
-	}
-
-	public Grid(int[][] model){
-	 	board = new Square[DIMENSION][DIMENSION];
-	  	blackSquareCount = 0;
-		whiteSquareCount = 0;
-		for(int i = 0; i < DIMENSION; i ++){
-			for(int j = 0; j < DIMENSION; j++){
-				board[i][j] = new Square(i,j,this);
-	   		//For every single x and y value, check if it's black or white, then set the pieces.
-	        if(model[i][j] == BLACK){
-					blackSquares[blackSquareCount] = board[i][j];
-					blackSquareCount++;
-					if (blackSquareCount>=10){
-						add = false;
-					}
-		        }
-		        if(model[i][j] == WHITE){
-						whiteSquares[whiteSquareCount] = board[i][j];
-						whiteSquareCount++;
-		        }
-	    		board[i][j].setPiece(model[i][j]);
-			}
-		}
-
-	}
-
-	public Grid(String pieces){
-		blackSquareCount = 0;
-		whiteSquareCount = 0;
-	    pieces = pieces.replaceAll("W", Integer.toString(WHITE));
-	    pieces = pieces.replaceAll("B", Integer.toString(BLACK));
-	    pieces = pieces.replaceAll("\\.", Integer.toString(NONE));
-		board = new Square[DIMENSION][DIMENSION];
-	    char[] charArray = pieces.toCharArray();
-		Square s;
-		int i = 0;
-	 	for (int y = 0; y < DIMENSION; y++){
-	 		for (int x = 0; x < DIMENSION; x++){
-	 			s = new Square(x, y, Integer.parseInt(String.valueOf(charArray[i])), this);
-	 			board[x][y] = s;
-	 			if (charArray[i] == WHITE){
-	 				whiteSquares[whiteSquareCount] = s;
-	 				whiteSquareCount++;
-	 			}
-	 			if (charArray[i] == BLACK){
-	 				blackSquares[blackSquareCount] = s;
-	 				blackSquareCount++;
-	 				if (blackSquareCount==10){
-	 					add = false;
-	 				}
-	 			}
-	    		i++;
-	 		}
-	 	}
- 	}
- 	
- 	public Grid cloneGrid(){
- 		Grid g = new Grid();
- 		for (int x = 0; x < DIMENSION; x++){
- 			for (int y = 0; y < DIMENSION; y++){
-  				g.set(x,y,get(x,y).getPiece());
- 			}
- 		}
- 		return g;
- 	}
-
-	public Square get(int x, int y){
-		try {
-			return board[x][y];
-		} catch(ArrayIndexOutOfBoundsException e){
-			return null;
-		}
-	}
-
-	public void set(int x, int y, int color){
-		try {
-			get(x,y).setPiece(color);
-			if (color==WHITE){
-				whiteSquares[whiteSquareCount]=get(x,y);
-				whiteSquareCount++;
-			}
-			if (color==BLACK){
-				blackSquares[blackSquareCount]=get(x,y);
-				blackSquareCount++;
-				if (blackSquareCount==10){
-					add = false;
-				}
-			}
-		} catch(ArrayIndexOutOfBoundsException e){
-			return ;
-		}
-
-	}
-
-	public int getGoalZones(int color){
-		int goals = 0;
-		if (color==BLACK){
-			for (int x0 = 0; x0 < DIMENSION; x0++){
-				if (get(x0,0).getPiece() == BLACK){
-					goals++;
-					break;
-				}
-			}
-			for (int x7 = 0; x7 < DIMENSION; x7++){
-				if (get(x7,7).getPiece() == BLACK){
-					goals++;
-					break;
-				}
-			}
-			return goals;
-		}
-		else{
-			for (int y0 = 0; y0 < DIMENSION; y0++){
-				if (get(0,y0).getPiece() == WHITE){
-					goals++;
-					break;
-				}
-			}
-			for (int y7 = 0; y7 < DIMENSION; y7++){
-				if (get(7,y7).getPiece() == WHITE){
-					goals++;
-					break;
-				}
-			}
-			return goals;
-		}
-	}
-
-	public void makeMove(Move move, int color){
-		if ((move != null)){
-			if (move.moveKind == Move.STEP){
-				get(move.x2, move.y2).removePiece();
-				get(move.x1,move.y1).setPiece(color);
-				for (int a=0; a<10; a++){
-					if (color==BLACK){
-						if (blackSquares[a]==get(move.x2, move.y2)){
-							blackSquares[a] = get(move.x1, move.y1);
-							break;
-						}
-					}
-					if (color==WHITE){
-						if (whiteSquares[a]==get(move.x2, move.y2)){
-							whiteSquares[a] = get(move.x1, move.y1);
-							break;
-						}
-					}
-				}
-			}
-			if (move.moveKind==Move.ADD) {
-				set(move.x1, move.y1, color);
-			}
-		}
-    	updateNetworkList();
-	}
-
-	public Move[] validMoves(int color){
-		Move[] validMoves = new Move[300];
-		int moveIndex = 0;
-		Move move;
-		if (add){
-			for (int y = 0; y < DIMENSION; y++){
-				for (int x = 0; x < DIMENSION; x++){
-					move = new Move(x, y);
-					if (isValidMove(move, color)){
-						validMoves[moveIndex] = move;
-						moveIndex++;
-					}
-				}
-			}
-		}
-		else {
-			Square[][] squares = new Square[3][10];
-			Network[] goals = goalNetworks(color);
-			Network longest = null;
-			squares[1] = whiteSquares;
-			squares[0] = blackSquares;
-			int count = 0;
-			Square[] movable = new Square[10];
-			for(Square s: squares[color]){
-				boolean inNetwork = false;
-				for(Network n: goals){
-					if(n!=null && (longest==null || n.length>longest.length))
-						longest = n;
-				}
-			}
-			for(Square s: squares[color]){
-				if(longest!=null&&s.alreadyInNetwork(longest.network)==false){
-					movable[count] = s;
-					count++;
-				}
-				else if(longest == null){
-					movable[count] = s;
-					count++;
-				}
-			}
-			if(count==0&&longest.length>9){
-				try{
-					movable[0] = longest.network[9];
-					movable[1] = longest.network[8];
-					movable[2] = longest.network[7];
-					movable[3] = longest.network[6];	
-				}
-				catch(NullPointerException e){
-
-				}
-				
-			}
-			for (Square add: movable){
-				if (add != null){
-					for (int y = 0; y < DIMENSION; y++){
-						for (int x = 0; x < DIMENSION && moveIndex < 300; x++){
-							move = new Move(x, y, add.position()[0], add.position()[1]);
-							if (isValidMove(move, color)){
-								validMoves[moveIndex] = move;
-								moveIndex++;
-							}	
-						}
-					}
-				}
-			}
-		}
-		return validMoves;
-	}
+	static final int[][] DIRECTIONS = Square.DIRECTIONS;
 
 
-	public boolean isValidMove(Move move, int color){
-		if(move == null){
-			return false;
-		}
-		if (get(move.x1, move.y1).hasPiece()){
-			return false;
-		}
-		if (move.x1 == 0){ //checking four corners 
-			if (move.y1 == 0 || move.y1 == 7){
-				return false;
-			}
-		}
-		if (move.y1 == 0){
-			if (move.x1 == 0 || move.x1 == 7){
-				return false;
-			}
-		}
-		if (color == WHITE){ //checking opponent goals
-			if (move.y1 == 0 || move.y1 == 7){
-				return false;
-			}
-		}
-		if (color == BLACK){
-			if (move.x1 == 0 || move.x1 == 7){
-				return false;
-			}
-		}
-		if (move.moveKind==Move.ADD){
-			Square[] neighbors = get(move.x1, move.y1).neighbor(color);
-			if(!add){
-				return false;
-			}
-			if(neighbors[1]!=null){
-				return false;
-			}
-			if (neighbors[0] != null){
-				if (neighbors[0].neighbor(color)[0] != null){
-					return false;
-				}
-			}
-		}
-		if (move.moveKind==Move.STEP){
-			if (add){
-				return false;
-			}
-			if (get(move.x2, move.y2).getPiece() != color){
-				return false;
-			}	
-			if (move.x1==move.x2 && move.y1==move.y2){ //stepping to same square
-				return false;
-			}
-			get(move.x2, move.y2).removePiece();
-			Square[] neighbors = get(move.x1, move.y1).neighbor(color);
-			if(neighbors[1]!=null){
-				get(move.x2, move.y2).setPiece(color);
-				return false;
-			}
-			if (neighbors[0] != null){
-				if (neighbors[0].neighbor(color)[0] != null){
-					get(move.x2, move.y2).setPiece(color);
-					return false;
-				}
-			}
-			get(move.x2, move.y2).setPiece(color);
-		}
-		return true;
-	}
+    /**
+    *  Grid constructor that creates a grid of squares with NONE pieces.
+    **/
+    public Grid(){
+    	board = new Square[DIMENSION][DIMENSION];
+    	for(int i = 0; i < DIMENSION; i ++){
+    		for(int j = 0; j < DIMENSION; j++){
+    			board[i][j] = new Square(i,j,this);
+    		}
+    	}
+    	blackSquareCount = 0;
+    	whiteSquareCount = 0;
+    }
 
   /**
-   * Resets the black/white potential and networks for all squares.
-   **/
+    *  Grid constructor that creates a grid based on a 2D array.
+    *  @param model is a 2D array that models the board.
+    **/  
+  public Grid(int[][] model){
+  	board = new Square[DIMENSION][DIMENSION];
+  	blackSquareCount = 0;
+  	whiteSquareCount = 0;
+  	for(int i = 0; i < DIMENSION; i ++){
+  		for(int j = 0; j < DIMENSION; j++){
+  			board[i][j] = new Square(i,j,this);
+         //For every single x and y value, check if it's black or white, then set the pieces.
+  			if(model[i][j] == BLACK){
+  				blackSquares[blackSquareCount] = board[i][j];
+  				blackSquareCount++;
+  			}
+  			if(model[i][j] == WHITE){
+  				whiteSquares[whiteSquareCount] = board[i][j];
+  				whiteSquareCount++;
+  			}
+  			board[i][j].setPiece(model[i][j]);
+  		}
+  	}
+  }
 
-	public void resetSquaresPN(){
-		for (int x = 0; x < DIMENSION; x++){
-			for (int y = 0; y < DIMENSION; y++){
-       			get(x, y).resetPN();
-      		}
+  /**
+  *  Makes a deep copy of a grid instance.
+  *  @return a grid that is a an exact copy of the current instance.
+  **/
+  public Grid cloneGrid(){
+    Grid g = new Grid();
+   	for (int x = 0; x < DIMENSION; x++){
+   		for (int y = 0; y < DIMENSION; y++){
+   			g.set(x,y,get(x,y).getPiece());
+   		}
+   	}
+   	return g;
+  }
+
+  /**
+  *  Returns the square at the coordinates given, or null if out of bounds.
+  *  @param x is x coordinate
+  *  @param y is the y coordinate
+  *  @return the Square at the given position.
+  **/
+  protected Square get(int x, int y){
+ 	  try {
+ 		  return board[x][y];
+ 	  } catch(ArrayIndexOutOfBoundsException e){
+ 		  return null;
+ 	  }
+  }
+
+  /**
+  *  Sets the piece of the square at the coordinates to a color and increments respective class values
+  *  @param x is the x coordinate
+  *  @param y is the y coordinate
+  *  @param color is the integer representation of what piece it is.
+  **/
+  protected void set(int x, int y, int color){
+  	try {
+  		get(x,y).setPiece(color);
+  		if (color==WHITE){
+  			whiteSquares[whiteSquareCount]=get(x,y);
+  			whiteSquareCount++;
+  		}
+  		if (color==BLACK){
+  			blackSquares[blackSquareCount]=get(x,y);
+  			blackSquareCount++;
+  			if (blackSquareCount==10){
+  				add = false;
+  			}
+  		}
+  	} catch(ArrayIndexOutOfBoundsException e){
+  		return ;
+  	}
+
+  }
+
+  /**
+  *  Returns number of goal zones occupied for a given color.
+  *  @param color is integer representation of color.
+  *  @return 0 for no goal zones, 1 for 1 goal zone, and 2 for 2 goal zones.
+  **/
+  protected int getGoalZones(int color){
+  	int goals = 0;
+  	if (color==BLACK){
+  		for (int x0 = 0; x0 < DIMENSION; x0++){
+  			if (get(x0,0).getPiece() == BLACK){
+  				goals++;
+  				break;
+  			}
+  		}
+  		for (int x7 = 0; x7 < DIMENSION; x7++){
+  			if (get(x7,7).getPiece() == BLACK){
+  				goals++;
+  				break;
+  			}
+  		}
+  		return goals;
+  	}
+  	else{
+  		for (int y0 = 0; y0 < DIMENSION; y0++){
+  			if (get(0,y0).getPiece() == WHITE){
+  				goals++;
+  				break;
+  			}
+  		}
+  		for (int y7 = 0; y7 < DIMENSION; y7++){
+  			if (get(7,y7).getPiece() == WHITE){
+  				goals++;
+  				break;
+  			}
+  		}
+  		return goals;
+  	}
+  }
+
+  /**
+  *  Makes a move on the board.
+  *  @param move is the move that is going to be made.
+  *  @param color is the integer representation of the board.
+  **/
+  protected void makeMove(Move move, int color){
+  	if ((move != null)){
+  		if (move.moveKind == Move.STEP){
+  			get(move.x2, move.y2).removePiece();
+  			get(move.x1,move.y1).setPiece(color);
+  			for (int a=0; a<10; a++){
+  				if (color==BLACK){
+  					if (blackSquares[a]==get(move.x2, move.y2)){
+  						blackSquares[a] = get(move.x1, move.y1);
+  						break;
+  					}
+  				}
+  				if (color==WHITE){
+  					if (whiteSquares[a]==get(move.x2, move.y2)){
+  						whiteSquares[a] = get(move.x1, move.y1);
+  						break;
+  					}
+  				}
+  			}
+  		}
+  		if (move.moveKind==Move.ADD) {
+  			set(move.x1, move.y1, color);
+  		}
+  	}
+  	updateNetworkList();
+  }
+  /**
+  *  Returns a list of moves to be considered for AB Pruning.
+  *  @param color is the integer representation of the color.
+  *  @return an array of valid Moves
+  **/
+  protected Move[] validMoves(int color){
+  	Move[] validMoves = new Move[300];
+  	int moveIndex = 0;
+  	Move move;
+  	if (add){
+  		for (int y = 0; y < DIMENSION; y++){
+  			for (int x = 0; x < DIMENSION; x++){
+  				move = new Move(x, y);
+  				if (isValidMove(move, color)){
+  					validMoves[moveIndex] = move;
+  					moveIndex++;
+  				}
+  			}
+  		}
+  	}
+  	else {
+  		Square[][] squares = new Square[3][10];
+  		Network[] goals = goalNetworks(color);
+  		Network longest = null;
+  		squares[1] = whiteSquares;
+  		squares[0] = blackSquares;
+  		int count = 0;
+  		Square[] movable = new Square[10];
+  		for(Square s: squares[color]){
+  			boolean inNetwork = false;
+  			for(Network n: goals){
+  				if(n!=null && (longest==null || n.length>longest.length))
+  					longest = n;
+  			}
+  		}
+  		for(Square s: squares[color]){
+  			if(longest!=null&&s.alreadyInNetwork(longest.network)==false){
+  				movable[count] = s;
+  				count++;
+  			}
+  			else if(longest == null){
+  				movable[count] = s;
+  				count++;
+  			}
+  		}
+  		if(count==0&&longest.length>9){
+  			try{
+  				movable[0] = longest.network[9];
+  				movable[1] = longest.network[8];
+  				movable[2] = longest.network[7];
+  				movable[3] = longest.network[6];  
+  			}
+  			catch(NullPointerException e){
+
+  			}
+
+  		}
+  		for (Square add: movable){
+  			if (add != null){
+  				for (int y = 0; y < DIMENSION; y++){
+  					for (int x = 0; x < DIMENSION && moveIndex < 300; x++){
+  						move = new Move(x, y, add.position()[0], add.position()[1]);
+  						if (isValidMove(move, color)){
+  							validMoves[moveIndex] = move;
+  							moveIndex++;
+  						}  
+  					}
+  				}
+  			}
+  		}
+  	}
+  	return validMoves;
+  }
+
+
+  /**
+  *  Checks if a move is valid.
+  *  @param move is the move being checked
+  *  @param color is the integer representation of color for the move
+  *  @return returns true or false based on whether or not it is valid.
+  **/
+  protected boolean isValidMove(Move move, int color){
+  	if(move == null){
+  		return false;
+  	}
+  	if (get(move.x1, move.y1).hasPiece()){
+  		return false;
+  	}
+    if (move.x1 == 0){ //checking four corners 
+    	if (move.y1 == 0 || move.y1 == 7){
+    		return false;
     	}
-	}
+    }
+    if (move.y1 == 0){
+    	if (move.x1 == 0 || move.x1 == 7){
+    		return false;
+    	}
+    }
+    if (color == WHITE){ //checking opponent goals
+    	if (move.y1 == 0 || move.y1 == 7){
+    		return false;
+    	}
+    }
+    if (color == BLACK){
+    	if (move.x1 == 0 || move.x1 == 7){
+    		return false;
+    	}
+    }
+    if (move.moveKind==Move.ADD){
+    	Square[] neighbors = get(move.x1, move.y1).neighbor(color);
+    	if(!add){
+    		return false;
+    	}
+    	if(neighbors[1]!=null){
+    		return false;
+    	}
+    	if (neighbors[0] != null){
+    		if (neighbors[0].neighbor(color)[0] != null){
+    			return false;
+    		}
+    	}
+    }
+    if (move.moveKind==Move.STEP){
+    	if (add){
+    		return false;
+    	}
+    	if (get(move.x2, move.y2).getPiece() != color){
+    		return false;
+    	}  
+      if (move.x1==move.x2 && move.y1==move.y2){ //stepping to same square
+      	return false;
+      }
+      get(move.x2, move.y2).removePiece();
+      Square[] neighbors = get(move.x1, move.y1).neighbor(color);
+      if(neighbors[1]!=null){
+      	get(move.x2, move.y2).setPiece(color);
+      	return false;
+      }
+      if (neighbors[0] != null){
+      	if (neighbors[0].neighbor(color)[0] != null){
+      		get(move.x2, move.y2).setPiece(color);
+      		return false;
+      	}
+      }
+      get(move.x2, move.y2).setPiece(color);
+    }
+    return true;
+  }
 
+    /**
+    *  Resets the black/white potential and networks for all squares.
+    **/
+    protected void resetSquaresPN(){
+    	for (int x = 0; x < DIMENSION; x++){
+    		for (int y = 0; y < DIMENSION; y++){
+    			get(x, y).resetPN();
+    		}
+    	}
+    }
+
+  /**
+  *  The following methods are all for grid evaluation.
+  **/
   private int fComputePotential(int count){
     //Heavy bias for overlap because we can make great networks out of overlap.
     //We subtract one because potential doesn't really help us unless it's overlapping.
     //We'll see if that's good.
-    if(count == 0){
-      return 0;
-    }
-    return (count-1)*(count-1);
+  	if(count == 0){
+  		return 0;
+  	}
+  	return (count-1)*(count-1);
   }
 
   private int fComputeNetwork(int count){
     //Weigh it more heavily (2*) with heavy bias for overlap.
-    return count*count;
+  	return count*count;
   }
 
   private int eComputePotential(int count){
     //Negative because it's bad, bias towards overlap because overlap bad.
-    return -4* count*count;
+  	return -4* count*count;
   }
 
   private int eComputeNetwork(int count){
     //The less networks the better
-    return -8* count*count;
+  	return -8* count*count;
   }
 
-  public int maxNetworkLength(int color){
+  /**
+  *  Finds the length of the longest network starting from anywhere on the board.
+  *  @param color is the integer representation of the color
+  *  @return integer length of longest network.
+  **/
+  protected int maxNetworkLength(int color){
   	int length = 0;
   	if(color == BLACK){
   		for(int i = 0; i < blackSquareCount; i++){
@@ -380,7 +395,12 @@ public class Grid{
   	return length;
   }
 
-  public Network[] goalNetworks(int color){
+  /**
+  *  Returns a list of networks starting from the goal.
+  *  @param color is the integer representation of the color
+  *  @return list of Network objects. 
+  **/
+  protected Network[] goalNetworks(int color){
   	Network[] temp = new Network[10];
   	int count = 0;
   	if(color==WHITE){
@@ -402,7 +422,12 @@ public class Grid{
   	return temp;
   }
 
-  public Network getNetwork(Square current){
+  /**
+  *  Find network from a square.
+  *  @param current is the starting square of the network.
+  *  @return a Network object
+  **/
+  protected Network getNetwork(Square current){
   	Square[] network = new Square[10];
   	int length = 0;
   	int[] temp = {0,0};
@@ -410,7 +435,12 @@ public class Grid{
   	return n;
   }
 
-  public boolean hasWinningNetwork(int color){
+  /**
+  *  Finds out whether or not there is a winning network for a color.
+  *  @param color is the integer representation of the color
+  *  @return boolean for whether or not there is a winning network.
+  **/
+  protected boolean hasWinningNetwork(int color){
   	int goal1 = 1;
   	int goal2 = 0;
   	int goal3 = 0;
@@ -441,10 +471,12 @@ public class Grid{
   	return false;
   }
 
-
-
-
-  public int networkLength(Square current){
+  /**
+  *  Finds length of a network from a specific square.
+  *  @param current is the starting square of the network.
+  *  @return integer length of network.
+  **/
+  protected int networkLength(Square current){
   	Square[] network = new Square[10];
   	int length = 0;
   	int[] temp = {0,0};
@@ -452,6 +484,11 @@ public class Grid{
   	return n.length;
   }
 
+  /**
+  *  Deep copy of a network array.
+  *  @param network is array of squares that represents a network.
+  *  @return array of squares that represents a network.
+  **/
   private Square[] copyNetworkArray(Square[] network){
   	Square[] temp = new Square[10];
   	for(int i = 0; i<10; i++){
@@ -460,7 +497,14 @@ public class Grid{
   	return temp;
   }
 
-
+  /**
+  *  Private function used within grid class for all the Network-related functions.
+  *  @param current is square of where to start looking for the network
+  *  @param network is length 10 array of squares representing a network
+  *  @param length is length of current network
+  *  @param prev_dir is a length two integer array representing the direction the network is coming from. 
+  *  @return a Network object
+  **/
   private Network findNetwork(Square current, Square[] network, int length, int[] prev_dir){
   	network[length] = current;
   	length++;
@@ -478,7 +522,7 @@ public class Grid{
   	if(current.position()[1]==7||current.position()[0]==7){
   		return longest;
   	}
-  	
+
   	for(int i = 0; i < connections.length; i++){
   		Square temp = connections[i];
   		if(temp!=null&&temp.getPiece()==WHITE&&temp.position()[0]==0){
@@ -490,313 +534,317 @@ public class Grid{
   		temp = connections[i];
   		if(temp!=null && temp.alreadyInNetwork(network)==false){
   			Network s = findNetwork(temp,copyNetworkArray(network),length, DIRECTIONS[i]);
-	  		if(s.length>longest.length){
-	  			longest = new Network(s.network,s.length);
-	  		}
-  		}	
+  			if(s.length>longest.length){
+  				longest = new Network(s.network,s.length);
+  			}
+  		}  
   	}
   	return longest;
 
   }
 
-  public int squaresInGoalZones(int color){
+  /**
+  *  Used for grid evaluate.
+  *  If there are more than 2 squares in either goalzone, it returns a negative multiplier.
+  *  @param color is the integer representation of the color.
+  *  @return integer multiplier used for eval.
+  **/
+  private int squaresInGoalZones(int color){
   	int count = 0;
   	if (color==BLACK){
-			for (int x0 = 0; x0 < DIMENSION; x0++){
-				if (get(x0,0).getPiece() == BLACK){
-					count++;
-				}
-			}
-			if(count>2){
-				return 2 - count;
-			}
-			count = 0;
-			for (int x7 = 0; x7 < DIMENSION; x7++){
-				if (get(x7,7).getPiece() == BLACK){
-					count++;
-				}
-			}
-			if(count>2){
-				return 2 - count;
-			}
-		}
-		else{
-			for (int y0 = 0; y0 < DIMENSION; y0++){
-				if (get(0,y0).getPiece() == WHITE){
-					count++;
-				}
-			}
-			if(count>2){
-				return 2 - count;
-			}
-			count = 0;
-			for (int y7 = 0; y7 < DIMENSION; y7++){
-				if (get(7,y7).getPiece() == WHITE){
-					count++;
-				}
-			}
-			if(count>2){
-				return 2 - count;
-			}
-		}
-		return 1;
+  		for (int x0 = 0; x0 < DIMENSION; x0++){
+  			if (get(x0,0).getPiece() == BLACK){
+  				count++;
+  			}
+  		}
+  		if(count>2){
+  			return 2 - count;
+  		}
+  		count = 0;
+  		for (int x7 = 0; x7 < DIMENSION; x7++){
+  			if (get(x7,7).getPiece() == BLACK){
+  				count++;
+  			}
+  		}
+  		if(count>2){
+  			return 2 - count;
+  		}
+  	}
+  	else{
+  		for (int y0 = 0; y0 < DIMENSION; y0++){
+  			if (get(0,y0).getPiece() == WHITE){
+  				count++;
+  			}
+  		}
+  		if(count>2){
+  			return 2 - count;
+  		}
+  		count = 0;
+  		for (int y7 = 0; y7 < DIMENSION; y7++){
+  			if (get(7,y7).getPiece() == WHITE){
+  				count++;
+  			}
+  		}
+  		if(count>2){
+  			return 2 - count;
+  		}
+  	}
+  	return 1;
   }
 
 
 
 
+  /**
+  *  Grid evaluate funciton.
+  *  @param friendly is the integer representation of the color.
+  *  @return integer multiplier used for eval.
+  **/
+  protected int evaluate(int friendly){
+  	int enemy;
+  	int fComputedPotential = 0;
+  	int fComputedNetwork = 0;
+  	int eComputedPotential = 0;
+  	int eComputedNetwork = 0;
+  	updateNetworkList();
+  	if(friendly == Square.BLACK){
+  		enemy = Square.WHITE;
+  	}else{
+  		enemy = Square.BLACK;
+  	}
+  	for (int y = 0; y < DIMENSION; y++){
+  		for (int x = 0; x < DIMENSION; x++){
+  			Square sq = get(x, y);
+  			if(friendly == Square.BLACK){
+  				fComputedPotential += fComputePotential(sq.getBlackPotential());
+  				eComputedPotential += eComputePotential(sq.getWhitePotential());
+  				fComputedNetwork += fComputeNetwork(sq.getBlackNetworks());
+  				eComputedNetwork += eComputeNetwork(sq.getWhiteNetworks());
+  			}
+  			if(friendly == Square.WHITE){
+  				eComputedPotential += eComputePotential(sq.getBlackPotential());
+  				fComputedPotential += fComputePotential(sq.getWhitePotential());
+  				eComputedNetwork += eComputeNetwork(sq.getBlackNetworks());
+  				fComputedNetwork += fComputeNetwork(sq.getWhiteNetworks());
+  			}
+  		}
+  	}
+  	Network[] fNetworks = goalNetworks(friendly);
+  	Network[] eNetworks = goalNetworks(enemy);
 
-  public int evaluate(int friendly){
-    int enemy;
-    int fComputedPotential = 0;
-    int fComputedNetwork = 0;
-    int eComputedPotential = 0;
-    int eComputedNetwork = 0;
-    updateNetworkList();
-    if(friendly == Square.BLACK){
-      enemy = Square.WHITE;
-    }else{
-      enemy = Square.BLACK;
-    }
-    for (int y = 0; y < DIMENSION; y++){
-      for (int x = 0; x < DIMENSION; x++){
-        Square sq = get(x, y);
-        if(friendly == Square.BLACK){
-          fComputedPotential += fComputePotential(sq.getBlackPotential());
-          eComputedPotential += eComputePotential(sq.getWhitePotential());
-          fComputedNetwork += fComputeNetwork(sq.getBlackNetworks());
-          eComputedNetwork += eComputeNetwork(sq.getWhiteNetworks());
-        }
-        if(friendly == Square.WHITE){
-          eComputedPotential += eComputePotential(sq.getBlackPotential());
-          fComputedPotential += fComputePotential(sq.getWhitePotential());
-          eComputedNetwork += eComputeNetwork(sq.getBlackNetworks());
-          fComputedNetwork += fComputeNetwork(sq.getWhiteNetworks());
-        }
-      }
-    }
-    Network[] fNetworks = goalNetworks(friendly);
-    Network[] eNetworks = goalNetworks(enemy);
+  	int flongest = 0;
+  	int fgoals = 0;
+  	int egoals = 0;
+  	int elongest = 0;
+  	while(fNetworks[fgoals]!=null){
+  		if(flongest<fNetworks[fgoals].length)
+  			flongest = fNetworks[fgoals].length;
+  		fgoals++;
+  	}
 
-    int flongest = 0;
-    int fgoals = 0;
-    int egoals = 0;
-    int elongest = 0;
-    while(fNetworks[fgoals]!=null){
-    	if(flongest<fNetworks[fgoals].length)
-    		flongest = fNetworks[fgoals].length;
-    	fgoals++;
-    }
+  	while(eNetworks[egoals]!=null){
+  		if(elongest<eNetworks[egoals].length)
+  			elongest = eNetworks[egoals].length;
+  		egoals++;
+  	}
+  	int emultiplier = maxNetworkLength(enemy)*(elongest-1);
+  	int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly) *(maxNetworkLength(friendly) + 2*(flongest));
+  	return multiplier*(fComputedPotential+fComputedNetwork)+emultiplier*(eComputedPotential+eComputedNetwork);
 
-    while(eNetworks[egoals]!=null){
-    	if(elongest<eNetworks[egoals].length)
-    		elongest = eNetworks[egoals].length;
-    	egoals++;
-    }
-    int emultiplier = maxNetworkLength(enemy)*(elongest-1);
-    int multiplier = getGoalZones(friendly)*squaresInGoalZones(friendly) *(maxNetworkLength(friendly) + 2*(flongest));
-    return multiplier*(fComputedPotential+fComputedNetwork)+emultiplier*(eComputedPotential+eComputedNetwork);
 
-        
     //We make seperate functions so we can change the algorithm for each.
 
   }
 
-	public void updateNetworkList(){
-	    int i = 0;
-	    Square mainSquare = blackSquares[i];
-	    SList squaresToChange;
-	    Square curSquare;
+    /**
+    *  Updates network-related values in each square of a grid.
+    **/
+    public void updateNetworkList(){
+    	int i = 0;
+    	Square mainSquare = blackSquares[i];
+    	SList squaresToChange;
+    	Square curSquare;
 
-	    resetSquaresPN();
+    	resetSquaresPN();
 
-	    //Use while instead of for so we can stop at null instead of at end.
-	    while(mainSquare != null){
-	      //For every mainSquare
-	      for(int[] dir : DIRECTIONS){
-	        
-	        //Reset varialbes, since we're in a new direction (a new path)
-	        squaresToChange = new SList();
-	        curSquare = mainSquare.adjacent(dir);
-          squaresToChange.insertBack(mainSquare);
+      //Use while instead of for so we can stop at null instead of at end.
+    	while(mainSquare != null){
+        //For every mainSquare
+    		for(int[] dir : DIRECTIONS){
 
-	        //Iterate through all squares on the path.
-	        while(true){
-	          //If we hit the edge or a white square, it's only a potential network.
-	          if(curSquare == null){
-	            for(Object item : squaresToChange){
-	              Square sq = (Square) item;
-	              sq.addBlackPotential();
-	            }
-	            break;
+          //Reset varialbes, since we're in a new direction (a new path)
+    			squaresToChange = new SList();
+    			curSquare = mainSquare.adjacent(dir);
+    			squaresToChange.insertBack(mainSquare);
+
+          //Iterate through all squares on the path.
+    			while(true){
+            //If we hit the edge or a white square, it's only a potential network.
+    				if(curSquare == null){
+    					for(Object item : squaresToChange){
+    						Square sq = (Square) item;
+    						sq.addBlackPotential();
+    					}
+    					break;
             //We need a seperate case anyway because if we hit a square we want to change its values too.
-            }else if(curSquare.getPiece() == Square.WHITE){
-	            squaresToChange.insertBack(curSquare);
-              for(Object item : squaresToChange){
-                Square sq = (Square) item;
-                sq.addBlackPotential();
-              }
-	            break;
-	          //If we hit a black square, it's a network.
-	          }else if(curSquare.getPiece() == Square.BLACK){
-	            squaresToChange.insertBack(curSquare);
-	            for(Object item : squaresToChange){
-	              Square sq = (Square) item;
-	              sq.addBlackNetwork();
-	            }
-	            break;
-	          //This just leaves NONE, an empty square, in which case
-	          //we add the square to the potential and move on.
-	          }else{
-	            squaresToChange.insertBack(curSquare);
-	            curSquare = curSquare.adjacent(dir);
-	          }
-	        }
-	      }
+    				}else if(curSquare.getPiece() == Square.WHITE){
+    					squaresToChange.insertBack(curSquare);
+    					for(Object item : squaresToChange){
+    						Square sq = (Square) item;
+    						sq.addBlackPotential();
+    					}
+    					break;
+            //If we hit a black square, it's a network.
+    				}else if(curSquare.getPiece() == Square.BLACK){
+    					squaresToChange.insertBack(curSquare);
+    					for(Object item : squaresToChange){
+    						Square sq = (Square) item;
+    						sq.addBlackNetwork();
+    					}
+    					break;
+            //This just leaves NONE, an empty square, in which case
+            //we add the square to the potential and move on.
+    				}else{
+    					squaresToChange.insertBack(curSquare);
+    					curSquare = curSquare.adjacent(dir);
+    				}
+    			}
+    		}
 
-	      //Increment to the next mainSquare, depends on array being initialized to null
-	      i++;
-        if(i == 10){
-          break;
-        }
-	      mainSquare = blackSquares[i];
-	    }
+        //Increment to the next mainSquare, depends on array being initialized to null
+    		i++;
+    		if(i == 10){
+    			break;
+    		}
+    		mainSquare = blackSquares[i];
+    	}
 
-	    //Repeat for white!
-	    i = 0;
-	    mainSquare = whiteSquares[i];
-	    while(mainSquare != null){
-	      for(int[] dir : DIRECTIONS){
-	        
-	        squaresToChange = new SList();
-	        curSquare = mainSquare.adjacent(dir);
-          squaresToChange.insertBack(mainSquare);
+      //Repeat for white!
+    	i = 0;
+    	mainSquare = whiteSquares[i];
+    	while(mainSquare != null){
+    		for(int[] dir : DIRECTIONS){
 
-	        while(true){
-	          //If we hit the edge or a white square, it's only a potential network.
-	          if(curSquare == null){
-	            for(Object item : squaresToChange){
-	              Square sq = (Square) item;
-	              sq.addWhitePotential();
-	            }
-	            break;
+    			squaresToChange = new SList();
+    			curSquare = mainSquare.adjacent(dir);
+    			squaresToChange.insertBack(mainSquare);
+
+    			while(true){
+            //If we hit the edge or a white square, it's only a potential network.
+    				if(curSquare == null){
+    					for(Object item : squaresToChange){
+    						Square sq = (Square) item;
+    						sq.addWhitePotential();
+    					}
+    					break;
             //We need a seperate case anyway because if we hit a square we want to change its values too.
-            }else if(curSquare.getPiece() == Square.BLACK){
-	            squaresToChange.insertBack(curSquare);
-              for(Object item : squaresToChange){
-                Square sq = (Square) item;
-                sq.addWhitePotential();
-              }
-	            break;
+    				}else if(curSquare.getPiece() == Square.BLACK){
+    					squaresToChange.insertBack(curSquare);
+    					for(Object item : squaresToChange){
+    						Square sq = (Square) item;
+    						sq.addWhitePotential();
+    					}
+    					break;
            //it's a network! 
-	          }else if(curSquare.getPiece() == Square.WHITE){
-	            for(Object item : squaresToChange){
-	              Square sq = (Square) item;
-	              sq.addWhiteNetwork();
-	            }
-	            break;
-	          }else{
-	            squaresToChange.insertBack(curSquare);
-	            curSquare = curSquare.adjacent(dir);
-	          }
-	        }
-	      }
-	      i++;
-        if(i == 10){
-          break;
-        }
-	      mainSquare = whiteSquares[i];
-	    }
-	}
-
-	String serializeToString(){
-	    int tmp;
-	    String out = "";
-			for (int y = 0; y < DIMENSION; y++){
-				for (int x = 0; x < DIMENSION; x++){
-	        tmp = get(x, y).getPiece();
-	        if(tmp == WHITE){
-	          out = out.concat("W");
-	        }else if(tmp == BLACK){
-	          out = out.concat("B");
-	        }else if(tmp == NONE){
-	          out = out.concat(".");
-	        }else{
-	          System.out.println("Internal state warning in seralizeToString");
-	        }
-	      }
-	    }
-	    return out;
-	}
-
-	public String toString(){
-		//return simpleToString();
-		String s = "=========================================\n";
-    s+= "Stringified version:\n";
-    s+= serializeToString();
-    s+= "\n";
-    s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
-    s += "-----------------------------------------";
-    for (int y = 0; y < DIMENSION; y++){
-      s+= "\n|";
-      for (int x = 0; x < DIMENSION; x++){
-        s += " "+get(x, y).toString()+" |";
-      }
-    s+="\n";
+    				}else if(curSquare.getPiece() == Square.WHITE){
+    					for(Object item : squaresToChange){
+    						Square sq = (Square) item;
+    						sq.addWhiteNetwork();
+    					}
+    					break;
+    				}else{
+    					squaresToChange.insertBack(curSquare);
+    					curSquare = curSquare.adjacent(dir);
+    				}
+    			}
+    		}
+    		i++;
+    		if(i == 10){
+    			break;
+    		}
+    		mainSquare = whiteSquares[i];
+    	}
     }
-    s += "-----------------------------------------";
-    return s;
-	}
 
-	public String simpleToString(){
+  /**
+    *  toString method that prints out Square with all its instance variables for debugging purposes.
+    *  @return a String representation of the board.
+    **/
+  public String toString(){
+    //return simpleToString();
+  	String s = "=========================================\n";
+  	s+= "Stringified version:\n";
+  	s+= serializeToString();
+  	s+= "\n";
+  	s+= "Code: <color ([W]hite,[B]lack)>:<blackNetworks>:<blackPotential>:<whiteNetworks>:<whitePotential>\n";
+  	s += "-----------------------------------------";
+  	for (int y = 0; y < DIMENSION; y++){
+  		s+= "\n|";
+  		for (int x = 0; x < DIMENSION; x++){
+  			s += " "+get(x, y).toString()+" |";
+  		}
+  		s+="\n";
+  	}
+  	s += "-----------------------------------------";
+  	return s;
+  }
 
-	    String s = "|=====================================|\n";
-	    s+="|    || 0,| 1,| 2,| 3,| 4,| 5,| 6,| 7,|\n";
-	    s += "|----||-------------------------------|\n";
-		for (int y = 0; y < DIMENSION; y++){
-			s+= "|----||-------------------------------|\n";
-			s+= "| "+y+"_ ||";
-			for (int x = 0; x < DIMENSION; x++){
-				if (get(x,y).getPiece()==BLACK){
-					s+=" B |";
-				}
-				if (get(x,y).getPiece()==WHITE){
-					s+=" W |";
-				}
-				if (get(x,y).getPiece()==NONE){
-					s+="   |";
-				}
-				//s += " "+get(x,y).getPiece()+" |";
-			}
-			s += "\n";
-		}
-		s += "|=====================================|\n";
-		s += "BLACK SQUARES: ";
-		for (Square a: blackSquares){
-			if (a == null){
-				s += "\nnull";
-			}
-			else {
-				s += "\n"+a.simpleToString();
-			}
-		}
-		s += "\n WHITE SQUARES: ";
-		for (Square b: whiteSquares){
-			if (b == null){
-				s += "\nnull";
-			}
-			else {
-				s += "\n"+b.simpleToString();
-			}
-		}
-		return s;
-	}
-	
-	public static void printSquares(Square[] squares){
-		for(Square s: squares){
-			System.out.println(s);
-		}
-	}
+  /**
+    *  String method that prints out a simple representation of the board.
+    *  @return a String representation of the board.
+    **/
+  public String simpleToString(){
+
+  	String s = "|=====================================|\n";
+  	s+="|    || 0,| 1,| 2,| 3,| 4,| 5,| 6,| 7,|\n";
+  	s += "|----||-------------------------------|\n";
+  	for (int y = 0; y < DIMENSION; y++){
+  		s+= "|----||-------------------------------|\n";
+  		s+= "| "+y+"_ ||";
+  		for (int x = 0; x < DIMENSION; x++){
+  			if (get(x,y).getPiece()==BLACK){
+  				s+=" B |";
+  			}
+  			if (get(x,y).getPiece()==WHITE){
+  				s+=" W |";
+  			}
+  			if (get(x,y).getPiece()==NONE){
+  				s+="   |";
+  			}
+        //s += " "+get(x,y).getPiece()+" |";
+  		}
+  		s += "\n";
+  	}
+  	s += "|=====================================|\n";
+  	s += "BLACK SQUARES: ";
+  	for (Square a: blackSquares){
+  		if (a == null){
+  			s += "\nnull";
+  		}
+  		else {
+  			s += "\n"+a.simpleToString();
+  		}
+  	}
+  	s += "\n WHITE SQUARES: ";
+  	for (Square b: whiteSquares){
+  		if (b == null){
+  			s += "\nnull";
+  		}
+  		else {
+  			s += "\n"+b.simpleToString();
+  		}
+  	}
+  	return s;
+  }
+  
+  /**
+  *  Print method that prints out arrays of squares.
+  **/
+  public static void printSquares(Square[] squares){
+  	for(Square s: squares){
+  		System.out.println(s);
+  	}
+  }
 }
 
 class Network{
