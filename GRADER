@@ -196,6 +196,54 @@ Classes Implemented In:
 
       Constructs a new Square object at location (x,y) on game board g,
       unoccupied by any players.
+      @param x is the x-coordinate of Square on the game board.
+      @param y is the y-coordinate of Square on the game board.
+      @param g is the Grid that the Square is on.
+
+    public Square(int x, int y, int piece, Grid g)
+
+      Constructs a new Square object at location (x,y) on game board g, occupied by the indicated player.
+      @param x is x coordinate of Square.
+      @param y is y coordinate of Square.
+      @param piece is the integer representation of the player who owns this Square.
+      @param g is Grid that the Square is on.
+
+  Methods:
+
+    public int[] position()
+
+      Gets the coordinates of the Square on the game board.
+      @return is a length-2 integer array. The first element in the array is the x-coordinate of the Square, the second element is the y-coordinate of the Square.
+
+    public void setPiece(int p)
+
+      Sets the Square to be occupied by a given player.
+      @param p is the integer representation of the player who owns this
+      Square (0 is black, 1 is white)
+
+    public void removePiece()
+
+      Sets the Square so that it is unoccupied (not owned by black or white)
+
+    public int getPiece()
+
+      Gets the player who owns the Square.
+      @return is an int representing the player who owns the Square (0 for black, 1 for white, 2 if the Square is unoccupied)
+
+    public boolean hasPiece()
+
+      Returns true if Square is occupied by white or black, false if Square is unoccupied.
+      @return true if occupied, false if unoccupied
+
+    public String toString()
+
+      Returns a string that includes the information about the Square--the owner of the square (or if it is unoccupied), the location, and the network information.
+      @return a string representation of the Square.
+
+    public String simpleToString()
+
+      Returns a string that includes the Square's location and owner (or if it is unoccupied).
+      @return a string representation of the Square
 
   -------------------------------Grid.java-------------------------------
 

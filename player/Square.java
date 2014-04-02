@@ -40,7 +40,8 @@ public class Square{
   static final int[][] DIRECTIONS = {LEFT,RIGHT,UP,DOWN,LEFT_UP,LEFT_DOWN,RIGHT_UP,RIGHT_DOWN};
 
   /**
-  *  Constructor for Square object.
+  *  Constructs a new Square object at location (x,y) on game
+  *  board g, unoccupied by any players.
   *  @param x is x coordinate of Square.
   *  @param y is y coordinate of Square.
   *  @param g is Grid that the Square is on.
@@ -52,6 +53,15 @@ public class Square{
     grid = g;
   }
 
+  /**
+  *  Constructs a new Square object at location (x,y) on game
+  *  board g, occupied by the indicated player.
+  *  @param x is x coordinate of Square.
+  *  @param y is y coordinate of Square.
+  *  @param piece is the integer representation of the player
+  *  who owns this Square.
+  *  @param g is Grid that the Square is on.
+  **/
   public Square( int x, int y, int piece, Grid g){
     this.piece = piece;
     this.x = x;
@@ -60,39 +70,45 @@ public class Square{
   }
 
   /**
-  *  Gets the coordinates of the Square.
-  *  @return is a length 2 integer array contain x and y.
+  *  Gets the coordinates of the Square on the game board.
+  *  @return is a length-2 integer array. The first element in
+  *  the array is the x-coordinate of the Square, the second
+  *  element is the y-coordinate of the Square.
   **/
-  public int[] position(){
+  protected int[] position(){
     int[] temp = {x,y};
     return temp;
   }
   /**
-  *  Sets the piece of a Square.
-  *  @param p where 0 is black and 1 is white.
+  *  Sets the Square to be occupied by a given player.
+  *  @param p is the integer representation of the player who
+  *  owns this Square (0 is black, 1 is white)
   **/
-  public void setPiece(int p){
+  protected void setPiece(int p){
     piece = p;
   }
 
   /**
-  *  Removes the piece of a Square.
+  *  Sets the Square so that it is unoccupied (not owned by
+  *  black or white)
   **/
   public void removePiece(){
     piece = NONE;
   }
 
   /**
-  *  Gets the piece a Square contains.
-  *  @return is an int representing piece if Square is occupied.
-  *  @return is null if Square is unoccupied.
+  *  Gets the player who owns the Square.
+  *  @return is an int representing the player who owns the
+  *  Square (0 for black, 1 for white, 2 if the Square is
+  *  unoccupied)
   **/
   public int getPiece(){
     return piece;
   }
 
   /**
-  *  Returns whether or not the Square has a piece.
+  *  Returns true if Square is occupied by white or black, false
+  *  if Square is unoccupied.
   *  @return true if occupied and false if unoccupied.
   **/
   public boolean hasPiece(){
@@ -124,7 +140,7 @@ public class Square{
   }
 
   /**
-  *  Gets a Square in an adjacdent direction
+  *  Gets a Square in an adjacent direction
   *  @param dir is a length 2 integer array defining direction.
   *  @return is a Square if there is a valid Square in the direction.
   *  @return is null if out of bounds of Grid.
@@ -220,9 +236,12 @@ public class Square{
   }
 
   /**
-   * Just a normal to string method
-   * @return a string representing piece contents including: color, potential and actual networks
+   * Returns a string that includes the information about the Square--
+   * the owner of the square (or if it is unoccupied), the
+   * location, and the network information.
+   * @return a string representation of the Square.
    **/
+
    public String toString(){
     String pieceStr = " ";
     if(piece == WHITE){
@@ -241,6 +260,12 @@ public class Square{
       return pieceStr+":"+blackNetworks/2+":"+blackPotential+":"+whiteNetworks/2+":"+whitePotential;
     }
   }
+
+  /**
+   * Returns a string that includes the Square's location and
+   * owner (or if it is unoccupied).
+   * @return a string representation of the Square.
+   **/
 
   public String simpleToString(){
     String s = "("+x+","+y+")-";

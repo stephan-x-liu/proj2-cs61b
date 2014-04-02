@@ -911,9 +911,10 @@ public class Grid{
   	return s;
   }
   
-  /**
-  *  Print method that prints out arrays of squares.
-  **/
+   /**
+	* Prints out all the information about each Square in an array of Squares
+    * @param squares is an array of Squares to be printed.
+    **/
   public static void printSquares(Square[] squares){
   	for(Square s: squares){
   		System.out.println(s);
